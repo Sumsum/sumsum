@@ -1,0 +1,13 @@
+Django==1.10.4
+django-appconf==1.0.2
+django-countries==4.0
+django-debug-toolbar==1.6
+Django-Select2==5.8.10
+django-superuser==0.2.2
+django-wysiwyg-redactor==0.4.9.1
+Pillow==3.4.2
+psycopg2==2.6.2
+python-memcached==1.58
+redis==2.10.5
+six==1.10.0
+sqlparse==0.2.2

@@ -1,0 +1,9 @@
+*.swp
+*.swo
+.~*
+._*
+*.pyc
+.DS_Store
+*/node_modules
+*-env
+media
