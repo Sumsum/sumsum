@@ -3,8 +3,14 @@ from django.contrib.auth.models import Group as AuthGroup
 from django.core.mail import send_mail
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from django_countries.fields import CountryField
-from utils.fields import TitleSlugField
+
+
+STATE_CHOICES = (
+    ('disabled', _('Disabled')),  # customers are disabled by default until they are invited. Staff accounts can disable a customer's account at any time.
+    ('invited', _('Invited')),  # the customer has been emailed an invite to create an account that saves their customer settings.
+    ('enabled', _('Enabled')),  # the customer accepted the email invite and created an account.
+    ('declined', _('Declined')),  # the customer declined the email invite to create an account.
+)
 
 
 class UserManager(BaseUserManager):
@@ -40,9 +46,22 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
-    first_name = models.CharField(_('first name'), max_length=255, blank=True)
-    last_name = models.CharField(_('last name'), max_length=255, blank=True)
+    accepts_marketing = models.BooleanField(_('customer accepts marketing'), default=False)
+    created_at = models.DateTimeField(_('created at'), auto_now_add=True)
+    default_address = models.ForeignKey('customers.CustomerAddress', verbose_name=_('default address'), blank=True, null=True)
     email = models.EmailField(_('email address'), unique=True)
+    first_name = models.CharField(_('first name'), max_length=255, blank=True, null=True)
+    multipass_identifier = models.CharField(_('multipass identifier'), max_length=255, blank=True, null=True)
+    last_name = models.CharField(_('last name'), max_length=255, blank=True, null=True)
+    #last_order = models.ForeignKey('orders.Order', verbose_name=_('last order'), blank=True, null=True)
+    note = models.TextField(_('notes'), help_text=_('Enter any extra notes relating to this customer.'), blank=True, null=True)
+    state = models.CharField(_('state'), max_length=50, choices=STATE_CHOICES, default='enabled', blank=True, null=True)  # maybe we need to sync this the is_active field
+    tags = models.ManyToManyField('customers.CustomerTag', help_text=_('Tags can be used to categorize customers into groups.'), blank=True)
+    tax_exempt = models.BooleanField(_('customer is tax excempt'), default=False)
+    updated_at = models.DateTimeField(_('updated at'), auto_now=True)
+    verified_email = models.BooleanField(_('verified email'), default=False)
+
+    # needend for the std user implementation
     is_staff = models.BooleanField(
         _('staff status'),
         default=False,
@@ -56,21 +75,6 @@ class User(AbstractBaseUser, PermissionsMixin):
             'Unselect this instead of deleting accounts.'
         ),
     )
-    accepts_marketing = models.BooleanField(_('customer accepts marketing'), default=False)
-    tax_exempt = models.BooleanField(_('customer is tax excempt'), default=False)
-    company = models.CharField(_('company'), max_length=255, blank=True)
-    phone = models.CharField(_('phone'), max_length=255, blank=True)
-    address1 = models.TextField(_('address'), blank=True)
-    address2 = models.TextField(_("address con't"), blank=True)
-    city = models.CharField(_('city'), max_length=255, blank=True)
-    zip_code = models.CharField(_('postal / Zip code'), max_length=255, blank=True)
-    country = CountryField(_('country'), blank=True)
-    region = models.CharField(_('region'), max_length=255, blank=True)
-    notes = models.TextField(_('notes'), help_text=_('Enter any extra notes relating to this customer.'), blank=True)
-    tags = models.ManyToManyField('users.UserTag', help_text=_('Tags can be used to categorize customers into groups.'), blank=True)
-    created = models.DateTimeField(_('created'), auto_now_add=True)
-    updated = models.DateTimeField(_('updated'), auto_now=True)
-
     USERNAME_FIELD = 'email'
     objects = UserManager()
 
@@ -88,21 +92,6 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def email_user(self, subject, message, from_email=None, **kwargs):
         send_mail(subject, message, from_email, [self.email], **kwargs)
-
-
-class UserTag(models.Model):
-    title = models.CharField(_('title'), max_length=255, unique=True)
-    slug = TitleSlugField(_('slug'))
-    updated = models.DateTimeField(_('updated'), auto_now=True)
-    created = models.DateTimeField(_('created'), auto_now_add=True)
-
-    class Meta:
-        ordering = ('title',)
-        verbose_name = _('tag')
-        verbose_name_plural = _('tags')
-
-    def __str__(self):
-        return self.title
 
 
 class Group(AuthGroup):

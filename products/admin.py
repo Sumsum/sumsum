@@ -1,23 +1,14 @@
 from django.contrib import admin
-from .models import Product, ProductImage, ProductTag, ProductVendor, ProductType
+from .models import Product, ProductImage, ProductTag
 from django.utils.translation import ugettext_lazy as _
 from utils.widgets import AdminImageWidget
 from django.db import models
 from .forms import ProductForm
+from advanced_filters.admin import AdminAdvancedFiltersMixin
 
 
 @admin.register(ProductTag)
 class ProductTagAdmin(admin.ModelAdmin):
-    pass
-
-
-@admin.register(ProductVendor)
-class ProductVendorAdmin(admin.ModelAdmin):
-    pass
-
-
-@admin.register(ProductType)
-class ProductTypeAdmin(admin.ModelAdmin):
     pass
 
 
@@ -30,11 +21,15 @@ class ProductImageInline(admin.TabularInline):
 
 
 @admin.register(Product)
-class ProductAdmin(admin.ModelAdmin):
+class ProductAdmin(AdminAdvancedFiltersMixin, admin.ModelAdmin):
     save_on_top = True
     prepopulated_fields = {'slug': ('title',)}
     inlines = [ProductImageInline]
     form = ProductForm
+    list_filter = ('price', 'title')
+    advanced_filter_fields = (
+        'title', 'price',
+    )
     fieldsets = (
         (None, {
             'fields': (

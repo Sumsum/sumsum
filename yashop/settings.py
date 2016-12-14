@@ -34,11 +34,13 @@ INSTALLED_APPS = [
     'redactor',
     'debug_toolbar',
     'django_select2',
+    'advanced_filters',
 
-    #'customers',
+    'customers',
     #'discounts',
     #'orders',
-    'products',
+    #'products',
+    'metafields',
     'users',
 ]
 INTERNAL_IPS = ('127.0.0.1',)

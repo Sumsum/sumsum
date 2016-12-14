@@ -4,7 +4,7 @@ from django.contrib import admin, messages
 from django.contrib.admin.options import IS_POPUP_VAR
 from django.contrib.admin.utils import unquote
 from django.contrib.auth import update_session_auth_hash
-from django.contrib.auth.forms import AdminPasswordChangeForm, UserCreationForm
+from django.contrib.auth.forms import AdminPasswordChangeForm, UserChangeForm, UserCreationForm
 from django.contrib.auth.models import Group as AuthGroup
 from django.core.exceptions import PermissionDenied
 from django.db import router, transaction
@@ -17,8 +17,7 @@ from django.utils.html import escape
 from django.utils.translation import ugettext, ugettext_lazy as _
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.debug import sensitive_post_parameters
-from .models import User, Group, UserTag
-from .forms import UserChangeForm
+from .models import User, Group
 
 
 csrf_protect_m = method_decorator(csrf_protect)
@@ -28,11 +27,6 @@ sensitive_post_parameters_m = method_decorator(sensitive_post_parameters())
 admin.site.unregister(AuthGroup)
 admin.site.site_title = 'YAShop Admin'
 admin.site.site_header = 'YAShop Admin'
-
-
-@admin.register(UserTag)
-class UserTagAdmin(admin.ModelAdmin):
-    pass
 
 
 @admin.register(Group)
@@ -55,37 +49,14 @@ class GroupAdmin(admin.ModelAdmin):
 class UserAdmin(admin.ModelAdmin):
     add_form_template = 'admin/auth/user/add_form.html'
     change_user_password_template = None
+    readonly_fields = ('last_login', 'created_at',)
     fieldsets = (
-        (_('Customer overview'), {
+        (None, {
             'fields': (
+                'email',
                 'first_name',
                 'last_name',
-                'email',
-                'tax_exempt',
-                'accepts_marketing',
             )
-        }),
-        (_('Address'), {
-            'fields': (
-                'company',
-                'phone',
-                'address1',
-                'address2',
-                'city',
-                'zip_code',
-                'country',
-                'region',
-            )
-        }),
-        (_('Notes'), {
-            'fields': (
-                'notes',
-            ),
-        }),
-        (_('Tags'), {
-            'fields': (
-                'tags',
-            ),
         }),
         (_('Permissions'), {
             'fields': (
@@ -95,8 +66,13 @@ class UserAdmin(admin.ModelAdmin):
                 'is_superuser',
                 'groups',
                 'user_permissions',
-            ),
-            'classes': ('collapse',)
+            )
+        }),
+        (_('Important dates'), {
+            'fields': (
+                'last_login',
+                'created_at',
+            )
         }),
     )
     add_fieldsets = (
