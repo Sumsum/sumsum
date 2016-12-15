@@ -54,7 +54,7 @@ SCOPE_CHOICES = (
 )
 
 
-FULLFILLMENT_CHOICES = (
+FULFILLMENT_CHOICES = (
     ('manual', _('Manual')),
 )
 
@@ -76,15 +76,15 @@ class ProductManager(models.Manager):
 
 
 class Product(MetaFieldMixin, models.Model):
-    body_html = RedactorField(_('description'), blank=True, null=True)
     created_at = models.DateTimeField(_('created at'), auto_now_add=True)
+    description = RedactorField(_('description'), blank=True, null=True)
     handle = TitleSlugField(_('handle'))
     metafields_global_description_tag = models.TextField(_('meta description'), blank=True, null=True)
     metafields_global_title_tag = models.CharField(_('page title'), max_length=255, blank=True, null=True)
     product_type = models.CharField(_('product type'), max_length=255, blank=True, null=True)  # this might need a related table
     published_at = models.DateTimeField(_('publish on'), help_text=_('publish this product on'), blank=True, null=True)
     published_scope = models.CharField(_('visability'), max_length=50, choices=SCOPE_CHOICES)
-    tags = models.ManyToManyField('products.ProductTag', verbose_name=_('tags'), blank=True)  # can we implement this as an ArrayField?
+    tags_m2m = models.ManyToManyField('products.ProductTag', verbose_name=_('tags'), blank=True)  # can we implement this as an ArrayField?
     template_suffix = models.CharField(_('template suffix'), max_length=255, blank=True, null=True)  # we probably do not need this
     title = models.CharField(_('title'), max_length=255)
     updated_at = models.DateTimeField(_('updated at'), auto_now=True)
@@ -100,19 +100,41 @@ class Product(MetaFieldMixin, models.Model):
     def __str__(self):
         return self.title
 
+    @property
+    def body_html(self):
+        """
+        Alias for description
+        """
+        return self.description
 
-class ProductVariant(MetaFieldMixin, models.Model):
+    @property
+    def content(self):
+        """
+        Alias for description
+        """
+        return self.description
+
+    def availble(self):
+        """
+        Returns True if at least one variant is available
+        """
+        for v in self.variants():
+            if v.availble():
+                return True
+        return False
+
+
+class Variant(MetaFieldMixin, models.Model):
     product = models.ForeignKey(Product, verbose_name=_('product'), related_name='variants')
     barcode = models.CharField(_('barcode'), help_text=_('ISBN, UPC, GTIN, etc.'), max_length=255, blank=True, null=True)
     compare_at_price = models.FloatField(_('compare at price'), blank=True, null=True)
     created_at = models.DateTimeField(_('created at'), auto_now_add=True)
-    fulfillment_service = models.CharField(_('Fulfillment service'), max_length=50, choices=FULLFILLMENT_CHOICES)
+    fulfillment_service = models.CharField(_('Fulfillment service'), max_length=50, choices=FULFILLMENT_CHOICES)
     grams = models.IntegerField(_('grams'), blank=True, null=True)
     image = models.ForeignKey('products.ProductImage', verbose_name=_('image'), blank=True, null=True, related_name='variants')
     inventory_management = models.CharField(_('track inventory'), help_text=_('Yashop tracks this products inventory'), max_length=50, choices=INVENTORY_MANAGEMENT_CHOICES, default='blank')
     inventory_policy = models.BooleanField(_('inventory policy'), help_text=_("Allow customers to purchase this product when it's out of stock"), max_length=50, choices=INVENTORY_POLICY_CHOICES, default='deny')
     inventory_quantity = models.IntegerField(_('inventory stock'), default=0)
-    old_inventory_quantity = models.IntegerField(_('origina stock level'), default=0)
     option1 = models.CharField(_('option #1'), max_length=255, blank=True, null=True)
     option2 = models.CharField(_('option #2'), max_length=255, blank=True, null=True)
     option3 = models.CharField(_('option #3'), max_length=255, blank=True, null=True)
@@ -123,7 +145,8 @@ class ProductVariant(MetaFieldMixin, models.Model):
     taxable = models.BooleanField(_('taxable'), default=True)
     title = models.CharField(_('title'), max_length=255)
     updated_at = models.DateTimeField(_('updated at'), auto_now=True)
-    weight = models.FloatField(_('weight'), blank=True, null=True)
+    grams = models.FloatField(_('weight in grams'), blank=True, null=True)
+    weight_in_unit = models.FloatField(_('weight'), blank=True, null=True)
     weight_unit = models.CharField(_('weight unit'), max_length=50, choices=UNIT_CHOICES, default='kg')
 
     class Meta:
@@ -133,6 +156,18 @@ class ProductVariant(MetaFieldMixin, models.Model):
 
     def __str__(self):
         return self.title
+
+    def availble(self):
+        """
+        Returns True if the variant is available for purchase, or False if it
+        not. For a variant to be available, its variant.inventory_quantity must
+        be greater than zero or variant.inventory_policy must be set to
+        continue. A variant with no variant.inventory_management is also
+        considered available.
+        """
+        if self.inventory_management == 'blank' or self.inventory_policy == 'continue':
+            return True
+        return self.inventory_quantity > 0
 
 
 class ProductTag(models.Model):
