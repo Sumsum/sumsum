@@ -1,7 +1,7 @@
 from django.db import models
 from redactor.fields import RedactorField
 from django.utils.translation import ugettext_lazy as _
-from utils.fields import TitleSlugField
+from utils.fields import HandleField, ChoiceField
 from metafields.models import MetaFieldMixin
 
 
@@ -77,18 +77,18 @@ class ProductManager(models.Manager):
 
 class Product(MetaFieldMixin, models.Model):
     created_at = models.DateTimeField(_('created at'), auto_now_add=True)
-    description = RedactorField(_('description'), blank=True, null=True)
-    handle = TitleSlugField(_('handle'))
+    body_html = RedactorField(_('description'), blank=True, null=True)
+    handle = HandleField(_('handle'), from_field='title')
     metafields_global_description_tag = models.TextField(_('meta description'), blank=True, null=True)
-    metafields_global_title_tag = models.CharField(_('page title'), max_length=255, blank=True, null=True)
-    product_type = models.CharField(_('product type'), max_length=255, blank=True, null=True)  # this might need a related table
+    metafields_global_title_tag = StringField(_('page title'))
+    product_type = StringField(_('product type'))  # this might need a related table
     published_at = models.DateTimeField(_('publish on'), help_text=_('publish this product on'), blank=True, null=True)
-    published_scope = models.CharField(_('visability'), max_length=50, choices=SCOPE_CHOICES)
+    published_scope = ChoiceField(_('visability'), choices=SCOPE_CHOICES)
     tags_m2m = models.ManyToManyField('products.ProductTag', verbose_name=_('tags'), blank=True)  # can we implement this as an ArrayField?
-    template_suffix = models.CharField(_('template suffix'), max_length=255, blank=True, null=True)  # we probably do not need this
+    template_suffix = StringField(_('template suffix'))
     title = models.CharField(_('title'), max_length=255)
     updated_at = models.DateTimeField(_('updated at'), auto_now=True)
-    vendor = models.CharField(_('vendor'), blank=True, null=True)
+    vendor = StringField(_('vendor'), blank=True, null=True)
 
     objects = ProductManager()
 
@@ -101,18 +101,14 @@ class Product(MetaFieldMixin, models.Model):
         return self.title
 
     @property
-    def body_html(self):
-        """
-        Alias for description
-        """
-        return self.description
+    def description(self):
+        return self.body_html
 
     @property
     def content(self):
-        """
-        Alias for description
-        """
-        return self.description
+        return self.body_html
+
+    def images(self):
 
     def availble(self):
         """
@@ -123,10 +119,14 @@ class Product(MetaFieldMixin, models.Model):
                 return True
         return False
 
+    def get_absolute_url(self):
+        return '/product/{}'.format(self.handle)
+    url = get_absolute_url
+
 
 class Variant(MetaFieldMixin, models.Model):
-    product = models.ForeignKey(Product, verbose_name=_('product'), related_name='variants')
-    barcode = models.CharField(_('barcode'), help_text=_('ISBN, UPC, GTIN, etc.'), max_length=255, blank=True, null=True)
+    product_rel = models.ForeignKey(Product, verbose_name=_('product'))
+    barcode = StringField(_('barcode'), help_text=_('ISBN, UPC, GTIN, etc.'))
     compare_at_price = models.FloatField(_('compare at price'), blank=True, null=True)
     created_at = models.DateTimeField(_('created at'), auto_now_add=True)
     fulfillment_service = models.CharField(_('Fulfillment service'), max_length=50, choices=FULFILLMENT_CHOICES)
@@ -135,13 +135,13 @@ class Variant(MetaFieldMixin, models.Model):
     inventory_management = models.CharField(_('track inventory'), help_text=_('Yashop tracks this products inventory'), max_length=50, choices=INVENTORY_MANAGEMENT_CHOICES, default='blank')
     inventory_policy = models.BooleanField(_('inventory policy'), help_text=_("Allow customers to purchase this product when it's out of stock"), max_length=50, choices=INVENTORY_POLICY_CHOICES, default='deny')
     inventory_quantity = models.IntegerField(_('inventory stock'), default=0)
-    option1 = models.CharField(_('option #1'), max_length=255, blank=True, null=True)
-    option2 = models.CharField(_('option #2'), max_length=255, blank=True, null=True)
-    option3 = models.CharField(_('option #3'), max_length=255, blank=True, null=True)
+    option1 = StringField(_('option #1'))
+    option2 = StringField(_('option #2'))
+    option3 = StringField(_('option #3'))
     position = models.IntegerField(_('position'), default=0)
     price = models.FloatField(_('price'), blank=True, null=True)
     requires_shipping = models.BooleanField(_('requires shipping'), help_text=_('This product requires shipping'), default=False)
-    sku = models.CharField(_('sku'), help_text=_('Stock Keeping Unit'), max_length=255, blank=True, null=True)
+    sku = StringField(_('sku'), help_text=_('Stock Keeping Unit'))
     taxable = models.BooleanField(_('taxable'), default=True)
     title = models.CharField(_('title'), max_length=255)
     updated_at = models.DateTimeField(_('updated at'), auto_now=True)
@@ -183,10 +183,11 @@ class ProductTag(models.Model):
 
 
 class ProductImage(MetaFieldMixin, models.Model):
+    alt_text = StringField(_('alt text'))
     created_at = models.DateTimeField(_('created at'), auto_now_add=True)
     image = models.ImageField(_('image'), upload_to='products')
     position = models.IntegerField(_('position'), default=0)
-    product = models.ForeignKey(Product, verbose_name=_('product'), related_name='images')
+    product = models.ForeignKey(Product, verbose_name=_('product'))
     updated_at = models.DateTimeField(_('updated at'), auto_now=True)
 
     class Meta:
@@ -213,8 +214,8 @@ class CustomCollection(MetaFieldMixin, models.Model):
     published = models.BooleanField(_('published'))
     published_at = models.DateTimeField(_('published at'), help_text=_('publish this collection on'), blank=True, null=True)
     published_scope = models.CharField(_('visability'), max_length=50, choices=SCOPE_CHOICES)
-    sort_order = models.CharField(_('sort'), max_length=255, choices=SORT_CHOICES, blank=True)
-    template_suffix = models.CharField(_('template suffix'), max_length=255, blank=True, null=True)  # we probably do not need this
+    sort_order = ChoiceField(_('sort'), choices=SORT_CHOICES, blank=True)
+    template_suffix = StringField(_('template suffix'))
     title = models.CharField(_('title'), max_length=255)
     updated_at = models.DateTimeField(_('updated at'), auto_now=True)
     # fields not in Shopify API
@@ -236,8 +237,8 @@ class CollectionCondition(models.Model):
     We also need to re calculate whenever a rule is updated.
     """
     collection = models.ForeignKey('products.CustomCollection', verbose_name=_('collection'), related_name='conditions')
-    attribute = models.CharField(_('attribute'), max_length=255, blank=True, choices=ATTRIBUTE_CHOICES)
-    relation = models.CharField(_('relation'), max_length=255, blank=True, choices=RELATION_CHOICES)
+    attribute = ChoiceField(_('attribute'), blank=True, choices=ATTRIBUTE_CHOICES)
+    relation = ChoiceField(_('relation'), blank=True, choices=RELATION_CHOICES)
     value = models.CharField(_('value'), max_length=255)
     position = models.IntegerField(_('position'), default=0)
     updated_at = models.DateTimeField(_('updated at'), auto_now=True)
