@@ -10,8 +10,12 @@ class ChoiceField(models.CharField):
 
     def __init__(self, *args, **kwargs):
         kwargs['max_length'] = kwargs.get('max_length', 50)
+        kwargs['blank'] = kwargs.get('blank', True)
+        kwargs['null'] = kwargs.get('null', True)
         if 'choices' not in kwargs:
             raise exceptions.ValidationError(_('ChoiceField must specify `choices`.'))
+        if 'default' not in kwargs:
+            kwargs['default'] = kwargs['choices'][0][0]
         super().__init__(*args, **kwargs)
 
     def deconstruct(self):
@@ -26,22 +30,37 @@ class StringField(models.CharField):
 
     def __init__(self, *args, **kwargs):
         kwargs['max_length'] = kwargs.get('max_length', 255)
-        kwargs['blank'] = kwargs.get('blank', True)
-        kwargs['null'] = kwargs.get('null', True)
+        if kwargs.pop('required', False):
+            kwargs['blank'] = False
+            kwargs['null'] = False
+        else:
+            kwargs['blank'] = True
+            kwargs['null'] = True
         super().__init__(*args, **kwargs)
 
     def deconstruct(self):
         name, path, args, kwargs = super().deconstruct()
         if kwargs.get('max_length') == 255:
             del kwargs['max_length']
-        if self.blank is True:
-            del kwargs['blank']
-        else:
+        if kwargs.get('required') is False:
+            del kwargs['required']
+        return name, path, args, kwargs
+
+
+class TextField(models.TextField):
+    def __init__(self, *args, **kwargs):
+        if kwargs.pop('required', False):
             kwargs['blank'] = False
-        if self.null is True:
-            del kwargs['null']
-        else:
             kwargs['null'] = False
+        else:
+            kwargs['blank'] = True
+            kwargs['null'] = True
+        super().__init__(*args, **kwargs)
+
+    def deconstruct(self):
+        name, path, args, kwargs = super().deconstruct()
+        if kwargs.get('required') is False:
+            del kwargs['required']
         return name, path, args, kwargs
 
 
@@ -51,7 +70,6 @@ class HandleField(models.CharField):
 
     def __init__(self, *args, **kwargs):
         kwargs['max_length'] = kwargs.get('max_length', 50)
-        # Set db_index=True unless it's been set manually.
         kwargs['db_index'] = kwargs.get('kwargs', True)
         kwargs['blank'] = kwargs.get('blank', True)
         kwargs['unique'] = kwargs.get('unique', True)
