@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from utils.fields import ChoiceField, StringField, HandleField
 
 
 STATUS_CHOICES = (
@@ -9,6 +10,12 @@ STATUS_CHOICES = (
     ('cancelled', _('Cancelled')),  # The fulfillment was cancelled.
     ('error', _('Error')),  # There was an error with the fulfillment request.
     ('failure', _('Failure')),  # The fulfillment request failed.
+)
+
+
+FORMAT_CHOICES = (
+    ('json', 'json'),
+    ('xml', 'XML'),
 )
 
 
@@ -73,3 +80,22 @@ class TrackingNumber(models.Model):
 
     def __str__(self):
         return self.number
+
+
+class FulfillmentService(models.Model):
+    callback_url = models.URLField(_('callback url'), blank=True, null=True)
+    format = ChoiceField(_('format'), choices=FORMAT_CHOICES)
+    handle = HandleField(_('handle'), from_field='name')
+    inventory_management = models.BooleanField(_('inventory management'), help_text=_('fulfillment service tracks product inventory'))
+    name = StringField(_('name'), required=True)
+    provider_id = StringField(_('provider id'), help_text=_('A unique identifier for the fulfillment service provider.'), unique=True)
+    requires_shipping_method = models.BooleanField(_('requires shipping method'))
+    tracking_support = models.BooleanField(_('tracking support'))
+
+    class Meta:
+        ordering = ('name',)
+        verbose_name = _('fulfillment service')
+        verbose_name_plural = _('fulfillment services')
+
+    def __str__(self):
+        return self.name

@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from utils.text import uncamel
+from django.utils.functional import cached_property
 
 
 VALUE_CHOICES = (
@@ -42,6 +43,7 @@ class MetaField(models.Model):
 
 
 class MetaFieldMixin:
+    @cached_property
     def metafields(self):
         return MetaField.objects.filter(
             owner_resource=uncamel(self.__class__.__name__),

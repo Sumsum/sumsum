@@ -1,8 +1,11 @@
+import datetime
 from django.db import models
 from redactor.fields import RedactorField
 from django.utils.translation import ugettext_lazy as _
-from utils.fields import HandleField, ChoiceField, StringField
+from utils.fields import HandleField, ChoiceField, StringField, PositionField
 from metafields.models import MetaFieldMixin
+from django.utils.functionan import cached_property
+from utils.datastructures import List
 
 
 UNIT_CHOICES = (
@@ -69,14 +72,23 @@ INVENTORY_POLICY_CHOICES = (
 )
 
 
+class Option:
+    def __init__(self, name, values, selected_value=None):
+        self.name = name
+        self.values = values
+        # TODO How do we solve this the ruby way?
+        self.selected_value = selected_value
+
+
 class ProductManager(models.Manager):
     def get_queryset(self):
         qs = super().get_queryset()
-        return qs.prefetch_related('collections', 'tags', 'images', 'options')
+        return qs.prefetch_related('collections_m2m', 'tags_m2m', 'variant_set', 'productimage_set')
 
 
 class Product(MetaFieldMixin, models.Model):
     created_at = models.DateTimeField(_('created at'), auto_now_add=True)
+    collections_m2m = models.ManyToMany('products.Collection', blank=True)
     body_html = RedactorField(_('description'), blank=True, null=True)
     handle = HandleField(_('handle'), from_field='title')
     metafields_global_description_tag = models.TextField(_('meta description'), blank=True, null=True)
@@ -89,6 +101,9 @@ class Product(MetaFieldMixin, models.Model):
     title = StringField(_('title'), blank=True)
     updated_at = models.DateTimeField(_('updated at'), auto_now=True)
     vendor = StringField(_('vendor'), blank=True, null=True)
+    option1_name = StringField(_('option #1 name'))
+    option2_name = StringField(_('option #2 name'))
+    option3_name = StringField(_('option #3 name'))
 
     objects = ProductManager()
 
@@ -100,16 +115,7 @@ class Product(MetaFieldMixin, models.Model):
     def __str__(self):
         return self.title
 
-    @property
-    def description(self):
-        return self.body_html
-
-    @property
-    def content(self):
-        return self.body_html
-
-    def images(self):
-
+    @cached_property
     def availble(self):
         """
         Returns True if at least one variant is available
@@ -119,26 +125,148 @@ class Product(MetaFieldMixin, models.Model):
                 return True
         return False
 
+    @cached_property
+    def compare_at_prices(self):
+        return [v.compare_at_price for v in self.variants()]
+
+    @cached_property
+    def compare_at_price_max(self):
+        if self.compare_at_prices:
+            return max(self.compare_at_prices)
+
+    @cached_property
+    def compare_at_price_min(self):
+        if self.compare_at_prices:
+            return min(self.compare_at_prices)
+
+    @cached_property
+    def compare_at_price_varies(self):
+        return self.compare_at_price_max != self.compare_at_price_min
+
+    @cached_property
+    def collections(self):
+        return self.collections_m2m.all()
+
+    @property
+    def content(self):
+        return self.body_html
+
+    @property
+    def description(self):
+        return self.body_html
+
+    @cached_property
+    def featured_image(self):
+        if self.images:
+            return self.image[0].file.url
+
+    @cached_property
+    def first_variant(self):
+        if self.variants:
+            return self.variants[0]
+
+    @cached_property
+    def first_available_variant(self):
+        for v in self.variants:
+            if v.available:
+                return v
+
     def get_absolute_url(self):
         return '/product/{}'.format(self.handle)
-    url = get_absolute_url
+
+    @cached_property
+    def images(self):
+        return self.productimage_set.all()
+
+    @cached_property
+    def options(self):
+        names = [self.option1_name, self.option2_name, self.option3_name]
+        return List([n for n in names if n])
+
+    @cached_property
+    def options_with_values(self):
+        opts = []
+        if self.option1_name:
+            values = [v.option1 for v in self.variants() if v.option1]
+            opts.append(Option(self.option1_name, values))
+        if self.option2_name:
+            values = [v.option2 for v in self.variants() if v.option2]
+            opts.append(Option(self.option2_name, values))
+        if self.option3_name:
+            values = [v.option3 for v in self.variants() if v.option3]
+            opts.append(Option(self.option3_name, values))
+        return opts
+
+    @cached_property
+    def prices(self):
+        return [v.price for v in self.variants()]
+
+    @cached_property
+    def price_max(self):
+        if self.compare_at_prices:
+            return max(self.compare_at_prices)
+
+    @cached_property
+    def price_min(self):
+        if self.prices:
+            return min(self.prices)
+
+    @property
+    def price(self):
+        """
+        Alias for price_min
+        """
+        return self.price_min
+
+    @cached_property
+    def price_varies(self):
+        return self.price_max != self.price_min
+
+    def selected_variant(self):
+        raise NotImplemented
+
+    def selected_or_first_available_variant(self):
+        raise NotImplemented
+
+    @cached_property
+    def tags(self):
+        return [t.name for t in self.tags_m2m.all()]
+
+    @property
+    def type(self):
+        """
+        Alias for product_type
+        """
+        return self.product_type
+
+    @cached_property
+    def url(self):
+        """
+        Alias for get_absolute_url
+        """
+        return self.get_absolute_url()
+
+    @cached_property
+    def variants(self):
+        return self.variant_set.all()
 
 
 class Variant(MetaFieldMixin, models.Model):
-    product_rel = models.ForeignKey(Product, verbose_name=_('product'))
+    product = models.ForeignKey(Product, verbose_name=_('product'))
     barcode = StringField(_('barcode'), help_text=_('ISBN, UPC, GTIN, etc.'))
     compare_at_price = models.FloatField(_('compare at price'), blank=True, null=True)
     created_at = models.DateTimeField(_('created at'), auto_now_add=True)
-    fulfillment_service = ChoiceField(_('Fulfillment service'), choices=FULFILLMENT_CHOICES)
+    fulfillment_service = models.ForeignKey('fullfillments.FulfillmentService', blank=True, null=True)
     grams = models.IntegerField(_('grams'), blank=True, null=True)
-    image = models.ForeignKey('products.ProductImage', verbose_name=_('image'), blank=True, null=True, related_name='variants')
+    image = models.ForeignKey('products.ProductImage', verbose_name=_('image'), blank=True, null=True)
+    next_incoming_date = models.DateField(_('next incoming date'), blank=True, null=True)
     inventory_management = ChoiceField(_('track inventory'), help_text=_('Yashop tracks this products inventory'), choices=INVENTORY_MANAGEMENT_CHOICES)
     inventory_policy = ChoiceField(_('inventory policy'), help_text=_("Allow customers to purchase this product when it's out of stock"), choices=INVENTORY_POLICY_CHOICES)
     inventory_quantity = models.IntegerField(_('inventory stock'), default=0)
     option1 = StringField(_('option #1'))
     option2 = StringField(_('option #2'))
     option3 = StringField(_('option #3'))
-    position = models.IntegerField(_('position'), default=0)
+    position = PositionField()
     price = models.FloatField(_('price'), blank=True, null=True)
     requires_shipping = models.BooleanField(_('requires shipping'), help_text=_('This product requires shipping'), default=False)
     sku = StringField(_('sku'), help_text=_('Stock Keeping Unit'))
@@ -157,6 +285,7 @@ class Variant(MetaFieldMixin, models.Model):
     def __str__(self):
         return self.title
 
+    @cached_property
     def availble(self):
         """
         Returns True if the variant is available for purchase, or False if it
@@ -169,9 +298,13 @@ class Variant(MetaFieldMixin, models.Model):
             return True
         return self.inventory_quantity > 0
 
+    @cached_property
+    def incoming(self):
+        return datetime.date.today() >= self.next_incoming_date
+
 
 class ProductTag(models.Model):
-    name = StringField(_('title'), required=True, primary_key=True)
+    name = StringField(_('title'), required=True)
 
     class Meta:
         ordering = ('name',)
@@ -183,31 +316,44 @@ class ProductTag(models.Model):
 
 
 class ProductImage(MetaFieldMixin, models.Model):
-    alt_text = StringField(_('alt text'))
+    alt = StringField(_('alt text'))
     created_at = models.DateTimeField(_('created at'), auto_now_add=True)
-    image = models.ImageField(_('image'), upload_to='products')
-    position = models.IntegerField(_('position'), default=0)
+    file = models.ImageField(_('image'), upload_to='products')
+    position = PositionField()
     product = models.ForeignKey(Product, verbose_name=_('product'))
     updated_at = models.DateTimeField(_('updated at'), auto_now=True)
 
     class Meta:
         ordering = ('-created',)
-        verbose_name = _('image')
-        verbose_name_plural = _('images')
+        verbose_name = _('product image')
+        verbose_name_plural = _('product images')
 
     def __str__(self):
         return self.image.name.split('/')[-1]
 
-    @property
+    @cached_property
+    def attached_to_variant(self):
+        # we could use .count but then the prefetch will not have cached
+        # the queryset result
+        return bool(len(self.variants_m2m.all()))
+
+    def get_absolute_url(self):
+        return self.file.url
+
+    @cached_property
     def src(self):
-        return self.image.url
+        return self.file.url
 
-    @property
+    @cached_property
     def variant_ids(self):
-        return list(self.variants.values_list('pk', flat=True))
+        return [v.pk for v in self.variants]
+
+    @cached_property
+    def variants(self):
+        return self.variant_set.all()
 
 
-class CustomCollection(MetaFieldMixin, models.Model):
+class Collection(MetaFieldMixin, models.Model):
     body_html = RedactorField(_('description'), blank=True, null=True)
     handle = HandleField(_('handle'), from_field='title')
     image = models.ImageField(_('image'), upload_to='products')
@@ -236,16 +382,16 @@ class CollectionCondition(models.Model):
     means that we need to recalculate the collections everytime a product is updated.
     We also need to re calculate whenever a rule is updated.
     """
-    collection = models.ForeignKey('products.CustomCollection', verbose_name=_('collection'), related_name='conditions')
+    collection = models.ForeignKey('products.Collection', verbose_name=_('collection'), related_name='conditions')
     attribute = ChoiceField(_('attribute'), choices=ATTRIBUTE_CHOICES)
     relation = ChoiceField(_('relation'), choices=RELATION_CHOICES)
     value = StringField(_('value'), blank=False)
-    position = models.IntegerField(_('position'), default=0)
+    position = PositionField()
     updated_at = models.DateTimeField(_('updated at'), auto_now=True)
     created_at = models.DateTimeField(_('created at'), auto_now_add=True)
 
     class Meta:
-        unique_together = (('collection', 'product_attribute', 'relation', 'value'))
+        unique_together = (('collection', 'attribute', 'relation', 'value'))
         ordering = ('position', '-created_at')
         verbose_name = _('collection condition')
         verbose_name_plural = _('collection conditions')

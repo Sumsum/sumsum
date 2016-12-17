@@ -5,6 +5,21 @@ from django.utils.translation import ugettext_lazy as _
 from django.core import validators, exceptions
 
 
+class PositionField(models.PositiveIntegerField):
+    def __init__(self, *args, **kwargs):
+        kwargs['verbose_name'] = kwargs.get('verbose_name', _('position'))
+        kwargs['default'] = kwargs.get('default', 1)
+        super().__init__(*args, **kwargs)
+
+    def deconstruct(self):
+        name, path, args, kwargs = super().deconstruct()
+        if kwargs.get('verbose_name') == _('position'):
+            del kwargs['verbose_name']
+        if kwargs.get('default') == 1:
+            del kwargs['default']
+        return name, path, args, kwargs
+
+
 class ChoiceField(models.CharField):
     description = _('String (up to %(max_length)s)')
 

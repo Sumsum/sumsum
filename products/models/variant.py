@@ -1,0 +1,79 @@
+import datetime
+from django.db import models
+from django.utils.functional import cached_property
+from django.utils.translation import ugettext_lazy as _
+from metafields.models import MetaFieldMixin
+from utils.fields import ChoiceField, StringField, PositionField
+
+
+UNIT_CHOICES = (
+    ('oz', _('oz')),
+    ('lb', _('lb')),
+    ('kg', _('kg')),
+    ('g', _('g')),
+)
+
+INVENTORY_MANAGEMENT_CHOICES = (
+    ('blank', _("Don't track inventory'")),
+    ('shopify', _("YAShop tracks this product's inventory")),
+)
+
+INVENTORY_POLICY_CHOICES = (
+    ('deny', _("Do not allow")),
+    ('continue', _("Allow")),
+)
+
+
+class Variant(MetaFieldMixin, models.Model):
+    barcode = StringField(_('barcode'), help_text=_('ISBN, UPC, GTIN, etc.'))
+    compare_at_price = models.FloatField(_('compare at price'), blank=True, null=True)
+    created_at = models.DateTimeField(_('created at'), auto_now_add=True)
+    fulfillment_service = models.ForeignKey('fullfillments.FulfillmentService', blank=True, null=True)
+    grams = models.IntegerField(_('grams'), blank=True, null=True)
+    image = models.ForeignKey('products.ProductImage', verbose_name=_('image'), blank=True, null=True)
+    next_incoming_date = models.DateField(_('next incoming date'), blank=True, null=True)
+    inventory_management = ChoiceField(_('track inventory'), help_text=_('Yashop tracks this products inventory'), choices=INVENTORY_MANAGEMENT_CHOICES)
+    inventory_policy = ChoiceField(_('inventory policy'), help_text=_("Allow customers to purchase this product when it's out of stock"), choices=INVENTORY_POLICY_CHOICES)
+    inventory_quantity = models.IntegerField(_('inventory stock'), default=0)
+    option1 = StringField(_('option #1'))
+    option2 = StringField(_('option #2'))
+    option3 = StringField(_('option #3'))
+    position = PositionField()
+    price = models.FloatField(_('price'), blank=True, null=True)
+    product = models.ForeignKey('products.Product', verbose_name=_('product'))
+    requires_shipping = models.BooleanField(_('requires shipping'), help_text=_('This product requires shipping'), default=False)
+    sku = StringField(_('sku'), help_text=_('Stock Keeping Unit'))
+    taxable = models.BooleanField(_('taxable'), default=True)
+    title = StringField(_('title'), blank=True)
+    updated_at = models.DateTimeField(_('updated at'), auto_now=True)
+    grams = models.FloatField(_('weight in grams'), blank=True, null=True)
+    weight_in_unit = models.FloatField(_('weight'), blank=True, null=True)
+    weight_unit = ChoiceField(_('weight unit'), choices=UNIT_CHOICES, default='kg')
+
+    class Meta:
+        ordering = ('product',)
+        verbose_name = _('variant')
+        verbose_name_plural = _('variants')
+
+    def __str__(self):
+        return self.title
+
+    @cached_property
+    def availble(self):
+        """
+        Returns True if the variant is available for purchase, or False if it
+        not. For a variant to be available, its variant.inventory_quantity must
+        be greater than zero or variant.inventory_policy must be set to
+        continue. A variant with no variant.inventory_management is also
+        considered available.
+        """
+        if self.inventory_management == 'blank' or self.inventory_policy == 'continue':
+            return True
+        return self.inventory_quantity > 0
+
+    @cached_property
+    def incoming(self):
+        return datetime.date.today() >= self.next_incoming_date
+
+    def selected(self):
+        raise NotImplemented
