@@ -39,7 +39,7 @@ class ProductVariant(MetaFieldMixin, models.Model):
     option2 = StringField(_('option #2'))
     option3 = StringField(_('option #3'))
     position = PositionField()
-    price = models.FloatField(_('price'), blank=True, null=True)
+    price = models.FloatField(_('price'), default=0)
     product = models.ForeignKey('products.Product', verbose_name=_('product'))
     requires_shipping = models.BooleanField(_('requires shipping'), help_text=_('This product requires shipping'), default=False)
     sku = StringField(_('sku'), help_text=_('Stock Keeping Unit'))
