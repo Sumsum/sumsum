@@ -119,7 +119,7 @@ class CustomerAddress(models.Model):
     city = StringField(_('city'))
     company = StringField(_('company'))
     country_code = CountryField(_('country'), blank=True, null=True)
-    customer = models.ForeignKey(Customer, verbose_name=_('customer'))
+    customer = models.ForeignKey(Customer, verbose_name=_('customer'), blank=True, null=True)
     first_name = StringField(_('first name'))
     last_name = StringField(_('last name'))
     phone = StringField(_('phone'))
@@ -146,6 +146,22 @@ class CustomerAddress(models.Model):
         Alias to country_name
         """
         return self.country_name
+
+    @cached_property
+    def latitude(self):
+        """
+        https://help.shopify.com/api/reference/order
+        latitude: The latitude of the billing address.
+        """
+        raise NotImplemented
+
+    @cached_property
+    def longitude(self):
+        """
+        https://help.shopify.com/api/reference/order
+        The longitude of the billing address.
+        """
+        raise NotImplemented
 
     @cached_property
     def name(self):
