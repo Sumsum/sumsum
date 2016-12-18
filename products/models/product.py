@@ -27,10 +27,14 @@ class ProductManager(models.Manager):
 
 
 class Product(MetaFieldMixin, models.Model):
-    created_at = models.DateTimeField(_('created at'), auto_now_add=True)
-    collections_m2m = models.ManyToMany('products.CustomCollection', through='products.Collect', blank=True)
     body_html = RedactorField(_('description'), blank=True, null=True)
+    collections_m2m = models.ManyToMany('products.CustomCollection', through='products.Collect', blank=True)
+    created_at = models.DateTimeField(_('created at'), auto_now_add=True)
     handle = HandleField(_('handle'), from_field='title')
+    # sh*pify probably has a related table implementation, is this good enough?
+    option1_name = StringField(_('option #1 name'))
+    option2_name = StringField(_('option #2 name'))
+    option3_name = StringField(_('option #3 name'))
     product_type = StringField(_('product type'))  # this might need a related table
     published = models.BooleanField(_('published'), default=True)
     published_at = models.DateTimeField(_('published at'), help_text=_('publish this product on'), blank=True, null=True)
@@ -40,10 +44,6 @@ class Product(MetaFieldMixin, models.Model):
     title = StringField(_('title'), blank=True)
     updated_at = models.DateTimeField(_('updated at'), auto_now=True)
     vendor = StringField(_('vendor'), blank=True, null=True)
-    # sh*pify probably has a related table implementation, is this good enough?
-    option1_name = StringField(_('option #1 name'))
-    option2_name = StringField(_('option #2 name'))
-    option3_name = StringField(_('option #3 name'))
 
     objects = ProductManager()
 

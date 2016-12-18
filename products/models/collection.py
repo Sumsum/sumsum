@@ -57,6 +57,7 @@ class CustomCollectionManager(models.Manager):
 
 class CustomCollection(MetaFieldMixin, models.Model):
     body_html = RedactorField(_('description'), blank=True, null=True)
+    disjunctive = models.BooleanField(_('products can match any condition'), default=False)
     handle = HandleField(_('handle'), from_field='title')
     image = ImageField(_('image'), upload_to='products')
     published = models.BooleanField(_('published'), default=True)
@@ -66,7 +67,6 @@ class CustomCollection(MetaFieldMixin, models.Model):
     template_suffix = StringField(_('template suffix'))
     title = StringField(_('title'), required=True)
     updated_at = models.DateTimeField(_('updated at'), auto_now=True)
-    disjunctive = models.BooleanField(_('products can match any condition'), default=False)
 
     objects = CustomCollectionManager()
 
@@ -251,9 +251,9 @@ class CollectionRule(models.Model):
     """
     collection = models.ForeignKey(CustomCollection, verbose_name=_('collection'))
     column = ChoiceField(_('column'), choices=COLUMN_CHOICES)
-    relation = ChoiceField(_('relation'), choices=RELATION_CHOICES)
     condition = StringField(_('condition'), blank=False)
     position = PositionField()
+    relation = ChoiceField(_('relation'), choices=RELATION_CHOICES)
 
     class Meta:
         unique_together = (('collection', 'attribute', 'relation', 'value'))
