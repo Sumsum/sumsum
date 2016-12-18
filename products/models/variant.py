@@ -44,7 +44,7 @@ class ProductVariant(MetaFieldMixin, models.Model):
     requires_shipping = models.BooleanField(_('requires shipping'), help_text=_('This product requires shipping'), default=False)
     sku = StringField(_('sku'), help_text=_('Stock Keeping Unit'))
     taxable = models.BooleanField(_('taxable'), default=True)
-    title = StringField(_('title'), required=True)
+    title = StringField(_('title'))
     updated_at = models.DateTimeField(_('updated at'), auto_now=True)
     grams = models.FloatField(_('weight in grams'), blank=True, null=True, editable=False)
     weight_in_unit = models.FloatField(_('weight'), blank=True, null=True)

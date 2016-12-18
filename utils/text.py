@@ -29,19 +29,19 @@ def uncamel(s, split_char='-'):
     Make camelcase lowercase and use dash (or other char).
 
         >>> uncamel('CamelCase')
-        'camel_case'
+        'camel-case'
         >>> uncamel('CamelCamelCase')
-        'camel_camel_case'
+        'camel-camel-case'
         >>> uncamel('Camel2Camel2Case')
-        'camel2_camel2_case'
+        'camel2-camel2-case'
         >>> uncamel('getHTTPResponseCode')
         'get_http_response_code'
         >>> uncamel('get2HTTPResponseCode')
-        'get2_http_response_code'
+        'get2-http-response_code'
         >>> uncamel('HTTPResponseCode')
-        'http_response_code'
+        'http-response-code'
         >>> uncamel('HTTPResponseCodeXYZ')
-        'http_response_code_xyz'
+        'http-response-code-xyz'
     """
     for pat in uncamel_patterns:
         s = pat.sub(r'\1{}\2'.format(split_char), s)

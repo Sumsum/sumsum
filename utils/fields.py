@@ -16,10 +16,10 @@ class ImageField(ImageField):
     attr_class = ImageFieldFile
 
 
-class PositionField(models.PositiveIntegerField):
+class PositionField(models.PositiveSmallIntegerField):
     def __init__(self, *args, **kwargs):
         kwargs['verbose_name'] = kwargs.get('verbose_name', _('position'))
-        kwargs['default'] = kwargs.get('default', 1)
+        kwargs['default'] = kwargs.get('default', 0)
         super().__init__(*args, **kwargs)
 
     def deconstruct(self):
