@@ -39,7 +39,7 @@ PROCESSING_CHOICES = (
     ('direct', _('Direct')),
     ('manual', _('Manual')),
     ('offsite', _('Offsite')),
-    ('express', _('Exprees')),
+    ('express', _('Express')),
 )
 
 
@@ -107,16 +107,29 @@ class Order(models.Model):
     order_status_url = models.URLField(_('order status url'), blank=True, null=True)
 
     @cached_property
-    def payment_gateway_names(self):
+    def cancel_reason_label(self):
+        return self.get_cancel_reason_label()
+
+    @cached_property
+    def cancelled(self):
+        return self.cancelled_at is not None
+
+    @cached_property
+    def customer_url(self):
         """
-        This should fetch information from the related transaction
+        Returns the URL of the customer's account page.
+        https://help.shopify.com/themes/liquid/objects/order#order-customer_url
         """
         raise NotImplemented
 
     @cached_property
+    def discounts(self):
+        return List(self.discounts_m2m.all())
+
+    @cached_property
     def discount_codes(self):
         codes = []
-        for d in self.discounts_m2m:
+        for d in self.discouns:
             codes.append({
                 'amount': d.amount(),
                 'code': d.code,
@@ -125,12 +138,16 @@ class Order(models.Model):
         return codes
 
     @cached_property
-    def fulfillments(self):
-        return List(self.fullfillment_set.all())
+    def financial_status_label(self):
+        return self.get_financial_status_label()
 
     @cached_property
-    def tags(self):
-        return List([t.name for t in self.tags_m2m.all()])
+    def fulfillment_status_label(self):
+        return self.get_fulfillment_status_label()
+
+    @cached_property
+    def fulfillments(self):
+        return List(self.fullfillment_set.all())
 
     @property
     def gateway(self):
@@ -177,6 +194,13 @@ class Order(models.Model):
         }
 
     @cached_property
+    def payment_gateway_names(self):
+        """
+        This should fetch information from the related transaction
+        """
+        raise NotImplemented
+
+    @cached_property
     def refunds(self):
         """
         The list of refunds applied to the order.
@@ -200,6 +224,10 @@ class Order(models.Model):
         raise NotImplemented
 
     @cached_property
+    def tags(self):
+        return List([t.name for t in self.tags_m2m.all()])
+
+    @cached_property
     def tax_lines(self):
         """
         An array of tax_line objects, each of which details the total taxes
@@ -208,6 +236,10 @@ class Order(models.Model):
         https://help.shopify.com/api/reference/order#tax-lines-property
         """
         raise NotImplemented
+
+    @cached_property
+    def tax_price(self):
+        return self.total_tax
 
 
 class Tag(models.Model):
