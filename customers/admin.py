@@ -1,12 +1,10 @@
 from django.contrib import admin
-from .models import Customer, CustomerAddress, CustomerTag
+from .models import Customer, CustomerAddress, Tag
 from django.utils.translation import ugettext_lazy as _
-from .forms import CustomerAdminForm
 
 
 @admin.register(Customer)
 class CustomerAdmin(admin.ModelAdmin):
-    form = CustomerAdminForm
     fieldsets = (
         (_('Customer overview'), {
             'fields': (
@@ -61,6 +59,6 @@ class CustomerAddressAdmin(admin.ModelAdmin):
     pass
 
 
-@admin.register(CustomerTag)
-class CustomerTagAdmin(admin.ModelAdmin):
+@admin.register(Tag)
+class TagAdmin(admin.ModelAdmin):
     pass

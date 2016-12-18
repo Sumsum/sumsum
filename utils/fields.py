@@ -3,7 +3,7 @@ from django.db import models
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 from django.core import validators, exceptions
-from django.db.models.field.files import ImageFieldFile, ImageField
+from django.db.models.fields.files import ImageFieldFile, ImageField
 
 
 class ImageFieldFile(ImageFieldFile):

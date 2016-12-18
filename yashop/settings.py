@@ -34,7 +34,7 @@ INSTALLED_APPS = [
     'redactor',
     'debug_toolbar',
     'django_select2',
-    'advanced_filters',
+    #'advanced_filters',
 
     'customers',
     #'discounts',
