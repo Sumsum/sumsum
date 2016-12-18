@@ -3,6 +3,17 @@ from django.db import models
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 from django.core import validators, exceptions
+from django.db.models.field.files import ImageFieldFile, ImageField
+
+
+class ImageFieldFile(ImageFieldFile):
+    @property
+    def src(self):
+        return self.url
+
+
+class ImageField(ImageField):
+    attr_class = ImageFieldFile
 
 
 class PositionField(models.PositiveIntegerField):

@@ -24,7 +24,7 @@ INVENTORY_POLICY_CHOICES = (
 )
 
 
-class Variant(MetaFieldMixin, models.Model):
+class ProductVariant(MetaFieldMixin, models.Model):
     barcode = StringField(_('barcode'), help_text=_('ISBN, UPC, GTIN, etc.'))
     compare_at_price = models.FloatField(_('compare at price'), blank=True, null=True)
     created_at = models.DateTimeField(_('created at'), auto_now_add=True)
@@ -44,9 +44,9 @@ class Variant(MetaFieldMixin, models.Model):
     requires_shipping = models.BooleanField(_('requires shipping'), help_text=_('This product requires shipping'), default=False)
     sku = StringField(_('sku'), help_text=_('Stock Keeping Unit'))
     taxable = models.BooleanField(_('taxable'), default=True)
-    title = StringField(_('title'), blank=True)
+    title = StringField(_('title'), required=True)
     updated_at = models.DateTimeField(_('updated at'), auto_now=True)
-    grams = models.FloatField(_('weight in grams'), blank=True, null=True)
+    grams = models.FloatField(_('weight in grams'), blank=True, null=True, editable=False)
     weight_in_unit = models.FloatField(_('weight'), blank=True, null=True)
     weight_unit = ChoiceField(_('weight unit'), choices=UNIT_CHOICES, default='kg')
 
@@ -57,6 +57,21 @@ class Variant(MetaFieldMixin, models.Model):
 
     def __str__(self):
         return self.title
+
+    @cached_property
+    def grams(self):
+        """
+        The weight of the product variant in grams.
+        """
+        if not self.weight_in_unit:
+            return None
+        unit_factor = {
+            'g': 1,
+            'kg': 1000,
+            'oz': 28.349523125,
+            'lb': 453.59237,
+        }
+        return unit_factor[self.weight_unit] * self.weight_in_unit
 
     @cached_property
     def availble(self):
@@ -71,9 +86,23 @@ class Variant(MetaFieldMixin, models.Model):
             return True
         return self.inventory_quantity > 0
 
+    def get_absulute_url(self):
+        raise NotImplemented
+
     @cached_property
     def incoming(self):
+        """
+        Returns true if the variant has incoming inventory.
+        """
         return datetime.date.today() >= self.next_incoming_date
 
     def selected(self):
+        """
+        Returns true if the variant is currently selected by the ?variant= URL
+        parameter, or false if it is not.
+        """
         raise NotImplemented
+
+    @cached_property
+    def url(self):
+        return self.get_absolute_url()
