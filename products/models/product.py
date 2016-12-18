@@ -3,8 +3,9 @@ from django.utils.functionan import cached_property
 from django.utils.translation import ugettext_lazy as _
 from metafields.models import MetaFieldMixin
 from redactor.fields import RedactorField
-from utils.datastructures import List
 from utils.fields import HandleField, StringField, ChoiceField
+from utils.datastructures import List
+from yashop.middleware import get_request
 
 
 PUBLICATION_CHOICES = (
@@ -70,7 +71,7 @@ class Product(MetaFieldMixin, models.Model):
 
     @cached_property
     def compare_at_prices(self):
-        return [v.compare_at_price for v in self.variants()]
+        return List([v.compare_at_price for v in self.variants()])
 
     @cached_property
     def compare_at_price_max(self):
@@ -143,7 +144,7 @@ class Product(MetaFieldMixin, models.Model):
                 return v
 
     def get_absolute_url(self):
-        return '/product/{}'.format(self.handle)
+        return '/products/{}'.format(self.handle)
 
     @cached_property
     def images(self):
@@ -168,7 +169,7 @@ class Product(MetaFieldMixin, models.Model):
         Returns an array of the product's options including their available and
         currently selected values.
         """
-        opts = []
+        opts = List()
         if self.option1_name:
             values = [v.option1 for v in self.variants if v.option1]
             opts.append(Option(self.option1_name, values))
@@ -193,8 +194,8 @@ class Product(MetaFieldMixin, models.Model):
         Returns the highest price of the product. Use one of the money filters
         to return the value in a monetary format.
         """
-        if self.compare_at_prices:
-            return max(self.compare_at_prices)
+        if self.prices:
+            return max(self.prices)
 
     @cached_property
     def price_min(self):
@@ -217,13 +218,19 @@ class Product(MetaFieldMixin, models.Model):
     def prices(self):
         return [v.price for v in self.variants()]
 
+    @cached_property
     def selected_variant(self):
         """
         Returns the variant object of the currently-selected variant if there
         is a valid ?variant= parameter in the URL. Returns nil if there is not.
         """
-        raise NotImplemented
+        request = get_request()
+        variant_id = request.GET.get('variant')
+        for v in self.variants:
+            if variant_id == v.pk:
+                return v
 
+    @cached_property
     def selected_or_first_available_variant(self):
         """
         Returns the variant object of the currently-selected variant if there
@@ -233,7 +240,10 @@ class Product(MetaFieldMixin, models.Model):
         greater than zero or variant.inventory_policy must be set to continue.
         A variant with no inventory_management is considered available.
         """
-        raise NotImplemented
+        request = get_request()
+        if 'variant' in request.GET:
+            return self.selected_variant
+        return self.first_available_variant
 
     @cached_property
     def tags(self):
@@ -241,7 +251,7 @@ class Product(MetaFieldMixin, models.Model):
         Returns an array of all of the product's tags. The tags are returned in
         alphabetical order.
         """
-        return [t.name for t in self.tags_m2m.all()]
+        return List([t.name for t in self.tags_m2m.all()])
 
     @property
     def type(self):

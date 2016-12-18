@@ -5,6 +5,7 @@ from metafields.models import MetaFieldMixin
 from redactor.fields import RedactorField
 from utils.fields import HandleField, ChoiceField, StringField, PositionField, ImageField
 from utils.datastructures import List
+from yashop.middleware import get_request
 
 
 COLUMN_CHOICES = (
@@ -127,15 +128,18 @@ class CustomCollection(MetaFieldMixin, models.Model):
         Returns the product type on a /collections/types?q=TYPE collection
         page.
         """
-        raise NotImplemented
+        request = get_request()
+        if request.path.endswith('/types'):
+            return request.GET.get('q')
 
     def current_vendor(self):
         """
-        Returns the product vendor on a /collections/vendores?q=VENDOR
+        Returns the product vendor on a /collections/vendors?q=VENDOR
         collection page.
         """
-        # https://help.shopify.com/themes/liquid/objects/collection#collection-current_vendor
-        raise NotImplemented
+        request = get_request()
+        if request.path.endswith('/vendors'):
+            return request.GET.get('q')
 
     @cached_property
     def default_sort_by(self):
@@ -168,16 +172,31 @@ class CustomCollection(MetaFieldMixin, models.Model):
         """
         return self.body_html
 
+    @cached_property
+    def adjecant_products(self):
+        request = get_request()
+        # request.path should look something like: /collections/contemporary-cityscapes/products/auckland
+        handle = request.path.split('/')[-1]
+        res = {'next': None, 'previous': None}
+        for j, p in enumerate(self.products):
+            if p.handle == handle:
+                if j + 1 < len(self.products):
+                    res['next'] = self.products[j + 1]
+                if j - 1 >= 0:
+                    res['previous'] = self.products[j - 1]
+        return res
+
+    @cached_property
     def next_product(self):
         """
         Returns the URL of the next product in the collection. Returns nil if
         there is no next product.
 
-        You can use collection.next_product and collection_previous product
+        You can use collection.next_product and collection.previous_product
         with the within filter to create "next" and "previous" links in the
         product template.
         """
-        raise NotImplemented
+        return self.adjecant_products['next']
 
     def previous_product(self):
         """
@@ -188,7 +207,7 @@ class CustomCollection(MetaFieldMixin, models.Model):
         with the within filter to create "next" and "previous" links in the
         product template.
         """
-        raise NotImplemented
+        return self.adjecant_products['previous']
 
     @cached_property
     def products(self):

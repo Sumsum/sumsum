@@ -4,6 +4,7 @@ from django.utils.functional import cached_property
 from django.utils.translation import ugettext_lazy as _
 from metafields.models import MetaFieldMixin
 from utils.fields import ChoiceField, StringField, PositionField
+from yashop.middleware import get_request
 
 
 UNIT_CHOICES = (
@@ -87,7 +88,7 @@ class ProductVariant(MetaFieldMixin, models.Model):
         return self.inventory_quantity > 0
 
     def get_absulute_url(self):
-        raise NotImplemented
+        raise '{}?variant={}'.format(self.product.get_absolute_url(), self.pk)
 
     @cached_property
     def incoming(self):
@@ -101,7 +102,8 @@ class ProductVariant(MetaFieldMixin, models.Model):
         Returns true if the variant is currently selected by the ?variant= URL
         parameter, or false if it is not.
         """
-        raise NotImplemented
+        request = get_request()
+        return self.pk == request.GET.get('variant')
 
     @cached_property
     def url(self):

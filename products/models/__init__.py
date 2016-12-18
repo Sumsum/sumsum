@@ -39,12 +39,16 @@ class ProductImage(MetaFieldMixin, models.Model):
         verbose_name_plural = _('product images')
 
     def __str__(self):
-        return self.image.name.split('/')[-1]
+        return self.src
 
     @cached_property
     def attached_to_variant(self):
-        # we could use .count but then the prefetch will not have cached
-        # the queryset result
+        """
+        Returns true if the image has been associated with a
+        variant. Returns false otherwise. This can be used in cases
+        where you want to create a gallery of images that are not
+        associated with variants.
+        """
         return bool(len(self.variants_m2m.all()))
 
     def get_absolute_url(self):
@@ -52,6 +56,10 @@ class ProductImage(MetaFieldMixin, models.Model):
 
     @cached_property
     def src(self):
+        """
+        Returns the relative path of the product image. This is the
+        same as outputting {{ image }}
+        """
         return self.file.url
 
     @cached_property
@@ -60,4 +68,7 @@ class ProductImage(MetaFieldMixin, models.Model):
 
     @cached_property
     def variants(self):
+        """
+        Returns the variant object(s) that the image is associated with.
+        """
         return list(self.variant_set.all())
