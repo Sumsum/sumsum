@@ -224,13 +224,6 @@ class CustomCollection(MetaFieldMixin, models.Model):
         return self.get_absolute_url()
 
 
-
-
-
-
-
-
-
 class Collect(models.Model):
     collection = models.ForeignKey('products.CustomCollection')
     created_at = models.DateTimeField(_('created at'), auto_now_add=True)

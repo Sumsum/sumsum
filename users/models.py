@@ -3,9 +3,11 @@ from django.contrib.auth.models import Group as AuthGroup
 from django.core.mail import send_mail
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from utils.fields import ChoiceField, StringField, TextField
 
 
 STATE_CHOICES = (
+    (None, ''),
     ('disabled', _('Disabled')),  # customers are disabled by default until they are invited. Staff accounts can disable a customer's account at any time.
     ('invited', _('Invited')),  # the customer has been emailed an invite to create an account that saves their customer settings.
     ('enabled', _('Enabled')),  # the customer accepted the email invite and created an account.
@@ -50,31 +52,19 @@ class User(AbstractBaseUser, PermissionsMixin):
     created_at = models.DateTimeField(_('created at'), auto_now_add=True)
     default_address = models.ForeignKey('customers.CustomerAddress', verbose_name=_('default address'), blank=True, null=True)
     email = models.EmailField(_('email address'), unique=True)
-    first_name = models.CharField(_('first name'), max_length=255, blank=True, null=True)
-    multipass_identifier = models.CharField(_('multipass identifier'), max_length=255, blank=True, null=True)
-    last_name = models.CharField(_('last name'), max_length=255, blank=True, null=True)
-    #last_order = models.ForeignKey('orders.Order', verbose_name=_('last order'), blank=True, null=True)
-    note = models.TextField(_('notes'), help_text=_('Enter any extra notes relating to this customer.'), blank=True, null=True)
-    state = models.CharField(_('state'), max_length=50, choices=STATE_CHOICES, default='enabled', blank=True, null=True)  # maybe we need to sync this the is_active field
-    tags = models.ManyToManyField('customers.CustomerTag', help_text=_('Tags can be used to categorize customers into groups.'), blank=True)
+    first_name = StringField(_('first name'))
+    last_name = StringField(_('last name'))
+    multipass_identifier = StringField(_('multipass identifier'))
+    note = TextField(_('notes'), help_text=_('Enter any extra notes relating to this customer.'))
+    state = ChoiceField(_('state'), max_length=50, choices=STATE_CHOICES)  # maybe we need to sync this the is_active field
+    tags_m2m = models.ManyToManyField('customers.Tag', help_text=_('Tags can be used to categorize customers into groups.'), blank=True)
     tax_exempt = models.BooleanField(_('customer is tax excempt'), default=False)
     updated_at = models.DateTimeField(_('updated at'), auto_now=True)
     verified_email = models.BooleanField(_('verified email'), default=False)
 
-    # needend for the std user implementation
-    is_staff = models.BooleanField(
-        _('staff status'),
-        default=False,
-        help_text=_('Designates whether the user can log into this admin site.'),
-    )
-    is_active = models.BooleanField(
-        _('active'),
-        default=True,
-        help_text=_(
-            'Designates whether this user should be treated as active. '
-            'Unselect this instead of deleting accounts.'
-        ),
-    )
+    is_staff = models.BooleanField(_('staff status'), default=False, help_text=_('Designates whether the user can log into this admin site.'))
+    is_active = models.BooleanField(_('active'), default=True, help_text=_('Designates whether this user should be treated as active. Unselect this instead of deleting accounts.'))
+
     USERNAME_FIELD = 'email'
     objects = UserManager()
 
@@ -84,8 +74,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         verbose_name_plural = _('users')
 
     def get_full_name(self):
-        s = '{0} {1}'.format(self.first_name, self.last_name)
-        return s.strip()
+        return ' '.join(filter(None, [self.first_name, self.last_name]))
 
     def get_short_name(self):
         return self.first_name
