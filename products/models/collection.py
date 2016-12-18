@@ -1,5 +1,3 @@
-from .product import Product  # NOQA
-from .variant import Variant  # NOQA
 from django.db import models
 from django.utils.functionan import cached_property
 from django.utils.translation import ugettext_lazy as _
