@@ -4,6 +4,7 @@ from django.utils.translation import ugettext_lazy as _
 from metafields.models import MetaFieldMixin
 from redactor.fields import RedactorField
 from utils.fields import HandleField, ChoiceField, StringField, PositionField, ImageField
+from utils.datastructures import List
 
 
 COLUMN_CHOICES = (
@@ -91,14 +92,14 @@ class CustomCollection(MetaFieldMixin, models.Model):
         """
         from products.models import Tag
         qs = Tag.objects.filter(product_set__in=self.product_set.all()).distinct('name')
-        return list(qs.values_list('name', flat=True))
+        return List(qs.values_list('name', flat=True))
 
     @cached_property
     def all_types(self):
         """
         Returns a list of all product types in a collection.
         """
-        return sorted(filter(None, set(p.product_type for p in self.products)))
+        return list(sorted(filter(None, set(p.product_type for p in self.products))))
 
     @cached_property
     def all_products_count(self):
@@ -119,7 +120,7 @@ class CustomCollection(MetaFieldMixin, models.Model):
         """
         Returns a list of all product vendors in a collection.
         """
-        return sorted(filter(None, set(p.vendor for p in self.products)))
+        return List(sorted(filter(None, set(p.vendor for p in self.products))))
 
     def current_type(self):
         """
@@ -197,7 +198,7 @@ class CustomCollection(MetaFieldMixin, models.Model):
 
         Use the paginate tag to choose how many products are shown per page.
         """
-        return list(self.product_set.all())
+        return List(self.product_set.all())
 
     def products_count(self):
         """

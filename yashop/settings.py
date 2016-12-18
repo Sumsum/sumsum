@@ -48,6 +48,7 @@ LANGUAGE_CODE = 'en-us'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 MIDDLEWARE = [
+    'yashop.middleware.RequestLocalMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',

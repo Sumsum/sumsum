@@ -100,7 +100,7 @@ class Product(MetaFieldMixin, models.Model):
 
     @cached_property
     def collections(self):
-        return list(self.collections_m2m.all())
+        return List(self.collections_m2m.all())
 
     @property
     def content(self):
@@ -152,7 +152,7 @@ class Product(MetaFieldMixin, models.Model):
         filter to link to the product image on Shopify's Content Delivery
         Network.
         """
-        return list(self.productimage_set.all())
+        return List(self.productimage_set.all())
 
     @cached_property
     def options(self):
@@ -262,4 +262,4 @@ class Product(MetaFieldMixin, models.Model):
         """
         Returns an array the product's variants.
         """
-        return list(self.productvariant_set.all())
+        return List(self.productvariant_set.all())
