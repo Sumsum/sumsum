@@ -2,8 +2,10 @@ from .text import slugify
 from django.db import models
 from django import forms
 from django.utils.translation import ugettext_lazy as _
-from django.core import validators, exceptions
+from django.core import validators
 from django.db.models.fields.files import ImageFieldFile, ImageField
+from django_countries.fields import CountryField
+from redactor.fields import RedactorField
 
 
 class ImageFieldFile(ImageFieldFile):
@@ -16,78 +18,80 @@ class ImageField(ImageField):
     attr_class = ImageFieldFile
 
 
-class PositionField(models.PositiveSmallIntegerField):
+class RedactorField(RedactorField):
     def __init__(self, *args, **kwargs):
-        kwargs['verbose_name'] = kwargs.get('verbose_name', _('position'))
-        kwargs['default'] = kwargs.get('default', 0)
+        required = kwargs.pop('required', False)
+        kwargs.setdefault('blank', not required)
+        kwargs.setdefault('null', not required)
         super().__init__(*args, **kwargs)
 
     def deconstruct(self):
         name, path, args, kwargs = super().deconstruct()
-        if kwargs.get('verbose_name') == _('position'):
-            del kwargs['verbose_name']
-        if kwargs.get('default') == 1:
-            del kwargs['default']
-        return name, path, args, kwargs
+        return name, 'django.db.models.TextField', args, kwargs
+
+
+class CountryField(CountryField):
+    def deconstruct(self):
+        name, path, args, kwargs = super(models.CharField, self).deconstruct()
+        kwargs.pop('choices')  # we don't want to put all those choices in the migrations
+        return name, 'django.db.models.CharField', args, kwargs
+
+
+class PositionField(models.PositiveSmallIntegerField):
+    def __init__(self, *args, **kwargs):
+        kwargs.setdefault('verbose_name', _('position'))
+        kwargs.setdefault('default', 0)
+        super().__init__(*args, **kwargs)
+
+    def deconstruct(self):
+        name, path, args, kwargs = super().deconstruct()
+        kwargs.pop('default')  # no need for default
+        return name, 'django.db.models.PositiveSmallIntegerField', args, kwargs
 
 
 class ChoiceField(models.CharField):
     description = _('String (up to %(max_length)s)')
 
     def __init__(self, *args, **kwargs):
-        kwargs['max_length'] = kwargs.get('max_length', 50)
-        kwargs['blank'] = kwargs.get('blank', True)
-        kwargs['null'] = kwargs.get('null', True)
-        if 'choices' not in kwargs:
-            raise exceptions.ValidationError(_('ChoiceField must specify `choices`.'))
-        if 'default' not in kwargs:
+        kwargs.setdefault('max_length', 50)
+        kwargs.setdefault('blank', True)
+        kwargs.setdefault('null', True)
+        if 'default' not in kwargs and kwargs.get('choices'):
             kwargs['default'] = kwargs['choices'][0][0]
         super().__init__(*args, **kwargs)
 
     def deconstruct(self):
         name, path, args, kwargs = super().deconstruct()
-        if kwargs.get('max_length') == 50:
-            del kwargs['max_length']
-        return name, path, args, kwargs
+        kwargs.pop('choices', None)  # this just clutters the migrations
+        kwargs.pop('default', None)  # this is not something we need in the migratons, no
+        return name, 'django.db.models.CharField', args, kwargs
 
 
 class StringField(models.CharField):
     description = _('String (up to %(max_length)s)')
 
     def __init__(self, *args, **kwargs):
-        kwargs['max_length'] = kwargs.get('max_length', 255)
-        if kwargs.pop('required', False):
-            kwargs['blank'] = False
-            kwargs['null'] = False
-        else:
-            kwargs['blank'] = True
-            kwargs['null'] = True
+        kwargs.setdefault('max_length', 255)
+        required = kwargs.pop('required', False)
+        kwargs.setdefault('blank', not required)
+        kwargs.setdefault('null', not required)
         super().__init__(*args, **kwargs)
 
     def deconstruct(self):
         name, path, args, kwargs = super().deconstruct()
-        if kwargs.get('max_length') == 255:
-            del kwargs['max_length']
-        if kwargs.get('required') is False:
-            del kwargs['required']
-        return name, path, args, kwargs
+        return name, 'django.db.models.CharField', args, kwargs
 
 
 class TextField(models.TextField):
     def __init__(self, *args, **kwargs):
-        if kwargs.pop('required', False):
-            kwargs['blank'] = False
-            kwargs['null'] = False
-        else:
-            kwargs['blank'] = True
-            kwargs['null'] = True
+        required = kwargs.pop('required', False)
+        kwargs.setdefault('blank', not required)
+        kwargs.setdefault('null', not required)
         super().__init__(*args, **kwargs)
 
     def deconstruct(self):
         name, path, args, kwargs = super().deconstruct()
-        if kwargs.get('required') is False:
-            del kwargs['required']
-        return name, path, args, kwargs
+        return name, 'django.db.models.TextField', args, kwargs
 
 
 class HandleField(models.CharField):
@@ -95,40 +99,23 @@ class HandleField(models.CharField):
     description = _('Slug (up to %(max_length)s)')
 
     def __init__(self, *args, **kwargs):
-        kwargs['max_length'] = kwargs.get('max_length', 50)
-        kwargs['db_index'] = kwargs.get('kwargs', True)
-        kwargs['blank'] = kwargs.get('blank', True)
-        kwargs['unique'] = kwargs.get('unique', True)
-        if 'from_field' not in kwargs:
-            raise exceptions.ValidationError(_('HandleField must specify `from_field`.'))
-        self.from_field = kwargs.pop('from_field')
+        kwargs.setdefault('max_length', 50)
+        kwargs.setdefault('db_index', True)
+        kwargs.setdefault('blank', True)
+        kwargs.setdefault('unique', True)
+        self.from_field = kwargs.pop('from_field', None)
         super().__init__(*args, **kwargs)
 
     def deconstruct(self):
         name, path, args, kwargs = super().deconstruct()
-        if kwargs.get('max_length') == 50:
-            del kwargs['max_length']
-        if self.db_index is True:
-            del kwargs['db_index']
-        else:
-            kwargs['db_index'] = False
-        if self.blank is True:
-            del kwargs['blank']
-        else:
-            kwargs['blank'] = False
-        if self.unique is True:
-            del kwargs['unique']
-        else:
-            kwargs['unique'] = False
-        return name, path, args, kwargs
+        return name, 'django.db.models.CharField', args, kwargs
 
     def get_internal_type(self):
         return 'SlugField'
 
     def formfield(self, **kwargs):
-        defaults = {'form_class': forms.SlugField, 'allow_unicode': self.allow_unicode}
-        defaults.update(kwargs)
-        return super().formfield(**defaults)
+        kwargs.setdefault('form_class', forms.SlugField)
+        return super().formfield(**kwargs)
 
     def pre_save(self, obj, add):
         value = self.value_from_object(obj)

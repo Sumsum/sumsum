@@ -29,7 +29,7 @@ class ProductVariant(MetaFieldMixin, models.Model):
     barcode = StringField(_('barcode'), help_text=_('ISBN, UPC, GTIN, etc.'))
     compare_at_price = models.FloatField(_('compare at price'), blank=True, null=True)
     created_at = models.DateTimeField(_('created at'), auto_now_add=True)
-    fulfillment_service = models.ForeignKey('fullfillments.FulfillmentService', blank=True, null=True)
+    fulfillment_service = models.ForeignKey('fulfillments.FulfillmentService', blank=True, null=True)
     grams = models.IntegerField(_('grams'), blank=True, null=True)
     image = models.ForeignKey('products.ProductImage', verbose_name=_('image'), blank=True, null=True)
     next_incoming_date = models.DateField(_('next incoming date'), blank=True, null=True)

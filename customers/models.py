@@ -1,10 +1,9 @@
 from django.db import models
 from django.utils.functional import cached_property
 from django.utils.translation import ugettext_lazy as _
-from django_countries.fields import CountryField
 from metafields.models import MetaFieldMixin
 from users.models import User
-from utils.fields import StringField
+from utils.fields import StringField, CountryField
 
 
 class CustomerManager(models.Manager):

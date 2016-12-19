@@ -38,8 +38,8 @@ class Fulfillment(models.Model):
     notify_customer = models.BooleanField(_('notify customer'), default=False)
     order = models.ForeignKey('orders.Order', verbose_name=_('order'))
     receipt_testcase = models.NullBooleanField(_('reciept testcase'), default=None)
-    reciept_autorization = models.CharField(_('receipt authorization'), max_length=255, blank=True, null=True)
-    status = models.CharField(_('status'), max_lendth=50, choices=STATUS_CHOICES, default='pending')
+    reciept_autorization = StringField(_('receipt authorization'))
+    status = ChoiceField(_('status'), choices=STATUS_CHOICES)
     tracking_company_rel = models.ForeignKey(TrackingCompany, verbose_name=_('tracking company'))
     updated_at = models.DateTimeField(_('updated at'), auto_now=True)
 
@@ -71,7 +71,7 @@ class Fulfillment(models.Model):
 
 class TrackingNumber(models.Model):
     fulfillment_rel = models.ForeignKey(Fulfillment, verbose_name=_('fulfillment'))
-    number = models.CharField(_('number'), max_length=255)
+    number = StringField(_('number'), required=True)
 
     class Meta:
         ordering = ('number',)

@@ -1,8 +1,8 @@
-from .collection import CustomCollection, CollectionCondition  # NOQA
+from .collection import CustomCollection, CollectionRule  # NOQA
 from .product import Product  # NOQA
 from .variant import ProductVariant  # NOQA
 from django.db import models
-from django.utils.functionan import cached_property
+from django.utils.functional import cached_property
 from django.utils.translation import ugettext_lazy as _
 from metafields.models import MetaFieldMixin
 from utils.fields import StringField, PositionField
@@ -34,7 +34,7 @@ class ProductImage(MetaFieldMixin, models.Model):
     updated_at = models.DateTimeField(_('updated at'), auto_now=True)
 
     class Meta:
-        ordering = ('-created',)
+        ordering = ('-created_at',)
         verbose_name = _('product image')
         verbose_name_plural = _('product images')
 

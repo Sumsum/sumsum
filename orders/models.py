@@ -65,7 +65,7 @@ class ClientDetail(models.Model):
 
 
 class Order(models.Model):
-    billing_address = models.ForeignKey('customer.CustomerAddress')
+    billing_address = models.ForeignKey('customers.CustomerAddress', related_name='order_billing_address_set')
     browser_ip = StringField(_('browser ip'))
     buyer_accepts_marketing = models.BooleanField(_('buyer accepts marketing'), default=False)
     cancel_reason = ChoiceField(_('cancel reason'), choices=CANCEL_CHOICES)
@@ -75,22 +75,22 @@ class Order(models.Model):
     closed_at = models.DateTimeField(_('closed at'), blank=True, null=True)
     created_at = models.DateTimeField(_('created at'), auto_now_add=True)
     currency = ChoiceField(_('currency'), choices=CURRENCY_CHOICES)
-    customer = models.ForeignKey('customers.Customer', blank=True, null=True)
-    discounts_m2m = models.ManyToMany('discounts.Discount', blank=True)
-    email = models.EmailFild(_('email'), blank=True, null=True)
+    customer = models.ForeignKey('customers.Customer', blank=True, null=True, related_name='order_billing_addresss_set')
+    discounts_m2m = models.ManyToManyField('discounts.Discount', blank=True)
+    email = models.EmailField(_('email'), blank=True, null=True)
     financial_status = ChoiceField(_('financial status'), choices=FINANCIAL_STATUS_CHOICES)
     fulfillment_status = ChoiceField(_('fulfilment status'), choices=FULFILLMENT_STATUS_CHOICES)
     tags_m2m = models.ManyToManyField('orders.Tag', blank=True)
     landing_site = models.URLField(_('landing site'), blank=True, null=True)
     # line items
-    location = models.ForeignKey('loactions.Location', blank=True, null=True)
+    location = models.ForeignKey('locations.Location', blank=True, null=True)
     order_number = models.PositiveIntegerField(_('number'), editable=False)  # its nice to be searchable
     note = TextField(_('note'))
     processed_at = models.DateTimeField(_('processed at'), blank=True)
     processing_method = ChoiceField(_('processing method'), choices=PROCESSING_CHOICES)
     referring_site = models.URLField(_('referring site'), blank=True, null=True)
     # Do we need to lock this value somehow, infact all related models should be 'locked' on finalization
-    shipping_address = models.ForeignKey('customers.CustomerAddress', blank=True, null=True)
+    shipping_address = models.ForeignKey('customers.CustomerAddress', blank=True, null=True, related_name='order_shipping_address_set')
     source_name = StringField(_('source name'), default='api')
     subtotal_price = models.FloatField(_('subtotal price'))
     taxes_included = models.BooleanField(_('taxes included'))

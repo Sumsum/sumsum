@@ -1,6 +1,5 @@
 from django.db import models
-from django_countries.fields import CountryField
-from utils.fields import StringField
+from utils.fields import StringField, CountryField
 from django.utils.translation import ugettext_lazy as _
 
 

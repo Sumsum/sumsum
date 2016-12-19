@@ -1,9 +1,8 @@
 from django.db import models
-from django.utils.functionan import cached_property
+from django.utils.functional import cached_property
 from django.utils.translation import ugettext_lazy as _
 from metafields.models import MetaFieldMixin
-from redactor.fields import RedactorField
-from utils.fields import HandleField, StringField, ChoiceField
+from utils.fields import HandleField, StringField, ChoiceField, RedactorField
 from utils.datastructures import List
 from yashop.middleware import get_request
 
@@ -28,8 +27,8 @@ class ProductManager(models.Manager):
 
 
 class Product(MetaFieldMixin, models.Model):
-    body_html = RedactorField(_('description'), blank=True, null=True)
-    collections_m2m = models.ManyToMany('products.CustomCollection', through='products.Collect', blank=True)
+    body_html = RedactorField(_('description'))
+    collections_m2m = models.ManyToManyField('products.CustomCollection', through='products.Collect', blank=True)
     created_at = models.DateTimeField(_('created at'), auto_now_add=True)
     handle = HandleField(_('handle'), from_field='title')
     # sh*pify probably has a related table implementation, is this good enough?
@@ -40,7 +39,7 @@ class Product(MetaFieldMixin, models.Model):
     published = models.BooleanField(_('published'), default=True)
     published_at = models.DateTimeField(_('published at'), help_text=_('publish this product on'), blank=True, null=True)
     published_scope = ChoiceField(_('visability'), choices=PUBLICATION_CHOICES)
-    tags_m2m = models.ManyToManyField('products.ProductTag', verbose_name=_('tags'), blank=True)
+    tags_m2m = models.ManyToManyField('products.Tag', verbose_name=_('tags'), blank=True)
     template_suffix = StringField(_('template suffix'))
     title = StringField(_('title'), blank=True)
     updated_at = models.DateTimeField(_('updated at'), auto_now=True)

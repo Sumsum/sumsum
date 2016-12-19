@@ -22,5 +22,5 @@ urlpatterns += [
     url(r'^admin/', admin.site.urls),
     url(r'^redactor/', include('redactor.urls')),
     url(r'^select2/', include('django_select2.urls')),
-    url(r'^advanced_filters/', include('advanced_filters.urls')),
+    #url(r'^advanced_filters/', include('advanced_filters.urls')),
 ]

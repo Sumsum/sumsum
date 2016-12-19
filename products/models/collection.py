@@ -1,5 +1,5 @@
 from django.db import models
-from django.utils.functionan import cached_property
+from django.utils.functional import cached_property
 from django.utils.translation import ugettext_lazy as _
 from metafields.models import MetaFieldMixin
 from redactor.fields import RedactorField
@@ -274,7 +274,7 @@ class CollectionRule(models.Model):
     relation = ChoiceField(_('relation'), choices=RELATION_CHOICES)
 
     class Meta:
-        unique_together = (('collection', 'attribute', 'relation', 'value'))
+        unique_together = (('collection', 'column', 'condition', 'relation'))
         ordering = ('position',)
         verbose_name = _('collection rule')
         verbose_name_plural = _('collection rules')

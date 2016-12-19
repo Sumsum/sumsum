@@ -37,11 +37,13 @@ INSTALLED_APPS = [
     #'advanced_filters',
 
     'customers',
-    #'discounts',
-    #'orders',
-    #'products',
-    'metafields',
     'users',
+    'metafields',
+    'discounts',
+    'orders',
+    'locations',
+    'products',
+    'fulfillments',
 ]
 INTERNAL_IPS = ('127.0.0.1',)
 LANGUAGE_CODE = 'en-us'
