@@ -1,15 +1,10 @@
 from django.contrib import admin
-from .models import Product, ProductImage, Tag
+from .models import Product, ProductImage
 from django.utils.translation import ugettext_lazy as _
 from utils.widgets import AdminImageWidget
 from django.db import models
 from .forms import ProductForm
 #from advanced_filters.admin import AdminAdvancedFiltersMixin
-
-
-@admin.register(Tag)
-class TagAdmin(admin.ModelAdmin):
-    pass
 
 
 class ProductImageInline(admin.TabularInline):

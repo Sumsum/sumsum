@@ -5,6 +5,7 @@ from metafields.models import MetaFieldMixin
 from utils.fields import HandleField, StringField, ChoiceField, RedactorField
 from utils.datastructures import List
 from yashop.middleware import get_request
+from django.contrib.postgres.fields import ArrayField
 
 
 PUBLICATION_CHOICES = (
@@ -39,7 +40,7 @@ class Product(MetaFieldMixin, models.Model):
     published = models.BooleanField(_('published'), default=True)
     published_at = models.DateTimeField(_('published at'), help_text=_('publish this product on'), blank=True, null=True)
     published_scope = ChoiceField(_('visability'), choices=PUBLICATION_CHOICES)
-    tags_m2m = models.ManyToManyField('products.Tag', verbose_name=_('tags'), blank=True)
+    tags = ArrayField(StringField(_('tag'), required=True), verbose_name=_('tags'), default=[])
     template_suffix = StringField(_('template suffix'))
     title = StringField(_('title'), blank=True)
     updated_at = models.DateTimeField(_('updated at'), auto_now=True)
@@ -243,14 +244,6 @@ class Product(MetaFieldMixin, models.Model):
         if 'variant' in request.GET:
             return self.selected_variant
         return self.first_available_variant
-
-    @cached_property
-    def tags(self):
-        """
-        Returns an array of all of the product's tags. The tags are returned in
-        alphabetical order.
-        """
-        return List([t.name for t in self.tags_m2m.all()])
 
     @property
     def type(self):

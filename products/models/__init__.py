@@ -13,18 +13,6 @@ PUBLICATION_CHOICES = (
 )
 
 
-class Tag(models.Model):
-    name = StringField(_('title'), required=True, primary_key=True)
-
-    class Meta:
-        ordering = ('name',)
-        verbose_name = _('tag')
-        verbose_name_plural = _('tags')
-
-    def __str__(self):
-        return self.name
-
-
 class ProductImage(MetaFieldMixin, models.Model):
     alt = StringField(_('alt text'))
     created_at = models.DateTimeField(_('created at'), auto_now_add=True)
@@ -49,7 +37,7 @@ class ProductImage(MetaFieldMixin, models.Model):
         where you want to create a gallery of images that are not
         associated with variants.
         """
-        return bool(len(self.variants_m2m.all()))
+        return bool(len(self.productvariant_set.all()))
 
     def get_absolute_url(self):
         return self.file.url
@@ -71,4 +59,4 @@ class ProductImage(MetaFieldMixin, models.Model):
         """
         Returns the variant object(s) that the image is associated with.
         """
-        return list(self.variant_set.all())
+        return list(self.productvariant_set.all())
