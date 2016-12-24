@@ -17,7 +17,7 @@ class ProductImage(models.Model):
     alt = StringField(_('alt text'))
     created_at = models.DateTimeField(_('created at'), auto_now_add=True)
     file = models.ImageField(_('image'), upload_to='products')
-    metafields = HStoreField()
+    metafields = HStoreField(_('metafields'), default={})
     position = PositionField()
     product = models.ForeignKey('products.Product', verbose_name=_('product'))
     updated_at = models.DateTimeField(_('updated at'), auto_now=True)

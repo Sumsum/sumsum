@@ -60,7 +60,7 @@ class CustomCollection(models.Model):
     disjunctive = models.BooleanField(_('products can match any condition'), default=False)
     handle = HandleField(_('handle'), from_field='title')
     image = ImageField(_('image'), upload_to='products')
-    metafields = HStoreField()
+    metafields = HStoreField(_('metafields'), default={})
     published = models.BooleanField(_('published'), default=True)
     published_at = models.DateTimeField(_('published at'), help_text=_('publish this collection on'), blank=True, null=True)
     published_scope = ChoiceField(_('visability'), choices=PUBLICATION_CHOICES)

@@ -55,7 +55,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(_('email address'), unique=True)
     first_name = StringField(_('first name'))
     last_name = StringField(_('last name'))
-    metafields = HStoreField()
+    metafields = HStoreField(_('metafields'), default={})
     multipass_identifier = StringField(_('multipass identifier'))
     note = TextField(_('notes'), help_text=_('Enter any extra notes relating to this customer.'))
     state = ChoiceField(_('state'), max_length=50, choices=STATE_CHOICES)  # maybe we need to sync this the is_active field

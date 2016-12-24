@@ -31,7 +31,7 @@ class Product(models.Model):
     collections_m2m = models.ManyToManyField('products.CustomCollection', through='products.Collect', blank=True)
     created_at = models.DateTimeField(_('created at'), auto_now_add=True)
     handle = HandleField(_('handle'), from_field='title')
-    metafields = HStoreField()
+    metafields = HStoreField(_('metafields'), default={})
     # sh*pify probably has a related table implementation, is this good enough?
     option1_name = StringField(_('option #1 name'))
     option2_name = StringField(_('option #2 name'))

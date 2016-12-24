@@ -35,7 +35,7 @@ class ProductVariant(models.Model):
     inventory_management = ChoiceField(_('track inventory'), help_text=_('Yashop tracks this products inventory'), choices=INVENTORY_MANAGEMENT_CHOICES)
     inventory_policy = ChoiceField(_('inventory policy'), help_text=_("Allow customers to purchase this product when it's out of stock"), choices=INVENTORY_POLICY_CHOICES)
     inventory_quantity = models.IntegerField(_('inventory stock'), default=0)
-    metafields = HStoreField()
+    metafields = HStoreField(_('metafields'), default={})
     next_incoming_date = models.DateField(_('next incoming date'), blank=True, null=True)
     option1 = StringField(_('option #1'))
     option2 = StringField(_('option #2'))
