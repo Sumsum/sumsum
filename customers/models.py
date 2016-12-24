@@ -1,7 +1,6 @@
 from django.db import models
 from django.utils.functional import cached_property
 from django.utils.translation import ugettext_lazy as _
-from metafields.models import MetaFieldMixin
 from users.models import User
 from utils.fields import StringField, CountryField
 
@@ -12,7 +11,7 @@ class CustomerManager(models.Manager):
         qs.prefetch_related('customeraddress_set', 'tags_m2m').select_related('default_address')
 
 
-class Customer(MetaFieldMixin, User):
+class Customer(User):
     objects = CustomerManager()
 
     class Meta:

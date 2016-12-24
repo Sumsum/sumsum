@@ -2,11 +2,11 @@ import datetime
 import hashlib
 import uuid
 from django.db import models
-from utils.fields import StringField, ChoiceField, TextField
+from django.utils.functional import cached_property
 from django.utils.translation import ugettext_lazy as _
 from utils.choices import CURRENCY_CHOICES
-from django.utils.functional import cached_property
 from utils.datastructures import List
+from utils.fields import StringField, ChoiceField, TextField
 
 
 CANCEL_CHOICES = (

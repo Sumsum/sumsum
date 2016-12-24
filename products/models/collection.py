@@ -1,10 +1,10 @@
+from django.contrib.postgres.fields import HStoreField
 from django.db import models
 from django.utils.functional import cached_property
 from django.utils.translation import ugettext_lazy as _
-from metafields.models import MetaFieldMixin
 from redactor.fields import RedactorField
-from utils.fields import HandleField, ChoiceField, StringField, PositionField, ImageField
 from utils.datastructures import List
+from utils.fields import HandleField, ChoiceField, StringField, PositionField, ImageField
 from yashop.middleware import get_request
 
 
@@ -55,11 +55,12 @@ class CustomCollectionManager(models.Manager):
         return qs.prefetch_related('product_set')
 
 
-class CustomCollection(MetaFieldMixin, models.Model):
+class CustomCollection(models.Model):
     body_html = RedactorField(_('description'), blank=True, null=True)
     disjunctive = models.BooleanField(_('products can match any condition'), default=False)
     handle = HandleField(_('handle'), from_field='title')
     image = ImageField(_('image'), upload_to='products')
+    metafields = HStoreField()
     published = models.BooleanField(_('published'), default=True)
     published_at = models.DateTimeField(_('published at'), help_text=_('publish this collection on'), blank=True, null=True)
     published_scope = ChoiceField(_('visability'), choices=PUBLICATION_CHOICES)

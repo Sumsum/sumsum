@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.contrib.auth.models import Group as AuthGroup
+from django.contrib.postgres.fields import HStoreField
 from django.core.mail import send_mail
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
@@ -54,6 +55,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(_('email address'), unique=True)
     first_name = StringField(_('first name'))
     last_name = StringField(_('last name'))
+    metafields = HStoreField()
     multipass_identifier = StringField(_('multipass identifier'))
     note = TextField(_('notes'), help_text=_('Enter any extra notes relating to this customer.'))
     state = ChoiceField(_('state'), max_length=50, choices=STATE_CHOICES)  # maybe we need to sync this the is_active field

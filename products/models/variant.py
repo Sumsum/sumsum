@@ -1,8 +1,8 @@
 import datetime
+from django.contrib.postgres.fields import HStoreField
 from django.db import models
 from django.utils.functional import cached_property
 from django.utils.translation import ugettext_lazy as _
-from metafields.models import MetaFieldMixin
 from utils.fields import ChoiceField, StringField, PositionField
 from yashop.middleware import get_request
 
@@ -25,17 +25,18 @@ INVENTORY_POLICY_CHOICES = (
 )
 
 
-class ProductVariant(MetaFieldMixin, models.Model):
+class ProductVariant(models.Model):
     barcode = StringField(_('barcode'), help_text=_('ISBN, UPC, GTIN, etc.'))
     compare_at_price = models.FloatField(_('compare at price'), blank=True, null=True)
     created_at = models.DateTimeField(_('created at'), auto_now_add=True)
     fulfillment_service = models.ForeignKey('fulfillments.FulfillmentService', blank=True, null=True)
     grams = models.IntegerField(_('grams'), blank=True, null=True)
     image = models.ForeignKey('products.ProductImage', verbose_name=_('image'), blank=True, null=True)
-    next_incoming_date = models.DateField(_('next incoming date'), blank=True, null=True)
     inventory_management = ChoiceField(_('track inventory'), help_text=_('Yashop tracks this products inventory'), choices=INVENTORY_MANAGEMENT_CHOICES)
     inventory_policy = ChoiceField(_('inventory policy'), help_text=_("Allow customers to purchase this product when it's out of stock"), choices=INVENTORY_POLICY_CHOICES)
     inventory_quantity = models.IntegerField(_('inventory stock'), default=0)
+    metafields = HStoreField()
+    next_incoming_date = models.DateField(_('next incoming date'), blank=True, null=True)
     option1 = StringField(_('option #1'))
     option2 = StringField(_('option #2'))
     option3 = StringField(_('option #3'))
@@ -47,7 +48,6 @@ class ProductVariant(MetaFieldMixin, models.Model):
     taxable = models.BooleanField(_('taxable'), default=True)
     title = StringField(_('title'))
     updated_at = models.DateTimeField(_('updated at'), auto_now=True)
-    grams = models.FloatField(_('weight in grams'), blank=True, null=True, editable=False)
     weight_in_unit = models.FloatField(_('weight'), blank=True, null=True)
     weight_unit = ChoiceField(_('weight unit'), choices=UNIT_CHOICES, default='kg')
 
