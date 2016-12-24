@@ -4,8 +4,22 @@ from django import forms
 from django.utils.translation import ugettext_lazy as _
 from django.core import validators
 from django.db.models.fields.files import ImageFieldFile, ImageField
-from django_countries.fields import CountryField
-from redactor.fields import RedactorField
+from django_countries.fields import CountryField as _CountryField
+from redactor.fields import RedactorField as _RedactorField
+from timezone_field import TimeZoneField as _TimeZoneField
+
+
+class TimeZoneField(_TimeZoneField):
+    def __init__(self, verbose_name=None, **kwargs):
+        required = kwargs.pop('required', False)
+        kwargs.setdefault('blank', not required)
+        kwargs.setdefault('null', not required)
+        super().__init__(verbose_name=verbose_name, **kwargs)
+
+    def deconstruct(self):
+        name, path, args, kwargs = super(_TimeZoneField, self).deconstruct()
+        kwargs.pop('choices')
+        return name, 'django.db.models.CharField', args, kwargs
 
 
 class ImageFieldFile(ImageFieldFile):
@@ -18,7 +32,7 @@ class ImageField(ImageField):
     attr_class = ImageFieldFile
 
 
-class RedactorField(RedactorField):
+class RedactorField(_RedactorField):
     def __init__(self, *args, **kwargs):
         required = kwargs.pop('required', False)
         kwargs.setdefault('blank', not required)
@@ -30,9 +44,9 @@ class RedactorField(RedactorField):
         return name, 'django.db.models.TextField', args, kwargs
 
 
-class CountryField(CountryField):
+class CountryField(_CountryField):
     def deconstruct(self):
-        name, path, args, kwargs = super(models.CharField, self).deconstruct()
+        name, path, args, kwargs = super(_CountryField, self).deconstruct()
         kwargs.pop('choices')  # we don't want to put all those choices in the migrations
         return name, 'django.db.models.CharField', args, kwargs
 

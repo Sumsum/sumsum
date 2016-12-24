@@ -1,11 +1,11 @@
 from .collection import CustomCollection, CollectionRule  # NOQA
 from .product import Product  # NOQA
 from .variant import ProductVariant  # NOQA
-from django.contrib.postgres.fields import HStoreField
 from django.db import models
 from django.utils.functional import cached_property
 from django.utils.translation import ugettext_lazy as _
 from utils.fields import StringField, PositionField
+from metafields.models import MetaFieldsMixin
 
 
 PUBLICATION_CHOICES = (
@@ -13,11 +13,10 @@ PUBLICATION_CHOICES = (
 )
 
 
-class ProductImage(models.Model):
+class ProductImage(MetaFieldsMixin, models.Model):
     alt = StringField(_('alt text'))
     created_at = models.DateTimeField(_('created at'), auto_now_add=True)
     file = models.ImageField(_('image'), upload_to='products')
-    metafields = HStoreField(_('metafields'), default={})
     position = PositionField()
     product = models.ForeignKey('products.Product', verbose_name=_('product'))
     updated_at = models.DateTimeField(_('updated at'), auto_now=True)
@@ -42,6 +41,12 @@ class ProductImage(models.Model):
 
     def get_absolute_url(self):
         return self.file.url
+
+    def metafields(self):
+        data = {}
+        for k, v in self.metafields_hstore.items():
+            head, tail = k.split('.', 1)
+
 
     @cached_property
     def src(self):

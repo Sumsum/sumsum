@@ -1,6 +1,7 @@
 import datetime
 import hashlib
 import uuid
+from django.contrib.postgres.fields import ArrayField, HStoreField
 from django.db import models
 from django.utils.functional import cached_property
 from django.utils.translation import ugettext_lazy as _
@@ -21,7 +22,6 @@ CANCEL_CHOICES = (
 FINANCIAL_STATUS_CHOICES = (
     ('pending', _('Pending')),
     ('autorized', _('Authorized')),
-    ('partially_paid', _('Partially paid')),
     ('paid', _('Paid')),
     ('partially_refunded', _('Partially refunded')),
     ('refunded', _('Refunded')),
@@ -80,12 +80,13 @@ class Order(models.Model):
     email = models.EmailField(_('email'), blank=True, null=True)
     financial_status = ChoiceField(_('financial status'), choices=FINANCIAL_STATUS_CHOICES)
     fulfillment_status = ChoiceField(_('fulfilment status'), choices=FULFILLMENT_STATUS_CHOICES)
-    tags_m2m = models.ManyToManyField('orders.Tag', blank=True)
+    tags = ArrayField(StringField(_('tag'), required=True), verbose_name=_('tags'), default=[])
     landing_site = models.URLField(_('landing site'), blank=True, null=True)
     # line items
     location = models.ForeignKey('locations.Location', blank=True, null=True)
     order_number = models.PositiveIntegerField(_('number'), editable=False)  # its nice to be searchable
     note = TextField(_('note'))
+    note_attributes = HStoreField(_('note attributes'), default={})
     processed_at = models.DateTimeField(_('processed at'), blank=True)
     processing_method = ChoiceField(_('processing method'), choices=PROCESSING_CHOICES)
     referring_site = models.URLField(_('referring site'), blank=True, null=True)
@@ -165,10 +166,6 @@ class Order(models.Model):
         return '#{}'.format(self.number)
 
     @cached_property
-    def note_attributes(self):
-        return List(self.noteattributes_set.all())
-
-    @cached_property
     def number(self):
         """
         Numerical identifier unique to the shop. A number is sequential and
@@ -224,10 +221,6 @@ class Order(models.Model):
         raise NotImplemented
 
     @cached_property
-    def tags(self):
-        return List([t.name for t in self.tags_m2m.all()])
-
-    @cached_property
     def tax_lines(self):
         """
         An array of tax_line objects, each of which details the total taxes
@@ -240,30 +233,3 @@ class Order(models.Model):
     @cached_property
     def tax_price(self):
         return self.total_tax
-
-
-class Tag(models.Model):
-    name = StringField(_('title'), required=True, primary_key=True)
-
-    class Meta:
-        ordering = ('name',)
-        verbose_name = _('tag')
-        verbose_name_plural = _('tags')
-
-    def __str__(self):
-        return self.name
-
-
-class NoteAttributes(models.Model):
-    order = models.ForeignKey('orders.Order')
-    name = StringField(_('name'), required=True)
-    value = StringField(_('value'), required=True)
-
-    class Meta:
-        unique_together = ('order', 'name')
-        ordering = ('name',)
-        verbose_name = _('note attribute')
-        verbose_name_plural = _('note attributes')
-
-    def __str__(self):
-        return '{} - {}'.format(self.order, self.name)

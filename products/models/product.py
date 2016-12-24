@@ -1,7 +1,8 @@
-from django.contrib.postgres.fields import ArrayField, HStoreField
+from django.contrib.postgres.fields import ArrayField
 from django.db import models
 from django.utils.functional import cached_property
 from django.utils.translation import ugettext_lazy as _
+from metafields.models import MetaFieldsMixin
 from utils.datastructures import List
 from utils.fields import HandleField, StringField, ChoiceField, RedactorField
 from yashop.middleware import get_request
@@ -26,12 +27,11 @@ class ProductManager(models.Manager):
         return qs.prefetch_related('collections_m2m', 'productvariant_set', 'productimage_set')
 
 
-class Product(models.Model):
+class Product(MetaFieldsMixin, models.Model):
     body_html = RedactorField(_('description'))
     collections_m2m = models.ManyToManyField('products.CustomCollection', through='products.Collect', blank=True)
     created_at = models.DateTimeField(_('created at'), auto_now_add=True)
     handle = HandleField(_('handle'), from_field='title')
-    metafields = HStoreField(_('metafields'), default={})
     # sh*pify probably has a related table implementation, is this good enough?
     option1_name = StringField(_('option #1 name'))
     option2_name = StringField(_('option #2 name'))

@@ -6,10 +6,12 @@ django-debug-toolbar==1.6
 django-easy-select2==1.2.5
 Django-Select2==5.8.10
 django-superuser==0.2.2
+django-timezone-field==2.0
 django-wysiwyg-redactor==0.4.9.1
 Pillow==3.4.2
 psycopg2==2.6.2
 python-memcached==1.58
+pytz==2016.10
 redis==2.10.5
 simplejson==3.6.5
 six==1.10.0

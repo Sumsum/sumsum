@@ -1,7 +1,8 @@
+from django.contrib.postgres.fields import HStoreField
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
-from utils.text import uncamel
 from django.utils.functional import cached_property
+from django.utils.translation import ugettext_lazy as _
+from utils.datastructures import NSDict
 from utils.fields import StringField, ChoiceField, TextField
 
 
@@ -44,10 +45,12 @@ class MetaField(models.Model):
         return '{} for {}.{}'.format(self.key, self.owner_resource, self.owner_id)
 
 
-class MetaFieldMixin:
+class MetaFieldsMixin(models.Model):
+    metafields_hstore = HStoreField(_('metafields'), default={})
+
     @cached_property
     def metafields(self):
-        return MetaField.objects.filter(
-            owner_resource=uncamel(self.__class__.__name__),
-            owner_id=self.pk
-        )
+        return NSDict(self.metafields_hstore)
+
+    class Meta:
+        abstract = True

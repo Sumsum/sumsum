@@ -97,13 +97,6 @@ class Customer(User):
         return len(self.orders)
 
     @cached_property
-    def tags(self):
-        """
-        Returns the list of tags associated with the customer.
-        """
-        return [t.name for t in self.tags_m2m.all()]
-
-    @cached_property
     def total_spent(self):
         """
         Returns the total amount spent on all orders.

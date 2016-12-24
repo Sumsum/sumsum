@@ -1,7 +1,7 @@
-from django.contrib.postgres.fields import HStoreField
 from django.db import models
 from django.utils.functional import cached_property
 from django.utils.translation import ugettext_lazy as _
+from metafields.models import MetaFieldsMixin
 from redactor.fields import RedactorField
 from utils.datastructures import List
 from utils.fields import HandleField, ChoiceField, StringField, PositionField, ImageField
@@ -55,12 +55,11 @@ class CustomCollectionManager(models.Manager):
         return qs.prefetch_related('product_set')
 
 
-class CustomCollection(models.Model):
+class CustomCollection(MetaFieldsMixin, models.Model):
     body_html = RedactorField(_('description'), blank=True, null=True)
     disjunctive = models.BooleanField(_('products can match any condition'), default=False)
     handle = HandleField(_('handle'), from_field='title')
     image = ImageField(_('image'), upload_to='products')
-    metafields = HStoreField(_('metafields'), default={})
     published = models.BooleanField(_('published'), default=True)
     published_at = models.DateTimeField(_('published at'), help_text=_('publish this collection on'), blank=True, null=True)
     published_scope = ChoiceField(_('visability'), choices=PUBLICATION_CHOICES)
@@ -92,16 +91,17 @@ class CustomCollection(models.Model):
         the current view. For example, if a collection is filtered by tag,
         collection.tags returns only the tags that match the current filter.
         """
-        from products.models import Tag
-        qs = Tag.objects.filter(product_set__in=self.product_set.all()).distinct('name')
-        return List(qs.values_list('name', flat=True))
+        tags = set()
+        for p in self.products:
+            tags.union(p.tags)
+        return List(sorted(tags))
 
     @cached_property
     def all_types(self):
         """
         Returns a list of all product types in a collection.
         """
-        return list(sorted(filter(None, set(p.product_type for p in self.products))))
+        return List(sorted(filter(None, set(p.product_type for p in self.products))))
 
     @cached_property
     def all_products_count(self):
@@ -115,7 +115,7 @@ class CustomCollection(models.Model):
         filtered by tag, collection.products_count returns the number of
         products that match the current filter.
         """
-        return len(self.product_set.all())
+        return len(self.products)
 
     @cached_property
     def all_vendors(self):

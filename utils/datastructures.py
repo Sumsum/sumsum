@@ -1,4 +1,18 @@
-from collections import UserList
+from collections import UserList, UserDict
+
+
+class NSDict(UserDict):
+    """
+    A dict with namespace features
+    """
+    def __init__(self, data):
+        self.data = data
+        for k, v in data.items():
+            if '.' in k:
+                namespace, key = k.split('.')
+                nsdata = getattr(self, namespace, {})
+                nsdata[key] = v
+                setattr(self, namespace, nsdata)
 
 
 class List(UserList):

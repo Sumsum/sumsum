@@ -1,8 +1,8 @@
 import datetime
-from django.contrib.postgres.fields import HStoreField
 from django.db import models
 from django.utils.functional import cached_property
 from django.utils.translation import ugettext_lazy as _
+from metafields.models import MetaFieldsMixin
 from utils.fields import ChoiceField, StringField, PositionField
 from yashop.middleware import get_request
 
@@ -25,7 +25,7 @@ INVENTORY_POLICY_CHOICES = (
 )
 
 
-class ProductVariant(models.Model):
+class ProductVariant(MetaFieldsMixin, models.Model):
     barcode = StringField(_('barcode'), help_text=_('ISBN, UPC, GTIN, etc.'))
     compare_at_price = models.FloatField(_('compare at price'), blank=True, null=True)
     created_at = models.DateTimeField(_('created at'), auto_now_add=True)
@@ -35,7 +35,6 @@ class ProductVariant(models.Model):
     inventory_management = ChoiceField(_('track inventory'), help_text=_('Yashop tracks this products inventory'), choices=INVENTORY_MANAGEMENT_CHOICES)
     inventory_policy = ChoiceField(_('inventory policy'), help_text=_("Allow customers to purchase this product when it's out of stock"), choices=INVENTORY_POLICY_CHOICES)
     inventory_quantity = models.IntegerField(_('inventory stock'), default=0)
-    metafields = HStoreField(_('metafields'), default={})
     next_incoming_date = models.DateField(_('next incoming date'), blank=True, null=True)
     option1 = StringField(_('option #1'))
     option2 = StringField(_('option #2'))
