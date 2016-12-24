@@ -23,7 +23,7 @@ class Option:
 class ProductManager(models.Manager):
     def get_queryset(self):
         qs = super().get_queryset()
-        return qs.prefetch_related('collections_m2m', 'tags_m2m', 'productvariant_set', 'productimage_set')
+        return qs.prefetch_related('collections_m2m', 'productvariant_set', 'productimage_set')
 
 
 class Product(models.Model):

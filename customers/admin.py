@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Customer, CustomerAddress, Tag
+from .models import Customer, CustomerAddress
 from django.utils.translation import ugettext_lazy as _
 
 
@@ -56,9 +56,4 @@ class CustomerAdmin(admin.ModelAdmin):
 
 @admin.register(CustomerAddress)
 class CustomerAddressAdmin(admin.ModelAdmin):
-    pass
-
-
-@admin.register(Tag)
-class TagAdmin(admin.ModelAdmin):
     pass

@@ -8,7 +8,7 @@ from utils.fields import StringField, CountryField
 class CustomerManager(models.Manager):
     def get_queryset(self):
         qs = super().get_queryset()
-        qs.prefetch_related('customeraddress_set', 'tags_m2m').select_related('default_address')
+        qs.prefetch_related('customeraddress_set').select_related('default_address')
 
 
 class Customer(User):
@@ -175,15 +175,3 @@ class CustomerAddress(models.Model):
         address.
         """
         return ' '.join(filter(None, self.address1, self.address2))
-
-
-class Tag(models.Model):
-    name = StringField(_('title'), required=True, primary_key=True)
-
-    class Meta:
-        ordering = ('name',)
-        verbose_name = _('tag')
-        verbose_name_plural = _('tags')
-
-    def __str__(self):
-        return self.name
