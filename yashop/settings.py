@@ -47,6 +47,8 @@ INSTALLED_APPS = [
     'products',
     'fulfillments',
     'shops',
+    'pages',
+    'blogs',
 ]
 INTERNAL_IPS = ('127.0.0.1',)
 LANGUAGE_CODE = 'en-us'

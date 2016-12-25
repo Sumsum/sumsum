@@ -42,7 +42,7 @@ class Product(MetaFieldsMixin, models.Model):
     published_scope = ChoiceField(_('visability'), choices=PUBLICATION_CHOICES)
     tags = ArrayField(StringField(_('tag'), required=True), verbose_name=_('tags'), default=[])
     template_suffix = StringField(_('template suffix'))
-    title = StringField(_('title'), blank=True)
+    title = StringField(_('title'))
     updated_at = models.DateTimeField(_('updated at'), auto_now=True)
     vendor = StringField(_('vendor'), blank=True, null=True)
 

@@ -178,7 +178,7 @@ class CustomCollection(MetaFieldsMixin, models.Model):
         request = get_request()
         # request.path should look something like: /collections/contemporary-cityscapes/products/auckland
         handle = request.path.split('/')[-1]
-        res = {'next': None, 'previous': None}
+        res = {'next': False, 'previous': False}
         for j, p in enumerate(self.products):
             if p.handle == handle:
                 if j + 1 < len(self.products):
@@ -199,6 +199,7 @@ class CustomCollection(MetaFieldsMixin, models.Model):
         """
         return self.adjecant_products['next']
 
+    @cached_property
     def previous_product(self):
         """
         Returns the URL of the previous product in the collection. Returns nil
