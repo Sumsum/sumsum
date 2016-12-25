@@ -4,7 +4,7 @@ from django.utils.functional import cached_property
 from django.utils.translation import ugettext_lazy as _
 from metafields.models import MetaFieldsMixin
 from utils.datastructures import List
-from utils.fields import HandleField, StringField, ChoiceField, RedactorField
+from utils.fields import HandleField, StringField, ChoiceField, WysiwygField
 from yashop.middleware import get_request
 
 
@@ -28,7 +28,7 @@ class ProductManager(models.Manager):
 
 
 class Product(MetaFieldsMixin, models.Model):
-    body_html = RedactorField(_('description'))
+    body_html = WysiwygField(_('description'))
     collections_m2m = models.ManyToManyField('products.CustomCollection', through='products.Collect', blank=True)
     created_at = models.DateTimeField(_('created at'), auto_now_add=True)
     handle = HandleField(_('handle'), from_field='title')

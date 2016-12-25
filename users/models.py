@@ -3,8 +3,9 @@ from django.contrib.auth.models import Group as AuthGroup
 from django.contrib.postgres.fields import ArrayField, HStoreField
 from django.core.mail import send_mail
 from django.db import models
+from django.utils.functional import cached_property
 from django.utils.translation import ugettext_lazy as _
-from utils.fields import ChoiceField, StringField, TextField
+from utils.fields import ChoiceField, StringField, TextField, WysiwygField
 
 
 STATE_CHOICES = (
@@ -50,10 +51,12 @@ class UserManager(BaseUserManager):
 
 class User(AbstractBaseUser, PermissionsMixin):
     accepts_marketing = models.BooleanField(_('customer accepts marketing'), default=False)
+    bio = WysiwygField(_('biography'))
     created_at = models.DateTimeField(_('created at'), auto_now_add=True)
     default_address = models.ForeignKey('customers.CustomerAddress', verbose_name=_('default address'), blank=True, null=True)
     email = models.EmailField(_('email address'), unique=True)
     first_name = StringField(_('first name'))
+    homepage = models.URLField(_('homepage'), blank=True, null=True)
     last_name = StringField(_('last name'))
     metafields = HStoreField(_('metafields'), default={})
     multipass_identifier = StringField(_('multipass identifier'))
@@ -83,6 +86,15 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def email_user(self, subject, message, from_email=None, **kwargs):
         send_mail(subject, message, from_email, [self.email], **kwargs)
+
+    @cached_property
+    def account_owner(self):
+        """
+        https://help.shopify.com/themes/liquid/objects/article#article-user-account_owner
+        Returns "true" if the author of the article is the account owner of the
+        shop. Returns "false" if the author is not the account owner.
+        """
+        raise NotImplemented
 
 
 class Group(AuthGroup):

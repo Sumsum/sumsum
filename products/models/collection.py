@@ -2,9 +2,8 @@ from django.db import models
 from django.utils.functional import cached_property
 from django.utils.translation import ugettext_lazy as _
 from metafields.models import MetaFieldsMixin
-from redactor.fields import RedactorField
 from utils.datastructures import List
-from utils.fields import HandleField, ChoiceField, StringField, PositionField, ImageField
+from utils.fields import HandleField, ChoiceField, StringField, PositionField, ImageField, WysiwygField
 from yashop.middleware import get_request
 
 
@@ -56,7 +55,7 @@ class CustomCollectionManager(models.Manager):
 
 
 class CustomCollection(MetaFieldsMixin, models.Model):
-    body_html = RedactorField(_('description'), blank=True, null=True)
+    body_html = WysiwygField(_('description'), blank=True, null=True)
     disjunctive = models.BooleanField(_('products can match any condition'), default=False)
     handle = HandleField(_('handle'), from_field='title')
     image = ImageField(_('image'), upload_to='products')

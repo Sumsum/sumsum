@@ -5,7 +5,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.core import validators
 from django.db.models.fields.files import ImageFieldFile, ImageField
 from django_countries.fields import CountryField as _CountryField
-from redactor.fields import RedactorField as _RedactorField
+from redactor.fields import RedactorField
 from timezone_field import TimeZoneField as _TimeZoneField
 
 
@@ -32,7 +32,7 @@ class ImageField(ImageField):
     attr_class = ImageFieldFile
 
 
-class RedactorField(_RedactorField):
+class WysiwygField(RedactorField):
     def __init__(self, *args, **kwargs):
         required = kwargs.pop('required', False)
         kwargs.setdefault('blank', not required)
