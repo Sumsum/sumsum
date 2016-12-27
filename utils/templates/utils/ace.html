@@ -1,0 +1,27 @@
+<div class="ace_wrapper">
+  <div id="ace-{{ id }}"></div>
+</div>
+
+<script>
+  (function() {
+    var editor = ace.edit("ace-{{ id }}")
+    var ta = $('#{{ id }}')
+    ta.hide()
+    editor.setValue(ta.val(), -1)
+    editor.getSession().setMode("ace/mode/{{ language }}")
+    editor.getSession().setTabSize(4)
+    editor.getSession().setUseSoftTabs(true)
+    editor.renderer.setShowGutter(false)
+    editor.setOptions({
+        maxLines: Infinity,
+        theme: "ace/theme/chrome",
+        fontSize: "12px",
+    })
+    {% if read_only %}
+      editor.setReadOnly(true)
+    {% endif %}
+    $('form').submit(function(e) {
+      ta.val(editor.getSession().getValue())
+    })
+   }())
+</script>

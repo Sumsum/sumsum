@@ -15,7 +15,7 @@ UNIT_CHOICES = (
 )
 
 INVENTORY_MANAGEMENT_CHOICES = (
-    ('blank', _("Don't track inventory'")),
+    ('blank', _("Don't track inventory")),
     ('shopify', _("YAShop tracks this product's inventory")),
 )
 

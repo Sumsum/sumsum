@@ -1,0 +1,28 @@
+.redactor-box { 
+  float: left;
+}
+.full-width .redactor-box {
+  max-width: none;
+}
+body .redactor-box_fullscreen {
+    max-width: none;
+}
+form .redactor-toolbar {
+    padding-left: 0;
+}
+/*span#redactor-image-box when you click to edit the image*/
+#redactor-image-box {
+    max-width: 100%;
+}
+.redactor-box li,
+.redactor_toolbar li {
+    font-size: 14px;
+}
+.form-row .redactor-box p {
+    font-size: 14px;
+    margin-left: 0;
+    padding-left: 0;
+}
+form .redactor-box ul {
+    margin-left: 0;
+}

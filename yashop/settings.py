@@ -36,11 +36,9 @@ INSTALLED_APPS = [
     'debug_toolbar',
     'django_select2',
     'timezone_field',
-    #'advanced_filters',
 
     'customers',
     'users',
-    'metafields',
     'discounts',
     'orders',
     'locations',
@@ -49,6 +47,7 @@ INSTALLED_APPS = [
     'shops',
     'pages',
     'blogs',
+    'utils',
 ]
 INTERNAL_IPS = ('127.0.0.1',)
 LANGUAGE_CODE = 'en-us'

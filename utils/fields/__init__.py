@@ -1,12 +1,14 @@
-from .text import slugify
+from .hstore import HStoreField  # NOQA
+from .yaml import YAMLJSONField, YAMLTextField  # NOQA
+from .handle import HandleField  # NOQA
 from django.db import models
-from django import forms
-from django.utils.translation import ugettext_lazy as _
-from django.core import validators
 from django.db.models.fields.files import ImageFieldFile, ImageField
+from django.utils.translation import ugettext_lazy as _
 from django_countries.fields import CountryField as _CountryField
-from redactor.fields import RedactorField
 from timezone_field import TimeZoneField as _TimeZoneField
+from redactor.widgets import RedactorEditor
+from django import forms
+from django.conf import settings
 
 
 class TimeZoneField(_TimeZoneField):
@@ -30,18 +32,6 @@ class ImageFieldFile(ImageFieldFile):
 
 class ImageField(ImageField):
     attr_class = ImageFieldFile
-
-
-class WysiwygField(RedactorField):
-    def __init__(self, *args, **kwargs):
-        required = kwargs.pop('required', False)
-        kwargs.setdefault('blank', not required)
-        kwargs.setdefault('null', not required)
-        super().__init__(*args, **kwargs)
-
-    def deconstruct(self):
-        name, path, args, kwargs = super().deconstruct()
-        return name, 'django.db.models.TextField', args, kwargs
 
 
 class CountryField(_CountryField):
@@ -108,48 +98,48 @@ class TextField(models.TextField):
         return name, 'django.db.models.TextField', args, kwargs
 
 
-class HandleField(models.CharField):
-    default_validators = [validators.validate_slug]
-    description = _('Slug (up to %(max_length)s)')
+class WysiwygWidget(RedactorEditor):
+    @property
+    def media(self):
+        js = (
+            'redactor/jquery.redactor.init.js',
+            'redactor/redactor{0}.js'.format('' if settings.DEBUG else '.min'),
+            'redactor/langs/{0}.js'.format(self.options.get('lang', 'en')),
+        )
+        if 'plugins' in self.options:
+            plugins = self.options.get('plugins')
+            for plugin in plugins:
+                js = js + (
+                    'redactor/plugins/{0}.js'.format(plugin),
+                )
+        css = {
+            'all': (
+                'redactor/css/redactor.css',
+                'utils/redactor/redactor.css',
+            )
+        }
+        return forms.Media(css=css, js=js)
 
+
+class WysiwygField(TextField):
     def __init__(self, *args, **kwargs):
-        kwargs.setdefault('max_length', 50)
-        kwargs.setdefault('db_index', True)
-        kwargs.setdefault('blank', True)
-        kwargs.setdefault('unique', True)
-        self.from_field = kwargs.pop('from_field', None)
+        redactor_options = kwargs.pop('redactor_options', {})
+        upload_to = kwargs.pop('upload_to', '')
+        allow_file_upload = kwargs.pop('allow_file_upload', True)
+        allow_image_upload = kwargs.pop('allow_image_upload', True)
+        self.widget = WysiwygWidget(
+            redactor_options=redactor_options,
+            upload_to=upload_to,
+            allow_file_upload=allow_file_upload,
+            allow_image_upload=allow_image_upload,
+            attrs={'height': '10em'},
+        )
         super().__init__(*args, **kwargs)
+
+    def formfield(self, **kwargs):
+        kwargs['widget'] = self.widget
+        return super().formfield(**kwargs)
 
     def deconstruct(self):
         name, path, args, kwargs = super().deconstruct()
-        return name, 'django.db.models.CharField', args, kwargs
-
-    def get_internal_type(self):
-        return 'SlugField'
-
-    def formfield(self, **kwargs):
-        kwargs.setdefault('form_class', forms.SlugField)
-        return super().formfield(**kwargs)
-
-    def pre_save(self, obj, add):
-        value = self.value_from_object(obj)
-        if add or not value:
-            # only compute slug from self.from_field if its a new record or if empty value
-            value = getattr(obj, self.from_field)
-        slug = slugify(value)[:46]
-        if self.unique:
-            qs = obj.__class__._default_manager.using(obj._state.db)
-            qs = qs.filter(**{'%s__startswith' % self.attname: slug})
-            if obj.pk:
-                qs = qs.exclude(pk=obj.pk)
-            invalid = list(qs.values_list(self.attname, flat=True))
-            new_slug = slug
-            counter = 1
-            while True:
-                if new_slug not in invalid:
-                    break
-                new_slug = '%s-%s' % (slug, counter)
-                counter += 1
-            slug = new_slug
-        setattr(obj, self.attname, slug)
-        return slug
+        return name, 'django.db.models.TextField', args, kwargs

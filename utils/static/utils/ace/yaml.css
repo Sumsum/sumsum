@@ -1,0 +1,7 @@
+.ace_wrapper {
+  float: left;
+  width: 30em;
+  padding: 5px 2px;
+  border: 1px solid #ccc;
+  min-height: 3em;
+}

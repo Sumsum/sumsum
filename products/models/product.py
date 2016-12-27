@@ -40,9 +40,9 @@ class Product(MetaFieldsMixin, models.Model):
     published = models.BooleanField(_('published'), default=True)
     published_at = models.DateTimeField(_('published at'), help_text=_('publish this product on'), blank=True, null=True)
     published_scope = ChoiceField(_('visability'), choices=PUBLICATION_CHOICES)
-    tags = ArrayField(StringField(_('tag'), required=True), verbose_name=_('tags'), default=[])
+    tags = ArrayField(StringField(_('tag'), required=True), verbose_name=_('tags'), default=[], blank=True)
     template_suffix = StringField(_('template suffix'))
-    title = StringField(_('title'))
+    title = StringField(_('title'), required=True)
     updated_at = models.DateTimeField(_('updated at'), auto_now=True)
     vendor = StringField(_('vendor'), blank=True, null=True)
 
