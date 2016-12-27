@@ -30,11 +30,10 @@ class ProductVariant(MetaFieldsMixin, models.Model):
     compare_at_price = models.FloatField(_('compare at price'), blank=True, null=True)
     created_at = models.DateTimeField(_('created at'), auto_now_add=True)
     fulfillment_service = models.ForeignKey('fulfillments.FulfillmentService', blank=True, null=True)
-    grams = models.IntegerField(_('grams'), blank=True, null=True)
     image = models.ForeignKey('products.ProductImage', verbose_name=_('image'), blank=True, null=True)
     inventory_management = ChoiceField(_('track inventory'), help_text=_('Yashop tracks this products inventory'), choices=INVENTORY_MANAGEMENT_CHOICES)
     inventory_policy = ChoiceField(_('inventory policy'), help_text=_("Allow customers to purchase this product when it's out of stock"), choices=INVENTORY_POLICY_CHOICES)
-    inventory_quantity = models.IntegerField(_('inventory stock'), default=0)
+    inventory_quantity = models.IntegerField(_('quantity'), default=0)
     next_incoming_date = models.DateField(_('next incoming date'), blank=True, null=True)
     option1 = StringField(_('option #1'))
     option2 = StringField(_('option #2'))
@@ -45,7 +44,6 @@ class ProductVariant(MetaFieldsMixin, models.Model):
     requires_shipping = models.BooleanField(_('requires shipping'), help_text=_('This product requires shipping'), default=False)
     sku = StringField(_('sku'), help_text=_('Stock Keeping Unit'))
     taxable = models.BooleanField(_('taxable'), default=True)
-    title = StringField(_('title'))
     updated_at = models.DateTimeField(_('updated at'), auto_now=True)
     weight_in_unit = models.FloatField(_('weight'), blank=True, null=True)
     weight_unit = ChoiceField(_('weight unit'), choices=UNIT_CHOICES, default='kg')
@@ -94,7 +92,7 @@ class ProductVariant(MetaFieldsMixin, models.Model):
         """
         Returns true if the variant has incoming inventory.
         """
-        return datetime.date.today() >= self.next_incoming_date
+        return self.next_incoming_date and self.next_incoming_date >= datetime.date.today()
 
     def selected(self):
         """
@@ -103,6 +101,14 @@ class ProductVariant(MetaFieldsMixin, models.Model):
         """
         request = get_request()
         return self.pk == request.GET.get('variant')
+
+    @cached_property
+    def title(self):
+        """
+        Returns the concatenation of all the variant's option values, joined by
+        / characters.
+        """
+        return ' / '.join(filter(None [self.option1, self.option2, self.option3]))
 
     @cached_property
     def url(self):

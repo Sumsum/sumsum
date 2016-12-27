@@ -17,12 +17,50 @@ class ProductImageInline(admin.TabularInline):
 
 class ProductVariantInline(admin.StackedInline):
     model = ProductVariant
+    extra = 1
+    fieldsets = (
+        (None, {
+            'fields': (
+                'position',
+            ),
+        }),
+        (_('Options'), {
+            'fields': (
+                'option1',
+                'option2',
+                'option3',
+                'image',
+            ),
+            'classes': ('collapse',)
+        }),
+        (_('Pricing'), {
+            'fields': (
+                ('price', 'compare_at_price'),
+                'taxable',
+            ),
+        }),
+        (_('Inventory'), {
+            'fields': (
+                ('sku', 'barcode'),
+                ('inventory_management', 'inventory_quantity'),
+                'inventory_policy',
+                'next_incoming_date',
+            ),
+        }),
+        (_('Shipping'), {
+            'fields': (
+                'requires_shipping',
+                ('weight_in_unit', 'weight_unit'),
+                'fulfillment_service',
+            ),
+        }),
+    )
 
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
     save_on_top = True
-    inlines = [ProductImageInline]
+    inlines = [ProductVariantInline, ProductImageInline]
     #form = ProductForm
     fieldsets = (
         (None, {
@@ -31,13 +69,12 @@ class ProductAdmin(admin.ModelAdmin):
                 'body_html',
             )
         }),
-        (_('Visability'), {
+        (_('visability'), {
             'fields': (
                 'published',
                 'published_at',
                 'published_scope',
             ),
-            'classes': ('collapse',)
         }),
         (_('Organization'), {
             'fields': (
@@ -46,7 +83,6 @@ class ProductAdmin(admin.ModelAdmin):
                 'vendor',
                 'tags',
             ),
-            'classes': ('collapse',)
         }),
         (_('Options'), {
             'fields': (
@@ -59,6 +95,12 @@ class ProductAdmin(admin.ModelAdmin):
         (_('Search engine listing preview'), {
             'fields': (
                 'handle',
+            ),
+            'classes': ('collapse',)
+        }),
+        (_('Metafields'), {
+            'fields': (
+                'metafields_hstore',
             ),
             'classes': ('collapse',)
         }),
