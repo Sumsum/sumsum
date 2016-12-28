@@ -1,8 +1,8 @@
-from django.contrib.postgres.fields import HStoreField
+from django.contrib.postgres.fields import JSONField
 from .yaml import YAMLJSONField
 
 
-class HStoreField(HStoreField):
+class JSONField(JSONField):
     def __init__(self, verbose_name=None, **kwargs):
         kwargs.setdefault('blank', True)
         kwargs.setdefault('default', {})
@@ -10,7 +10,7 @@ class HStoreField(HStoreField):
 
     def deconstruct(self):
         name, path, args, kwargs = super().deconstruct()
-        return name, 'django.contrib.postgres.fields.HStoreField', args, kwargs
+        return name, 'django.contrib.postgres.fields.JSONField', args, kwargs
 
     def formfield(self, **kwargs):
         kwargs.setdefault('form_class', YAMLJSONField)

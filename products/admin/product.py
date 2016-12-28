@@ -100,32 +100,10 @@ class ProductAdmin(admin.ModelAdmin):
         }),
         (_('Metafields'), {
             'fields': (
-                'metafields_hstore',
+                'metafields_json',
             ),
             'classes': ('collapse',)
         }),
-        #(_('Pricing'), {
-        #    'fields': (
-        #        ('price', 'compare_at_price'),
-        #        ('tax', 'taxable'),
-        #    )
-        #}),
-        #(_('Inventory'), {
-        #    'fields': (
-        #        'requires_shipping',
-        #        ('weight', 'weight_unit'),
-        #        'taxable',
-        #    ),
-        #    'classes': ('collapse',)
-        #}),
-        #(_('Search engine listing preview'), {
-        #    'fields': (
-        #        'page_title',
-        #        ('meta_description'),
-        #        'slug',
-        #    ),
-        #    'classes': ('collapse',)
-        #}),
     )
 
     #def formfield_for_manytomany(self, db_field, request, **kwargs):

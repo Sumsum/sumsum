@@ -1,9 +1,9 @@
-from django.contrib.postgres.fields import HStoreField
-from utils.fields import YAMLJSONField
+from django.contrib.postgres.fields import JSONField
+from utils.fields import YAMLMetaField
 from django.utils.translation import ugettext_lazy as _
 
 
-class MetaField(HStoreField):
+class MetaField(JSONField):
     def __init__(self, verbose_name=None, **kwargs):
         verbose_name = verbose_name or _('metafields')
         kwargs.setdefault('blank', True)
@@ -15,7 +15,7 @@ class MetaField(HStoreField):
 
     def formfield(self, **kwargs):
         defaults = {
-            'form_class': YAMLJSONField,
+            'form_class': YAMLMetaField,
         }
         defaults.update(kwargs)
-        return super(HStoreField, self).formfield(**defaults)
+        return super(JSONField, self).formfield(**defaults)
