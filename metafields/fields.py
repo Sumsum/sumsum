@@ -1,21 +1,32 @@
-from django.contrib.postgres.fields import JSONField
-from utils.fields import YAMLMetaField
-from django.utils.translation import ugettext_lazy as _
+from django import forms
+from utils.fields import JSONField
+from utils.fields import YAMLJSONField
+
+
+class YAMLMetaField(YAMLJSONField):
+    """
+    YAML Metafields form field
+    """
+    def to_python(self, value):
+        obj = super().to_python(value)
+        for k, v in obj.items():
+            if not isinstance(k, str):
+                raise forms.ValidationError('Error "{}" is not a sting key.'.format(k))
+            if '.' not in k:
+                raise forms.ValidationError('Error "{}" key is missing namespace denoted with a "."'.format(k))
+            if not isinstance(v, (str, int)):
+                raise forms.ValidationError('Error "{}" is not a string or integer value.'.format(v))
+        return obj
 
 
 class MetaField(JSONField):
-    def __init__(self, verbose_name=None, **kwargs):
-        verbose_name = verbose_name or _('metafields')
-        kwargs.setdefault('blank', True)
-        kwargs.setdefault('default', {})
-        super().__init__(verbose_name=verbose_name, **kwargs)
-
+    """
+    Metafields models field
+    """
     def deconstruct(self):
-        return super().deconstruct()
+        name, path, args, kwargs = super(JSONField, self).deconstruct()
+        return name, 'django.contrib.postgres.fields.jsonb.JSONField', args, kwargs
 
     def formfield(self, **kwargs):
-        defaults = {
-            'form_class': YAMLMetaField,
-        }
-        defaults.update(kwargs)
-        return super(JSONField, self).formfield(**defaults)
+        kwargs.setdefault('form_class', YAMLMetaField)
+        return super().formfield(**kwargs)

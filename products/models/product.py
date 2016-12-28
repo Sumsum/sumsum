@@ -37,7 +37,6 @@ class Product(MetaFieldsMixin, models.Model):
     option2_name = StringField(_('option #2 name'))
     option3_name = StringField(_('option #3 name'))
     product_type = StringField(_('product type'))  # this might need a related table
-    published = models.BooleanField(_('published'), default=True)
     published_at = models.DateTimeField(_('published at'), help_text=_('publish this product on'), blank=True, null=True)
     published_scope = ChoiceField(_('visability'), choices=PUBLICATION_CHOICES)
     tags = ArrayField(StringField(_('tag'), required=True), verbose_name=_('tags'), default=[], blank=True)

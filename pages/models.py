@@ -2,7 +2,7 @@ from django.db import models
 from django.utils.functional import cached_property
 from django.utils.translation import ugettext_lazy as _
 from metafields.models import MetaFieldsMixin
-from utils.fields import StringField, WysiwygField, HandleField
+from utils.fields import StringField, WysiwygField, HandleField, TransStringField
 from yashop.middleware import get_request
 
 
@@ -15,6 +15,7 @@ class Page(MetaFieldsMixin, models.Model):
     shop = models.ForeignKey('shops.Shop', blank=True, null=True)
     template_suffix = StringField(_('template suffix'))
     title = StringField(_('title'), required=True)
+    title_t = TransStringField()
     updated_at = models.DateTimeField(_('updated at'), auto_now=True)
 
     class Meta:

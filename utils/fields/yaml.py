@@ -1,4 +1,3 @@
-import json
 import yaml
 from django import forms
 from django.forms.widgets import Textarea
@@ -40,21 +39,6 @@ class YAMLJSONField(forms.CharField):
         if isinstance(value, str):
             return value
         return yaml.dump(value, default_flow_style=False)
-
-
-class YAMLMetaField(YAMLJSONField):
-    widget = YAMLWidget
-
-    def to_python(self, value):
-        obj = super().to_python(value)
-        for k, v in obj.items():
-            if not isinstance(k, str):
-                raise forms.ValidationError('Error "{}" is not a sting key.'.format(k))
-            if '.' not in k:
-                raise forms.ValidationError('Error "{}" key is missing namespace denoted with a "."'.format(k))
-            if not isinstance(v, (str, int)):
-                raise forms.ValidationError('Error "{}" is not a string or integer value.'.format(v))
-        return obj
 
 
 class YAMLTextField(forms.CharField):

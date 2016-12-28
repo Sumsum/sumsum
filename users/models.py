@@ -1,10 +1,11 @@
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.contrib.auth.models import Group as AuthGroup
-from django.contrib.postgres.fields import ArrayField, HStoreField
+from django.contrib.postgres.fields import ArrayField
 from django.core.mail import send_mail
 from django.db import models
 from django.utils.functional import cached_property
 from django.utils.translation import ugettext_lazy as _
+from metafields.models import MetaFieldsMixin
 from utils.fields import ChoiceField, StringField, TextField, WysiwygField
 
 
@@ -49,7 +50,7 @@ class UserManager(BaseUserManager):
         return self._create_user(email, password, **extra_fields)
 
 
-class User(AbstractBaseUser, PermissionsMixin):
+class User(MetaFieldsMixin, AbstractBaseUser, PermissionsMixin):
     accepts_marketing = models.BooleanField(_('customer accepts marketing'), default=False)
     bio = WysiwygField(_('biography'))
     created_at = models.DateTimeField(_('created at'), auto_now_add=True)
@@ -58,7 +59,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     first_name = StringField(_('first name'))
     homepage = models.URLField(_('homepage'), blank=True, null=True)
     last_name = StringField(_('last name'))
-    metafields = HStoreField(_('metafields'), default={})
     multipass_identifier = StringField(_('multipass identifier'))
     note = TextField(_('notes'), help_text=_('Enter any extra notes relating to this customer.'))
     state = ChoiceField(_('state'), max_length=50, choices=STATE_CHOICES)  # maybe we need to sync this the is_active field

@@ -60,6 +60,8 @@ class ProductVariantInline(admin.StackedInline):
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
     save_on_top = True
+    list_fields = ('title', 'product_type', 'vendor', 'published_at', 'updated_at')
+    search_fields = ('title', 'product_type', 'vendor')
     inlines = [ProductVariantInline, ProductImageInline]
     #form = ProductForm
     fieldsets = (
@@ -71,7 +73,6 @@ class ProductAdmin(admin.ModelAdmin):
         }),
         (_('visability'), {
             'fields': (
-                'published',
                 'published_at',
                 'published_scope',
             ),

@@ -1,13 +1,13 @@
 import datetime
 import hashlib
 import uuid
-from django.contrib.postgres.fields import ArrayField, HStoreField
+from django.contrib.postgres.fields import ArrayField
 from django.db import models
 from django.utils.functional import cached_property
 from django.utils.translation import ugettext_lazy as _
 from utils.choices import CURRENCY_CHOICES
 from utils.datastructures import List
-from utils.fields import StringField, ChoiceField, TextField
+from utils.fields import StringField, ChoiceField, TextField, JSONField
 
 
 CANCEL_CHOICES = (
@@ -86,7 +86,7 @@ class Order(models.Model):
     location = models.ForeignKey('locations.Location', blank=True, null=True)
     order_number = models.PositiveIntegerField(_('number'), editable=False)  # its nice to be searchable
     note = TextField(_('note'))
-    note_attributes = HStoreField(_('note attributes'), default={})
+    note_attributes = JSONField(_('note attributes'))
     processed_at = models.DateTimeField(_('processed at'), blank=True)
     processing_method = ChoiceField(_('processing method'), choices=PROCESSING_CHOICES)
     referring_site = models.URLField(_('referring site'), blank=True, null=True)

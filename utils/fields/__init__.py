@@ -1,5 +1,5 @@
-from .json import JSONField  # NOQA
-from .yaml import YAMLJSONField, YAMLTextField, YAMLMetaField  # NOQA
+from .json import JSONField, TransStringField  # NOQA
+from .yaml import YAMLJSONField, YAMLTextField  # NOQA
 from .handle import HandleField  # NOQA
 from django.db import models
 from django.db.models.fields.files import ImageFieldFile, ImageField
