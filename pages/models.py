@@ -14,13 +14,12 @@ class Page(MetaFieldsMixin, models.Model):
     published_at = models.DateTimeField(_('published at'), blank=True, null=True)
     shop = models.ForeignKey('shops.Shop', blank=True, null=True)
     template_suffix = StringField(_('template suffix'))
-    title = StringField(_('title'), required=True)
-    title_t = TransStringField()
+    title_t = TransStringField(_('title'), required=True)
     updated_at = models.DateTimeField(_('updated at'), auto_now=True)
 
     class Meta:
         unique_together = ('handle', 'shop')
-        ordering = ('title',)
+        ordering = ('updated_at',)
         verbose_name = _('page')
         verbose_name_plural = _('pages')
 

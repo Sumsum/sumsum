@@ -9,7 +9,6 @@ class PageAdmin(admin.ModelAdmin):
     fieldsets = (
         (_('Page details'), {
             'fields': (
-                'title',
                 'title_t',
                 'body_html',
             ),
