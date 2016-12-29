@@ -4,7 +4,7 @@ from django.utils.functional import cached_property
 from django.utils.translation import get_language
 from django.utils.translation import ugettext_lazy as _
 from metafields.models import MetaFieldsMixin
-from utils.fields import StringField, WysiwygField, HandleField, TransStringField, TransWysiwygField
+from utils.fields import StringField, HandleField, TransStringField, TransWysiwygField
 from yashop.middleware import get_request
 
 

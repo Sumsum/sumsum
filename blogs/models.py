@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from metafields.models import MetaFieldsMixin
-from utils.fields import StringField, ChoiceField, HandleField, WysiwygField, TextField
+from utils.fields import StringField, ChoiceField, HandleField, WysiwygField, TextField, TransStringField, TransWysiwygField
 from django.contrib.postgres.fields import ArrayField
 from django.utils.functional import cached_property
 from utils.datastructures import List
@@ -30,10 +30,10 @@ class Blog(MetaFieldsMixin, models.Model):
     handle = HandleField(_('handle'), from_field='title', unique=False)
     tags = ArrayField(StringField(_('tag'), required=True), verbose_name=_('tags'), default=[])
     template_suffix = StringField(_('template suffix'))
-    title = StringField(_('title'), required=True)
+    title_t = TransStringField(_('title'), required=True)
 
     class Meta:
-        ordering = ('title',)
+        ordering = ('handle',)
         verbose_name = _('blog')
         verbose_name_plural = _('blogs')
 
@@ -128,16 +128,16 @@ class ArticleManager(models.Manager):
 class Article(MetaFieldsMixin, models.Model):
     user = models.ForeignKey('users.User', verbose_name=_('author'))
     blog = models.ForeignKey('blogs.Blog')
-    body_html = WysiwygField(_('description'))
+    body_html_t = TransWysiwygField(_('description'))
     created_at = models.DateTimeField(_('created at'), auto_now_add=True)
     handle = HandleField(_('handle'), from_field='title', unique=False)
     image = models.ImageField(_('image'), blank=True, null=True, upload_to='blogs')
     published = models.BooleanField(_('published'), default=True)
     published_at = models.DateTimeField(_('published at'), blank=True, null=True)
-    summary_html = WysiwygField(_('summary'))
+    summary_html_t = TransWysiwygField(_('summary'))
     tags = ArrayField(StringField(_('tag'), required=True), verbose_name=_('tags'), default=[])
     template_suffix = StringField(_('template suffix'))
-    title = StringField(_('title'), required=True)
+    title_t = TransStringField(_('title'), required=True)
     updated_at = models.DateTimeField(_('updated at'), auto_now=True)
 
     objects = ArticleManager()
