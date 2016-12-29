@@ -1,5 +1,6 @@
 import yaml
 from django import forms
+from django.contrib.postgres.fields import JSONField
 from django.forms.widgets import Textarea
 from django.template.loader import render_to_string
 
@@ -53,3 +54,18 @@ class YAMLTextField(forms.CharField):
         except Exception as e:
             raise forms.ValidationError('Error: {}'.format(e))
         return value
+
+
+class JSONField(JSONField):
+    def __init__(self, verbose_name=None, **kwargs):
+        kwargs.setdefault('blank', True)
+        kwargs.setdefault('default', {})
+        super().__init__(verbose_name=verbose_name, **kwargs)
+
+    def deconstruct(self):
+        name, path, args, kwargs = super().deconstruct()
+        return name, 'django.contrib.postgres.fields.jsonb.JSONField', args, kwargs
+
+    def formfield(self, **kwargs):
+        kwargs.setdefault('form_class', YAMLJSONField)
+        return super().formfield(**kwargs)

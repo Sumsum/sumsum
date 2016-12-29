@@ -1,34 +1,10 @@
-from .yaml import YAMLJSONField
+from .transutils import get_field_translation
 from django import forms
 from django.conf import settings
 from django.contrib.postgres.fields import JSONField
 from django.template.loader import render_to_string
-from django.utils.text import mark_safe
-from django.utils.translation import get_language
 from django.utils.functional import curry
-
-
-class JSONField(JSONField):
-    def __init__(self, verbose_name=None, **kwargs):
-        kwargs.setdefault('blank', True)
-        kwargs.setdefault('default', {})
-        super().__init__(verbose_name=verbose_name, **kwargs)
-
-    def deconstruct(self):
-        name, path, args, kwargs = super().deconstruct()
-        return name, 'django.contrib.postgres.fields.jsonb.JSONField', args, kwargs
-
-    def formfield(self, **kwargs):
-        kwargs.setdefault('form_class', YAMLJSONField)
-        return super().formfield(**kwargs)
-
-
-def get_field_translation(self, field):
-    data = getattr(self, field.attname)
-    value = data.get(get_language(), None)
-    if not value:
-        value = data.get(settings.LANGUAGE_CODE, None)
-    return value
+from django.utils.text import mark_safe
 
 
 class TransStringWidget(forms.MultiWidget):
