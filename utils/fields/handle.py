@@ -5,6 +5,9 @@ from django.utils.translation import ugettext_lazy as _
 from utils.text import slugify
 
 
+__all__ = ('HandleField',)
+
+
 class HandleField(models.CharField):
     default_validators = [validators.validate_slug]
     description = _('Slug (up to %(max_length)s)')

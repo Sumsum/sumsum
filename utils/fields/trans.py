@@ -1,21 +1,30 @@
-from .transutils import get_field_translation
+from .base import WysiwygWidget
 from django import forms
 from django.conf import settings
 from django.contrib.postgres.fields import JSONField
 from django.template.loader import render_to_string
 from django.utils.functional import curry
 from django.utils.text import mark_safe
+from django.utils.translation import get_language
 
 
-class TransStringWidget(forms.MultiWidget):
-    def __init__(self, attrs=None):
-        widgets = []
-        attrs = attrs or {}
-        attrs.setdefault('class', '')
-        attrs['class'] += ' vTextField'
-        for code, name in settings.LANGUAGES:
-            widgets.append(forms.TextInput(attrs=attrs))
-        super().__init__(widgets, attrs)
+__all__ = ('TransStringField', 'TransWysiwygField',)
+
+
+def get_field_translation(self, field):
+    data = getattr(self, field.attname)
+    try:
+        return data.get(get_language())
+    except AttributeError:
+        return data.get(settings.LANGUAGE_CODE, None)
+
+
+class TransWidget(forms.MultiWidget):
+    template = 'utils/trans_widget.html'
+
+    def __init__(self, widget):
+        widgets = (widget,) * len(settings.LANGUAGES)
+        super().__init__(widgets)
 
     def decompress(self, value):
         value = value or {}
@@ -27,7 +36,7 @@ class TransStringWidget(forms.MultiWidget):
     def format_output(self, rendered_widgets):
         labels = [name for code, name in settings.LANGUAGES]
         rows = list(zip(labels, rendered_widgets))
-        html = render_to_string('utils/transstring.html', {'rows': rows})
+        html = render_to_string(self.template, {'rows': rows})
         return mark_safe(html)
 
 
@@ -36,7 +45,7 @@ class TransStringFormField(forms.MultiValueField):
     Multi language form field, required means the first language is required,
     require_all_fields means that all fields are required.
     """
-    widget = TransStringWidget
+    widget = TransWidget(forms.TextInput(attrs={'class': 'vTextField'}))
 
     def __init__(self, label=None, max_length=None, min_length=None, strip=True, require_all_fields=False, required=False, *args, **kwargs):
         self.max_length = max_length
@@ -68,21 +77,25 @@ class TransStringFormField(forms.MultiValueField):
 
 
 class TransStringField(JSONField):
+    form_class = TransStringFormField
+
     def __init__(self, *args, **kwargs):
-        kwargs.setdefault('max_length', 255)
-        required = kwargs.pop('required', False)
         self.require_all_fields = kwargs.pop('require_all_fields', False)
+        required = kwargs.pop('required', False)
         kwargs.setdefault('blank', not required)
         kwargs.setdefault('null', not required)
+        kwargs.setdefault('max_length', 255)
         super().__init__(*args, **kwargs)
 
     def deconstruct(self):
         name, path, args, kwargs = super().deconstruct()
+        kwargs.pop('max_length', None)  # remove illegal option for JSONField
         return name, 'django.contrib.postgres.fields.jsonb.JSONField', args, kwargs
 
     def formfield(self, **kwargs):
-        kwargs.setdefault('form_class', TransStringFormField)
-        kwargs.setdefault('max_length', self.max_length)
+        kwargs.setdefault('form_class', self.form_class)
+        if self.max_length:
+            kwargs.setdefault('max_length', self.max_length)
         kwargs.setdefault('require_all_fields', self.require_all_fields)
         return super().formfield(**kwargs)
 
@@ -92,3 +105,16 @@ class TransStringField(JSONField):
             attr = self.attname.rsplit('_', 1)[0]
             if not getattr(cls, attr, None):
                 setattr(cls, attr, property(curry(get_field_translation, field=self)))
+
+
+class TransWysiwygFormField(TransStringFormField):
+    widget = TransWidget(WysiwygWidget)
+
+
+class TransWysiwygField(TransStringField):
+    form_class = TransWysiwygFormField
+
+    def deconstruct(self):
+        name, path, args, kwargs = super().deconstruct()
+        kwargs.pop('max_length', None)  # remove illegal option for JSONField
+        return name, 'django.contrib.postgres.fields.jsonb.JSONField', args, kwargs

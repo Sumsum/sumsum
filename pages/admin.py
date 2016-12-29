@@ -10,7 +10,7 @@ class PageAdmin(admin.ModelAdmin):
         (_('Page details'), {
             'fields': (
                 'title_t',
-                'body_html',
+                'body_html_t',
             ),
         }),
         (_('Visibility'), {
