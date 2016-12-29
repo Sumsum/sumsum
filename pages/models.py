@@ -1,7 +1,7 @@
-from django.conf import settings
 from django.db import models
 from django.db.models.expressions import RawSQL
 from django.utils.functional import cached_property
+from django.utils.translation import get_language
 from django.utils.translation import ugettext_lazy as _
 from metafields.models import MetaFieldsMixin
 from utils.fields import StringField, WysiwygField, HandleField, TransStringField
@@ -11,7 +11,7 @@ from yashop.middleware import get_request
 class PageManager(models.Manager):
     def get_queryset(self):
         qs = super().get_queryset()
-        return qs.order_by(RawSQL('title_t->>%s', (settings.LANGUAGE_CODE,)))
+        return qs.order_by(RawSQL('title_t->>%s', (get_language(),)))
 
 
 class Page(MetaFieldsMixin, models.Model):
