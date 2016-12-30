@@ -2,13 +2,15 @@ from .base import WysiwygWidget
 from django import forms
 from django.conf import settings
 from django.contrib.postgres.fields import JSONField
+from django.core import exceptions
 from django.template.loader import render_to_string
 from django.utils.functional import curry
 from django.utils.text import mark_safe
 from django.utils.translation import get_language
+from inspect import signature
 
 
-__all__ = ('TransStringField', 'TransWysiwygField',)
+__all__ = ('TransStringField', 'TransWysiwygField', 'TransTagField')
 
 
 def get_field_translation(self, field):
@@ -17,6 +19,14 @@ def get_field_translation(self, field):
         return data.get(get_language())
     except AttributeError:
         return data.get(settings.LANGUAGE_CODE, None)
+
+
+def valid_kwargs(f, kwargs):
+    valid_kwargs = {}
+    for key in signature(f).parameters.keys():
+        if key in kwargs:
+            valid_kwargs[key] = kwargs[key]
+    return valid_kwargs
 
 
 class TransWidget(forms.MultiWidget):
@@ -40,45 +50,30 @@ class TransWidget(forms.MultiWidget):
         return mark_safe(html)
 
 
-class TextInputWidget(forms.TextInput):
-    def __init__(self, attrs=None):
-        attrs = attrs or {}
-        attrs.setdefault('class', 'vTextField')
-        super().__init__(attrs=attrs)
-
-
 class TransFormField(forms.MultiValueField):
     """
     Multi language form field, required means the first language is required,
     require_all_fields means that all fields are required.
     """
-    def __init__(self, label=None, max_length=None, min_length=None,
-            require_all_fields=False, required=False, strip=True,
-            validators=None, base_field=None, base_widget=None, *args,
-            **kwargs):
-        self.max_length = max_length
-        self.min_length = min_length
-        self.strip = strip
+    def __init__(self, require_all_fields=False, required=False,
+            base_field=None, base_widget=None, **kwargs):
         self.widget = TransWidget(base_widget)
-        validators = validators or []
-        required_field = required or require_all_fields
+        field_kwargs = valid_kwargs(base_field.__init__, kwargs)
+        field_kwargs['required'] = required or require_all_fields
+        self.required = False
         fields = []
         for code, name in settings.LANGUAGES:
-            f = base_field(
-                max_length=max_length, min_length=min_length,
-                strip=strip, required=required_field,
-                validators=validators,
-                *args, **kwargs
-            )
+            f = base_field(**field_kwargs)
             fields.append(f)
             if not require_all_fields:
-                required_field = False
-        kwargs.update({
-            'label': label,
-            'required': required or require_all_fields,
-            'require_all_fields': require_all_fields,
-        })
-        super().__init__(fields, *args, **kwargs)
+                field_kwargs['required'] = False
+        super().__init__(fields, require_all_fields=require_all_fields,
+                required=require_all_fields or required)
+
+    def prepare_value(self, value):
+        for field, code in zip(self.fields, value.keys()):
+            value[code] = field.prepare_value(value[code])
+        return value
 
     def compress(self, data_list):
         data_list = data_list or []
@@ -91,19 +86,26 @@ class TransFormField(forms.MultiValueField):
 
 class TransField(JSONField):
     form_class = TransFormField
-    base_field = forms.CharField
-    base_widget = TextInputWidget
+    base_field = None
+    base_widget = None
     max_length = None
 
     def __init__(self, verbose_name=None, max_length=None, required=False,
             require_all_fields=False, form_class=None, base_field=None,
             base_widget=None, **kwargs):
+        base_field = base_field or self.base_field
+        if base_field is None:
+            raise exceptions.ValidationError('base_field cannot be None')
+        base_widget = base_widget or self.base_widget
+        if base_widget is None:
+            raise exceptions.ValidationError('base_widget cannot be None')
+        max_length = max_length or self.max_length
         self.formfield_defaults = {
-            'base_field': base_field or self.base_field,
-            'base_widget': base_widget or self.base_widget,
+            'base_field': base_field,
+            'base_widget': base_widget,
             'form_class': form_class or self.form_class,
-            'max_length': max_length or self.max_length,
-            'require_all_fields': require_all_fields
+            'require_all_fields': require_all_fields,
+            'max_length': max_length,
         }
         defaults = {
             'blank': not required,
@@ -135,7 +137,16 @@ class TransField(JSONField):
 # ~~~~~~~~~~~
 # StringField
 # ~~~~~~~~~~~
+class TextInputWidget(forms.TextInput):
+    def __init__(self, attrs=None):
+        attrs = attrs or {}
+        attrs.setdefault('class', 'vTextField')
+        super().__init__(attrs=attrs)
+
+
 class TransStringField(TransField):
+    base_field = forms.CharField
+    base_widget = TextInputWidget
     max_length = 255
 
 
@@ -143,15 +154,26 @@ class TransStringField(TransField):
 # WysiwygField
 # ~~~~~~~~~~~~
 class TransWysiwygField(TransField):
+    base_field = forms.CharField
     base_widget = WysiwygWidget
 
 
 # ~~~~~~~~
 # TagField
 # ~~~~~~~~
-#class TransTagFormField(TransField):
-#    widget = TransWidget(TextInputWidget)
-#
-#
-#class TransTagField(TransField):
-#    form_class = TransTagFormField
+class TagField(forms.Field):
+    def clean(self, value):
+        tags = set(tag.strip() for tag in value.split(','))
+        return sorted(filter(None, tags))
+
+    def prepare_value(self, value):
+        if value in self.empty_values:
+            return ''
+        if isinstance(value, str):
+            return value
+        return ', '.join(value)
+
+
+class TransTagField(TransField):
+    base_field = TagField
+    base_widget = TextInputWidget

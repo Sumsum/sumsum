@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from metafields.models import MetaFieldsMixin
-from utils.fields import StringField, ChoiceField, HandleField, WysiwygField, TextField, TransStringField, TransWysiwygField
+from utils.fields import StringField, ChoiceField, HandleField, WysiwygField, TextField, TransStringField, TransWysiwygField, TransTagField
 from django.contrib.postgres.fields import ArrayField
 from django.utils.functional import cached_property
 from utils.datastructures import List
@@ -28,7 +28,7 @@ class Blog(MetaFieldsMixin, models.Model):
     feedburner = models.NullBooleanField(_('feedburner'), default=None)
     feedburner_location = models.URLField(_('feedburner location'), blank=True, null=True)
     handle = HandleField(_('handle'), from_field='title', unique=False)
-    tags = ArrayField(StringField(_('tag'), required=True), verbose_name=_('tags'), default=[])
+    tags_t = TransTagField(_('tag'))
     template_suffix = StringField(_('template suffix'))
     title_t = TransStringField(_('title'), required=True)
 
