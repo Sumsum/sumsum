@@ -57,17 +57,17 @@ class TransFormField(forms.MultiValueField):
     """
     def __init__(self, require_all_fields=False, required=False,
             base_field=None, base_widget=None, **kwargs):
+        required = required or require_all_fields
         self.widget = TransWidget(base_widget)
         field_kwargs = valid_kwargs(base_field.__init__, kwargs)
-        field_kwargs['required'] = required or require_all_fields
+        field_kwargs['required'] = required
         fields = []
         for code, name in settings.LANGUAGES:
-            f = base_field(**field_kwargs)
-            fields.append(f)
+            fields.append(base_field(**field_kwargs))
             if not require_all_fields:
                 field_kwargs['required'] = False
         super().__init__(fields, require_all_fields=require_all_fields,
-                required=require_all_fields or required)
+                required=required)
 
     def prepare_value(self, value):
         if isinstance(value, dict):
