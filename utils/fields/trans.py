@@ -40,31 +40,44 @@ class TransWidget(forms.MultiWidget):
         return mark_safe(html)
 
 
-class TransStringFormField(forms.MultiValueField):
+class TextInputWidget(forms.TextInput):
+    def __init__(self, attrs=None):
+        attrs = attrs or {}
+        attrs.setdefault('class', 'vTextField')
+        super().__init__(attrs=attrs)
+
+
+class TransFormField(forms.MultiValueField):
     """
     Multi language form field, required means the first language is required,
     require_all_fields means that all fields are required.
     """
-    widget = TransWidget(forms.TextInput(attrs={'class': 'vTextField'}))
-
-    def __init__(self, label=None, max_length=None, min_length=None, strip=True, require_all_fields=False, required=False, *args, **kwargs):
+    def __init__(self, label=None, max_length=None, min_length=None,
+            require_all_fields=False, required=False, strip=True,
+            validators=None, base_field=None, base_widget=None, *args,
+            **kwargs):
         self.max_length = max_length
         self.min_length = min_length
         self.strip = strip
-        fields = []
+        self.widget = TransWidget(base_widget)
+        validators = validators or []
         required_field = required or require_all_fields
+        fields = []
         for code, name in settings.LANGUAGES:
-            f = forms.CharField(
+            f = base_field(
                 max_length=max_length, min_length=min_length,
                 strip=strip, required=required_field,
+                validators=validators,
                 *args, **kwargs
             )
             fields.append(f)
             if not require_all_fields:
                 required_field = False
-        kwargs['label'] = label
-        kwargs['required'] = required or require_all_fields
-        kwargs['require_all_fields'] = require_all_fields
+        kwargs.update({
+            'label': label,
+            'required': required or require_all_fields,
+            'require_all_fields': require_all_fields,
+        })
         super().__init__(fields, *args, **kwargs)
 
     def compress(self, data_list):
@@ -76,28 +89,40 @@ class TransStringFormField(forms.MultiValueField):
         return value
 
 
-class TransStringField(JSONField):
-    form_class = TransStringFormField
+class TransField(JSONField):
+    form_class = TransFormField
+    base_field = forms.CharField
+    base_widget = TextInputWidget
+    max_length = None
 
-    def __init__(self, *args, **kwargs):
-        self.require_all_fields = kwargs.pop('require_all_fields', False)
-        required = kwargs.pop('required', False)
-        kwargs.setdefault('blank', not required)
-        kwargs.setdefault('null', not required)
-        kwargs.setdefault('max_length', 255)
-        super().__init__(*args, **kwargs)
+    def __init__(self, verbose_name=None, max_length=None, required=False,
+            require_all_fields=False, form_class=None, base_field=None,
+            base_widget=None, **kwargs):
+        self.formfield_defaults = {
+            'base_field': base_field or self.base_field,
+            'base_widget': base_widget or self.base_widget,
+            'form_class': form_class or self.form_class,
+            'max_length': max_length or self.max_length,
+            'require_all_fields': require_all_fields
+        }
+        defaults = {
+            'blank': not required,
+            'null': not required,
+            'verbose_name': verbose_name,
+            'max_length': max_length,
+        }
+        defaults.update(kwargs)
+        super().__init__(**defaults)
 
     def deconstruct(self):
         name, path, args, kwargs = super().deconstruct()
-        kwargs.pop('max_length', None)  # remove illegal option for JSONField
+        kwargs.pop('max_length', None)  # remove all kwargs not applicable for JSONField
         return name, 'django.contrib.postgres.fields.jsonb.JSONField', args, kwargs
 
     def formfield(self, **kwargs):
-        kwargs.setdefault('form_class', self.form_class)
-        if self.max_length:
-            kwargs.setdefault('max_length', self.max_length)
-        kwargs.setdefault('require_all_fields', self.require_all_fields)
-        return super().formfield(**kwargs)
+        defaults = self.formfield_defaults.copy()
+        defaults.update(**kwargs)
+        return super().formfield(**defaults)
 
     def contribute_to_class(self, cls, *args, **kwargs):
         super().contribute_to_class(cls, *args, **kwargs)
@@ -107,14 +132,26 @@ class TransStringField(JSONField):
                 setattr(cls, attr, property(curry(get_field_translation, field=self)))
 
 
-class TransWysiwygFormField(TransStringFormField):
-    widget = TransWidget(WysiwygWidget)
+# ~~~~~~~~~~~
+# StringField
+# ~~~~~~~~~~~
+class TransStringField(TransField):
+    max_length = 255
 
 
-class TransWysiwygField(TransStringField):
-    form_class = TransWysiwygFormField
+# ~~~~~~~~~~~~
+# WysiwygField
+# ~~~~~~~~~~~~
+class TransWysiwygField(TransField):
+    base_widget = WysiwygWidget
 
-    def deconstruct(self):
-        name, path, args, kwargs = super().deconstruct()
-        kwargs.pop('max_length', None)  # remove illegal option for JSONField
-        return name, 'django.contrib.postgres.fields.jsonb.JSONField', args, kwargs
+
+# ~~~~~~~~
+# TagField
+# ~~~~~~~~
+#class TransTagFormField(TransField):
+#    widget = TransWidget(TextInputWidget)
+#
+#
+#class TransTagField(TransField):
+#    form_class = TransTagFormField
