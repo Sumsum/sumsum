@@ -7,25 +7,33 @@ from django.template.loader import render_to_string
 from django.utils.functional import curry
 from django.utils.text import mark_safe
 from django.utils.translation import get_language
-from inspect import signature
+from inspect import signature, getmro
+from utils.text import slugify
 
 
-__all__ = ('TransStringField', 'TransWysiwygField', 'TransTagField')
+__all__ = (
+    'TransStringField', 'TransHandleField', 'TransTextField',
+    'TransWysiwygField', 'TransTagField'
+)
 
 
-def get_field_translation(self, field):
-    data = getattr(self, field.attname)
-    try:
-        return data.get(get_language())
-    except AttributeError:
-        return data.get(settings.LANGUAGE_CODE, None)
+def field_value(value, code):
+    if code in value:
+        return value[code]
+    if settings.LANGUAGE_CODE in value:
+        return value[settings.LANGUAGE_CODE]
+    return ''
 
 
-def valid_kwargs(f, kwargs):
+def valid_field_kwargs(field, kwargs):
+    valid_keys = set()
+    for cls in getmro(field):
+        valid_keys.union(set(signature(cls.__init__).parameters.keys()))
+    valid_keys = valid_keys - set(['self', 'args', 'kwargs'])
     valid_kwargs = {}
-    for key in signature(f).parameters.keys():
-        if key in kwargs:
-            valid_kwargs[key] = kwargs[key]
+    for k, v in kwargs.items():
+        if k in valid_keys:
+            valid_kwargs[k] = v
     return valid_kwargs
 
 
@@ -55,19 +63,19 @@ class TransFormField(forms.MultiValueField):
     Multi language form field, required means the first language is required,
     require_all_fields means that all fields are required.
     """
-    def __init__(self, require_all_fields=False, required=False,
+    def __init__(self, label=None, require_all_fields=False, required=False,
             base_field=None, base_widget=None, **kwargs):
         required = required or require_all_fields
         self.widget = TransWidget(base_widget)
-        field_kwargs = valid_kwargs(base_field.__init__, kwargs)
+        field_kwargs = valid_field_kwargs(base_field, kwargs)
         field_kwargs['required'] = required
         fields = []
         for code, name in settings.LANGUAGES:
             fields.append(base_field(**field_kwargs))
             if not require_all_fields:
                 field_kwargs['required'] = False
-        super().__init__(fields, require_all_fields=require_all_fields,
-                required=required)
+        super().__init__(fields, label=label,
+                require_all_fields=require_all_fields, required=required)
 
     def prepare_value(self, value):
         if isinstance(value, dict):
@@ -84,7 +92,10 @@ class TransFormField(forms.MultiValueField):
         return value
 
 
-class TransField(JSONField):
+class TransBaseField(JSONField):
+    """
+    Tranlation fields need to subclass this
+    """
     form_class = TransFormField
     base_field = None
     base_widget = None
@@ -92,26 +103,27 @@ class TransField(JSONField):
 
     def __init__(self, verbose_name=None, max_length=None, required=False,
             require_all_fields=False, form_class=None, base_field=None,
-            base_widget=None, **kwargs):
-        base_field = base_field or self.base_field
-        if base_field is None:
+            base_widget=None, populate_from=None, **kwargs):
+        self.base_field = base_field or self.base_field
+        if self.base_field is None:
             raise exceptions.ValidationError('base_field cannot be None')
-        base_widget = base_widget or self.base_widget
-        if base_widget is None:
+        self.base_widget = base_widget or self.base_widget
+        if self.base_widget is None:
             raise exceptions.ValidationError('base_widget cannot be None')
-        max_length = max_length or self.max_length
+        self.max_length = max_length or self.max_length
+        self.form_class = form_class or self.form_class
         self.formfield_defaults = {
-            'base_field': base_field,
-            'base_widget': base_widget,
-            'form_class': form_class or self.form_class,
+            'base_field': self.base_field,
+            'base_widget': self.base_widget,
+            'form_class': self.form_class,
             'require_all_fields': require_all_fields,
-            'max_length': max_length,
+            'max_length': self.max_length,
         }
         defaults = {
             'blank': not required,
             'null': not required,
             'verbose_name': verbose_name,
-            'max_length': max_length,
+            'max_length': self.max_length,
         }
         defaults.update(kwargs)
         super().__init__(**defaults)
@@ -129,9 +141,15 @@ class TransField(JSONField):
     def contribute_to_class(self, cls, *args, **kwargs):
         super().contribute_to_class(cls, *args, **kwargs)
         if self.column:
-            attr = self.attname.rsplit('_', 1)[0]
-            if not getattr(cls, attr, None):
-                setattr(cls, attr, property(curry(get_field_translation, field=self)))
+            attr = self.attname[:-2]
+            if not hasattr(cls, attr):
+                def get_translation(self, field):
+                    value = getattr(self, field.attname)
+                    return field_value(value, get_language())
+                setattr(
+                    cls, attr,
+                    property(curry(get_translation, field=self))
+                )
 
 
 # ~~~~~~~~~~~
@@ -144,16 +162,85 @@ class TextInputWidget(forms.TextInput):
         super().__init__(attrs=attrs)
 
 
-class TransStringField(TransField):
+class TransStringField(TransBaseField):
     base_field = forms.CharField
     base_widget = TextInputWidget
     max_length = 255
 
 
+# ~~~~~~~~~~~
+# HandleField
+# ~~~~~~~~~~~
+class TransHandleField(TransBaseField):
+    base_field = forms.CharField
+    base_widget = TextInputWidget
+    max_length = 50
+
+    def __init__(self, *args, **kwargs):
+        kwargs.setdefault('db_index', True)
+        self.populate_from = kwargs.pop('populate_from', None)
+        self.unique_together = set(kwargs.pop('unique_together', []))
+        if 'unique' in kwargs:
+            self.unique_together.add(kwargs.pop('unique'))
+        super().__init__(*args, **kwargs)
+
+    def pre_save(self, obj, add):
+        value_t = self.value_from_object(obj)
+        handle_t = {}
+        for code, name in settings.LANGUAGES:
+            value = value_t.get(code, None)
+            if add or not value:
+                value = field_value(getattr(obj, self.populate_from), code)
+                if value is None:
+                    continue
+            handle = slugify(value)[:(self.max_length - 4)]
+            if self.unique_together:
+                model = obj.__class__
+                qs = model._default_manager.using(obj._state.db)
+                for field_name in self.unique_together:
+                    if field_name != self.attname:
+                        continue
+                    lookup = field_name
+                    value = getattr(obj, field_name)
+                    if field_name.endswith('_t'):
+                        lookup = '{}__{}'.format(lookup, code)
+                        value = field_value(value, code)
+                    qs = qs.filter(**{lookup: value})
+                if obj.pk:
+                    qs = qs.exclude(pk=obj.pk)
+                base_handle = handle
+                counter = 1
+                while True:
+                    try:
+                        qs.get(**{'{}__{}'.format(self.attname, code): handle})
+                    except model.DoesNotExist:
+                        break
+                    handle = '-'.join([base_handle, counter])
+                    counter += 1
+            handle_t[code] = handle
+        setattr(obj, self.attname, handle_t)
+        return handle_t
+
+
+# ~~~~~~~~~
+# TextField
+# ~~~~~~~~~
+class TextareaWidget(forms.Textarea):
+    def __init__(self, attrs=None):
+        attrs = attrs or {}
+        attrs.setdefault('class', 'vLargeTextField')
+        super().__init__(attrs=attrs)
+
+
+class TransTextField(TransBaseField):
+    base_field = forms.CharField
+    base_widget = TextareaWidget
+
+
 # ~~~~~~~~~~~~
 # WysiwygField
 # ~~~~~~~~~~~~
-class TransWysiwygField(TransField):
+class TransWysiwygField(TransBaseField):
     base_field = forms.CharField
     base_widget = WysiwygWidget
 
@@ -174,6 +261,6 @@ class TagField(forms.Field):
         return ', '.join(value)
 
 
-class TransTagField(TransField):
+class TransTagField(TransBaseField):
     base_field = TagField
     base_widget = TextInputWidget

@@ -26,7 +26,7 @@ class PageAdmin(admin.ModelAdmin):
         }),
         (_('Search engine listing preview'), {
             'fields': (
-                'handle',
+                'handle_t',
             ),
             'classes': ('collapse',)
         }),

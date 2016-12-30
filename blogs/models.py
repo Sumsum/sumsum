@@ -1,8 +1,8 @@
+import datetime
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from metafields.models import MetaFieldsMixin
-from utils.fields import StringField, ChoiceField, HandleField, WysiwygField, TextField, TransStringField, TransWysiwygField, TransTagField
-from django.contrib.postgres.fields import ArrayField
+from utils.fields import StringField, ChoiceField, HandleField, TransStringField, TransTextField, TransWysiwygField, TransTagField
 from django.utils.functional import cached_property
 from utils.datastructures import List
 from yashop.middleware import get_request
@@ -132,10 +132,9 @@ class Article(MetaFieldsMixin, models.Model):
     created_at = models.DateTimeField(_('created at'), auto_now_add=True)
     handle = HandleField(_('handle'), from_field='title', unique=False)
     image = models.ImageField(_('image'), blank=True, null=True, upload_to='blogs')
-    published = models.BooleanField(_('published'), default=True)
     published_at = models.DateTimeField(_('published at'), blank=True, null=True)
     summary_html_t = TransWysiwygField(_('summary'))
-    tags = ArrayField(StringField(_('tag'), required=True), verbose_name=_('tags'), default=[])
+    tags_t = TransTagField(_('tags'))
     template_suffix = StringField(_('template suffix'))
     title_t = TransStringField(_('title'), required=True)
     updated_at = models.DateTimeField(_('updated at'), auto_now=True)
@@ -196,6 +195,10 @@ class Article(MetaFieldsMixin, models.Model):
         return self.blog.moderated
 
     @cached_property
+    def published(self):
+        return datetime.datetime.now() >= self.published_at
+
+    @cached_property
     def url(self):
         return '/blogs/{}/{}-{}'.format(self.blog.handle, self.pk, self.handle)
 
@@ -204,8 +207,8 @@ class Comment(models.Model):
     article = models.ForeignKey('blogs.Article')
     author = StringField(_('author'))
     blog = models.ForeignKey('blogs.Blog')
-    body = TextField(_('body'))
-    body_html = TextField(_('body html'))
+    body_t = TransTextField(_('body'))
+    body_html_t = TransWysiwygField(_('body html'))
     created_at = models.DateTimeField(_('created at'), auto_now_add=True)
     email = models.EmailField(_('email'), blank=True, null=True)
     ip = StringField(_('ip'))
