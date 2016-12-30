@@ -60,7 +60,6 @@ class TransFormField(forms.MultiValueField):
         self.widget = TransWidget(base_widget)
         field_kwargs = valid_kwargs(base_field.__init__, kwargs)
         field_kwargs['required'] = required or require_all_fields
-        self.required = False
         fields = []
         for code, name in settings.LANGUAGES:
             f = base_field(**field_kwargs)
@@ -71,8 +70,9 @@ class TransFormField(forms.MultiValueField):
                 required=require_all_fields or required)
 
     def prepare_value(self, value):
-        for field, code in zip(self.fields, value.keys()):
-            value[code] = field.prepare_value(value[code])
+        if isinstance(value, dict):
+            for field, code in zip(self.fields, value.keys()):
+                value[code] = field.prepare_value(value[code])
         return value
 
     def compress(self, data_list):
