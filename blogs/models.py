@@ -2,7 +2,7 @@ import datetime
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from metafields.models import MetaFieldsMixin
-from utils.fields import StringField, ChoiceField, HandleField, TransStringField, TransTextField, TransWysiwygField, TransTagField
+from utils.fields import StringField, TextField, ChoiceField, HandleField, TransStringField, TransWysiwygField, TransHandleField, TransTagField
 from django.utils.functional import cached_property
 from utils.datastructures import List
 from yashop.middleware import get_request
@@ -130,7 +130,7 @@ class Article(MetaFieldsMixin, models.Model):
     blog = models.ForeignKey('blogs.Blog')
     body_html_t = TransWysiwygField(_('description'))
     created_at = models.DateTimeField(_('created at'), auto_now_add=True)
-    handle = HandleField(_('handle'), from_field='title', unique=False)
+    handle_t = TransHandleField(_('handle'), populate_from='title')
     image = models.ImageField(_('image'), blank=True, null=True, upload_to='blogs')
     published_at = models.DateTimeField(_('published at'), blank=True, null=True)
     summary_html_t = TransWysiwygField(_('summary'))
@@ -207,8 +207,8 @@ class Comment(models.Model):
     article = models.ForeignKey('blogs.Article')
     author = StringField(_('author'))
     blog = models.ForeignKey('blogs.Blog')
-    body_t = TransTextField(_('body'))
-    body_html_t = TransWysiwygField(_('body html'))
+    body = TextField(_('body'))
+    body_html = TextField(_('body html'))
     created_at = models.DateTimeField(_('created at'), auto_now_add=True)
     email = models.EmailField(_('email'), blank=True, null=True)
     ip = StringField(_('ip'))
