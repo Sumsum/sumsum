@@ -61,8 +61,9 @@ class ChoiceField(models.CharField):
 
     def __init__(self, *args, **kwargs):
         kwargs.setdefault('max_length', 50)
-        kwargs.setdefault('blank', True)
-        kwargs.setdefault('null', True)
+        required = kwargs.pop('required', True)
+        kwargs.setdefault('blank', not required)
+        kwargs.setdefault('null', not required)
         if 'default' not in kwargs and kwargs.get('choices'):
             kwargs['default'] = kwargs['choices'][0][0]
         super().__init__(*args, **kwargs)

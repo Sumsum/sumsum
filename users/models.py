@@ -61,7 +61,7 @@ class User(MetaFieldsMixin, AbstractBaseUser, PermissionsMixin):
     last_name = StringField(_('last name'))
     multipass_identifier = StringField(_('multipass identifier'))
     note = TextField(_('notes'), help_text=_('Enter any extra notes relating to this customer.'))
-    state = ChoiceField(_('state'), max_length=50, choices=STATE_CHOICES)  # maybe we need to sync this the is_active field
+    state = ChoiceField(_('state'), max_length=50, choices=STATE_CHOICES, required=False)  # maybe we need to sync this the is_active field
     tags = ArrayField(StringField(_('tag'), required=True), verbose_name=_('tags'), default=[])
     tax_exempt = models.BooleanField(_('customer is tax excempt'), default=False)
     updated_at = models.DateTimeField(_('updated at'), auto_now=True)

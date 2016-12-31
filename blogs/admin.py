@@ -1,11 +1,30 @@
-from django.contrib import admin
 from .models import Blog, Article, Comment
+from django.contrib import admin
+from django.db.models.expressions import RawSQL
 from django.utils.translation import ugettext_lazy as _
 
 
 @admin.register(Blog)
 class BlogAdmin(admin.ModelAdmin):
-    pass
+    fieldsets = (
+        (_('Blog details'), {
+            'fields': (
+                'title_t',
+                'feedburner_location',
+            )
+        }),
+        (_('Comments'), {
+            'fields': (
+                'commentable',
+            ),
+        }),
+        (_('Search engine listing preview'), {
+            'fields': (
+                'handle_t',
+            ),
+            'classes': ('collapse',)
+        }),
+    )
 
 
 class CommentInline(admin.StackedInline):
@@ -16,7 +35,9 @@ class CommentInline(admin.StackedInline):
 @admin.register(Article)
 class ArticleAdmin(admin.ModelAdmin):
     inlines = [CommentInline]
-
+    list_display = ['title', 'blog', 'user', 'published_at']
+    list_filter = ['user', 'blog']
+    search_fields = ['title_t']
     fieldsets = (
         (None, {
             'fields': (
@@ -30,14 +51,27 @@ class ArticleAdmin(admin.ModelAdmin):
             ),
             'classes': ('collapse',)
         }),
-        (_('visability'), {
+        (None, {
+            'fields': (
+                'user',
+                'blog',
+            ),
+        }),
+        (_('Visability'), {
             'fields': (
                 'published_at',
             ),
         }),
-        (_('organization'), {
+        (_('Organization'), {
             'fields': (
                 'tags_t',
             ),
+            'classes': ('collapse',)
+        }),
+        (_('Search engine listing preview'), {
+            'fields': (
+                'handle_t',
+            ),
+            'classes': ('collapse',)
         }),
     )

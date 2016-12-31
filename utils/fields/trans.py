@@ -18,11 +18,12 @@ __all__ = (
 
 
 def field_value(value, code):
+    if not value:
+        return None
     if code in value:
         return value[code]
     if settings.LANGUAGE_CODE in value:
         return value[settings.LANGUAGE_CODE]
-    return ''
 
 
 def valid_field_kwargs(field, kwargs):
@@ -185,14 +186,14 @@ class TransHandleField(TransBaseField):
         super().__init__(*args, **kwargs)
 
     def pre_save(self, obj, add):
-        value_t = self.value_from_object(obj)
+        value_t = self.value_from_object(obj) or {}
         handle_t = {}
         for code, name in settings.LANGUAGES:
             value = value_t.get(code, None)
             if add or not value:
                 value = field_value(getattr(obj, self.populate_from), code)
-                if value is None:
-                    continue
+            if value is None:
+                continue
             handle = slugify(value)[:(self.max_length - 4)]
             if self.unique_together:
                 model = obj.__class__
@@ -205,6 +206,8 @@ class TransHandleField(TransBaseField):
                     if field_name.endswith('_t'):
                         lookup = '{}__{}'.format(lookup, code)
                         value = field_value(value, code)
+                    if value is None:
+                        continue
                     qs = qs.filter(**{lookup: value})
                 if obj.pk:
                     qs = qs.exclude(pk=obj.pk)

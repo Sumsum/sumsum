@@ -2,16 +2,16 @@ import datetime
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from metafields.models import MetaFieldsMixin
-from utils.fields import StringField, TextField, ChoiceField, HandleField, TransStringField, TransWysiwygField, TransHandleField, TransTagField
+from utils.fields import StringField, TextField, ChoiceField, TransStringField, TransWysiwygField, TransHandleField, TransTagField
 from django.utils.functional import cached_property
 from utils.datastructures import List
 from yashop.middleware import get_request
 
 
 COMMENTABLE_CHOICES = (
-    ('no', _('No')),
-    ('moderate', _('Moderate')),
-    ('yes', _('Yes')),
+    ('no', _('Comments are disabled')),
+    ('moderate', _('Comments are allowed, pending moderation')),
+    ('yes', _('Comments are allowed, and are automatically published')),
 )
 
 STATUS_CHOICES = (
@@ -23,17 +23,16 @@ STATUS_CHOICES = (
 
 
 class Blog(MetaFieldsMixin, models.Model):
-    commentable = ChoiceField(_('commentable'), choices=COMMENTABLE_CHOICES)
+    commentable = ChoiceField(_('commentable'), choices=COMMENTABLE_CHOICES, help_text=_('Manage how comments are handled on this blog.'))
     created_at = models.DateTimeField(_('created at'), auto_now_add=True)
-    feedburner = models.NullBooleanField(_('feedburner'), default=None)
-    feedburner_location = models.URLField(_('feedburner location'), blank=True, null=True)
-    handle = HandleField(_('handle'), from_field='title', unique=False)
+    feedburner_location = models.URLField(_('feedburner url'), blank=True, null=True)
+    handle_t = TransHandleField(_('handle'), populate_from='title_t')
     tags_t = TransTagField(_('tag'))
     template_suffix = StringField(_('template suffix'))
     title_t = TransStringField(_('title'), required=True)
 
     class Meta:
-        ordering = ('handle',)
+        ordering = ('created_at',)
         verbose_name = _('blog')
         verbose_name_plural = _('blogs')
 
@@ -70,6 +69,11 @@ class Blog(MetaFieldsMixin, models.Model):
         Returns true if comments are enabled, or false if they are disabled.
         """
         return self.commentable != 'no'
+
+    @cached_property
+    def feedburner(self):
+        if self.feedburner_location:
+            return True
 
     def get_absolute_url(self):
         return self.url
@@ -128,12 +132,12 @@ class ArticleManager(models.Manager):
 class Article(MetaFieldsMixin, models.Model):
     user = models.ForeignKey('users.User', verbose_name=_('author'))
     blog = models.ForeignKey('blogs.Blog')
-    body_html_t = TransWysiwygField(_('description'))
+    body_html_t = TransWysiwygField(_('content'))
     created_at = models.DateTimeField(_('created at'), auto_now_add=True)
-    handle_t = TransHandleField(_('handle'), populate_from='title')
+    handle_t = TransHandleField(_('handle'), populate_from='title_t', unique_together=('handle_t', 'blog'))
     image = models.ImageField(_('image'), blank=True, null=True, upload_to='blogs')
     published_at = models.DateTimeField(_('published at'), blank=True, null=True)
-    summary_html_t = TransWysiwygField(_('summary'))
+    summary_html_t = TransWysiwygField(_('excerpt'))
     tags_t = TransTagField(_('tags'))
     template_suffix = StringField(_('template suffix'))
     title_t = TransStringField(_('title'), required=True)
@@ -145,7 +149,6 @@ class Article(MetaFieldsMixin, models.Model):
         ordering = ('-created_at',)
         verbose_name = _('article')
         verbose_name_plural = _('articles')
-        unique_together = ('blog', 'handle')
 
     def __str__(self):
         return self.title
