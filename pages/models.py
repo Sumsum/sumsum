@@ -1,3 +1,4 @@
+import datetime
 from django.db import models
 from django.db.models.expressions import RawSQL
 from django.utils.functional import cached_property
@@ -19,7 +20,7 @@ class Page(MetaFieldsMixin, models.Model):
     body_html_t = TransWysiwygField(_('description'))
     created_at = models.DateTimeField(_('created at'), auto_now_add=True)
     handle_t = TransHandleField(_('handle'), populate_from='title_t', unique_together=('handle_t', 'user'))
-    published_at = models.DateTimeField(_('published at'), blank=True, null=True)
+    published_at = models.DateTimeField(_('published at'), blank=True, null=True, default=datetime.datetime.now)
     shop = models.ForeignKey('shops.Shop', blank=True, null=True)
     template_suffix = StringField(_('template suffix'))
     title_t = TransStringField(_('title'), required=True)
