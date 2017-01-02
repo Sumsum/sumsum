@@ -1,10 +1,12 @@
+import bleach
 import datetime
+import markdown
 from django.db import models
+from django.utils.functional import cached_property
 from django.utils.translation import ugettext_lazy as _
 from metafields.models import MetaFieldsMixin
-from utils.fields import StringField, TextField, ChoiceField, TransStringField, TransWysiwygField, TransHandleField, TransTagField
-from django.utils.functional import cached_property
 from utils.datastructures import List
+from utils.fields import StringField, TextField, ChoiceField, TransStringField, TransWysiwygField, TransHandleField, TransTagField
 from yashop.middleware import get_request
 
 
@@ -32,7 +34,7 @@ class Blog(MetaFieldsMixin, models.Model):
     title_t = TransStringField(_('title'), required=True)
 
     class Meta:
-        ordering = ('created_at',)
+        ordering = ('title_t',)
         verbose_name = _('blog')
         verbose_name_plural = _('blogs')
 
@@ -209,10 +211,9 @@ class Article(MetaFieldsMixin, models.Model):
 class Comment(models.Model):
     article = models.ForeignKey('blogs.Article')
     author = StringField(_('author'))
-    blog = models.ForeignKey('blogs.Blog')
-    body = TextField(_('body'))
-    body_html = TextField(_('body html'))
-    created_at = models.DateTimeField(_('created at'), auto_now_add=True)
+    body = TextField(_('body'), help_text=_('Markdown of a comment.'))
+    body_html = TextField(_('body html'), editable=False)
+    created_at = models.DateTimeField(_('created at'), auto_now_add=True, editable=True)
     email = models.EmailField(_('email'), blank=True, null=True)
     ip = StringField(_('ip'))
     published_at = models.DateTimeField(_('published at'), blank=True, null=True)
@@ -231,9 +232,21 @@ class Comment(models.Model):
     def get_absolute_url(self):
         return self.url
 
+    @cached_property
+    def blog(self):
+        return self.article.blog
+
+    @cached_property
+    def blog_id(self):
+        return self.blog.pk
+
     @property
     def content(self):
         return self.body_html
+
+    def save(self, **kwargs):
+        self.body_html = bleach.clean(markdown.markdown(self.body))
+        super().save(**kwargs)
 
     @cached_property
     def url(self):

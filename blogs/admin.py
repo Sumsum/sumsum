@@ -1,11 +1,12 @@
 from .models import Blog, Article, Comment
 from django.contrib import admin
-from django.db.models.expressions import RawSQL
 from django.utils.translation import ugettext_lazy as _
 
 
 @admin.register(Blog)
 class BlogAdmin(admin.ModelAdmin):
+    list_display = ['title', 'commentable']
+    search_fields = ['title_t']
     fieldsets = (
         (_('Blog details'), {
             'fields': (
@@ -27,15 +28,20 @@ class BlogAdmin(admin.ModelAdmin):
     )
 
 
-class CommentInline(admin.StackedInline):
+class CommentInline(admin.TabularInline):
     model = Comment
     extra = 0
+    readonly_fields = ('created_at', 'body', 'summary')
+    fields = ('created_at', 'summary', 'status')
+
+    def summary(self, obj):
+        return '{} {}: {}'.format(obj.name, obj.email, obj.html)
 
 
 @admin.register(Article)
 class ArticleAdmin(admin.ModelAdmin):
     inlines = [CommentInline]
-    list_display = ['title', 'blog', 'user', 'published_at']
+    list_display = ['title_t', 'blog', 'user', 'published_at']
     list_filter = ['user', 'blog']
     search_fields = ['title_t']
     fieldsets = (
@@ -75,3 +81,35 @@ class ArticleAdmin(admin.ModelAdmin):
             'classes': ('collapse',)
         }),
     )
+
+
+@admin.register(Comment)
+class CommentAdmin(admin.ModelAdmin):
+    list_display = ['author', 'summary', 'status']
+    list_filter = ['article__blog', 'article']
+    search_fields = ['author', 'body', 'email', 'article__title']
+    readonly_fields = ['created_at', 'updated_at']
+    fieldsets = (
+        (None, {
+            'fields': (
+                'created_at',
+                'article',
+                'author',
+                'email',
+                'body',
+                'status',
+            )
+        }),
+        (_('Details'), {
+            'fields': (
+                'ip',
+                'user_agent',
+                'updated_at',
+                'published_at',
+            ),
+            'classes': ('collapse',),
+        }),
+    )
+
+    def summary(self, obj):
+        return '{} {}: {}'.format(obj.name, obj.email, obj.html)
