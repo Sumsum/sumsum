@@ -42,12 +42,6 @@ class ProductImage(MetaFieldsMixin, models.Model):
     def get_absolute_url(self):
         return self.file.url
 
-    def metafields(self):
-        data = {}
-        for k, v in self.metafields_hstore.items():
-            head, tail = k.split('.', 1)
-
-
     @cached_property
     def src(self):
         """

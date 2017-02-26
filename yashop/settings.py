@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'debug_toolbar',
     'django_select2',
     'timezone_field',
+    'rest_framework',
 
     'customers',
     'users',
