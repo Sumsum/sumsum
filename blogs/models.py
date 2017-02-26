@@ -213,7 +213,7 @@ class Comment(models.Model):
     author = StringField(_('author'))
     body = TextField(_('body'), help_text=_('Markdown of a comment.'))
     body_html = TextField(_('body html'), editable=False)
-    created_at = models.DateTimeField(_('created at'), auto_now_add=True, editable=True)
+    created_at = models.DateTimeField(_('created at'), auto_now_add=True)
     email = models.EmailField(_('email'), blank=True, null=True)
     ip = StringField(_('ip'))
     published_at = models.DateTimeField(_('published at'), blank=True, null=True)
