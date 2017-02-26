@@ -22,7 +22,6 @@ class PageAdmin(admin.ModelAdmin):
             'fields': (
                 'metafields_json',
             ),
-            #'classes': ('collapse',)
         }),
         (_('Search engine listing preview'), {
             'fields': (

@@ -1,0 +1,26 @@
+{
+  "name": "yashop",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs",
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sorl/yashop.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sorl/yashop/issues"
+  },
+  "homepage": "https://github.com/sorl/yashop#readme",
+  "devDependencies": {
+    "sir-trevor": "^0.6.4"
+  }
+}
