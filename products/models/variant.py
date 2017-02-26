@@ -108,7 +108,7 @@ class ProductVariant(MetaFieldsMixin, models.Model):
         Returns the concatenation of all the variant's option values, joined by
         / characters.
         """
-        return ' / '.join(filter(None [self.option1, self.option2, self.option3]))
+        return ' / '.join(filter(None, [self.option1, self.option2, self.option3]))
 
     @cached_property
     def url(self):

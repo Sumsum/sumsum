@@ -6,7 +6,7 @@ from rest_framework import routers
 from products.api import ProductViewSet
 
 
-router = routers.DefaultRouter()
+router = routers.DefaultRouter(trailing_slash=False)
 router.register(r'products', ProductViewSet)
 
 

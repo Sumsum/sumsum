@@ -5,7 +5,7 @@ from rest_framework import serializers, viewsets
 class ProductSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Product
-        fields = ('title', 'type', 'vendor')
+        fields = ('id', 'title', 'type', 'vendor')
 
 
 class ProductViewSet(viewsets.ModelViewSet):
