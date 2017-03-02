@@ -31,6 +31,7 @@ admin.site.site_header = 'YAShop Admin'
 
 @admin.register(Group)
 class GroupAdmin(admin.ModelAdmin):
+    icon = '<i class="material-icons">people</i>'
     search_fields = ('name',)
     ordering = ('name',)
     filter_horizontal = ('permissions',)
@@ -47,6 +48,7 @@ class GroupAdmin(admin.ModelAdmin):
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
+    icon = '<i class="material-icons">account_circle</i>'
     add_form_template = 'admin/auth/user/add_form.html'
     change_user_password_template = None
     readonly_fields = ('last_login', 'created_at',)

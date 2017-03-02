@@ -59,7 +59,7 @@ class ProductVariantInline(admin.StackedInline):
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    icon = '<i class="material-icons">bookmark</i>'
+    icon = '<i class="material-icons">local_offer</i>'
     save_on_top = True
     list_fields = ('title', 'product_type', 'vendor', 'published_at', 'updated_at')
     search_fields = ('title', 'product_type', 'vendor')
@@ -72,7 +72,7 @@ class ProductAdmin(admin.ModelAdmin):
                 'body_html',
             )
         }),
-        (_('visability'), {
+        (_('Visability'), {
             'fields': (
                 'published_at',
                 'published_scope',

@@ -5,6 +5,7 @@ from django.utils.translation import ugettext_lazy as _
 
 @admin.register(Blog)
 class BlogAdmin(admin.ModelAdmin):
+    icon = '<i class="material-icons">rss_feed</i>'
     list_display = ['title', 'commentable']
     search_fields = ['title_t']
     fieldsets = (
@@ -40,6 +41,7 @@ class CommentInline(admin.TabularInline):
 
 @admin.register(Article)
 class ArticleAdmin(admin.ModelAdmin):
+    icon = '<i class="material-icons">description</i>'
     inlines = [CommentInline]
     list_display = ['title_t', 'blog', 'user', 'published_at']
     list_filter = ['user', 'blog']
@@ -85,6 +87,7 @@ class ArticleAdmin(admin.ModelAdmin):
 
 @admin.register(Comment)
 class CommentAdmin(admin.ModelAdmin):
+    icon = '<i class="material-icons">comment</i>'
     list_display = ['author', 'summary', 'status']
     list_filter = ['article__blog', 'article']
     search_fields = ['author', 'body', 'email', 'article__title']

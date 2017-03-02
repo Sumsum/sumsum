@@ -5,6 +5,7 @@ from django.utils.translation import ugettext_lazy as _
 
 @admin.register(Customer)
 class CustomerAdmin(admin.ModelAdmin):
+    icon = '<i class="material-icons">contacts</i>'
     fieldsets = (
         (_('Customer overview'), {
             'fields': (
@@ -56,4 +57,5 @@ class CustomerAdmin(admin.ModelAdmin):
 
 @admin.register(CustomerAddress)
 class CustomerAddressAdmin(admin.ModelAdmin):
+    icon = '<i class="material-icons">contact_mail</i>'
     pass
