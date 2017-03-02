@@ -12,6 +12,7 @@ from utils.text import slugify
 
 
 __all__ = (
+    'TransWidget', 'TransFormField',
     'TransStringField', 'TransHandleField', 'TransTextField',
     'TransWysiwygField', 'TransTagField'
 )

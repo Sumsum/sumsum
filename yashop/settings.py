@@ -25,6 +25,9 @@ DATABASES = {'default': {
     'NAME': 'yashop',
 }}
 INSTALLED_APPS = [
+    'material.theme.blue',
+    'material',
+    'material.admin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
