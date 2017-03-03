@@ -1,6 +1,8 @@
 .redactor-box { 
   float: left;
   margin-bottom: 3px;
+  margin-top: 6px;
+  width: 80%;
 }
 .full-width .redactor-box {
   max-width: none;

@@ -1,9 +1,9 @@
-<div style="margin-left:170px">
+<div>
   {% for label, field in rows %}
-    <div style="margin-bottom: 1em">
+    <div>
       {{ field }}
       {% if rows|length > 1 %}
-        <p class="help" style="padding:0;margin:0">{{ label }}</p>
+        <small class="help-block">{{ label }}</small>
       {% endif %}
     </div
   {% endfor %}
