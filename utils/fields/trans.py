@@ -40,7 +40,7 @@ def valid_field_kwargs(field, kwargs):
 
 
 class TransWidget(forms.MultiWidget):
-    template = 'utils/trans_widget.html'
+    template_name = 'utils/trans_widget.html'
 
     def __init__(self, widget):
         widgets = (widget,) * len(settings.LANGUAGES)
@@ -48,16 +48,13 @@ class TransWidget(forms.MultiWidget):
 
     def decompress(self, value):
         value = value or {}
-        data_list = []
-        for code, lang in settings.LANGUAGES:
-            data_list.append(value.get(code, None))
-        return data_list
+        return [value.get(code) for code, name in settings.LANGUAGES]
 
-    def format_output(self, rendered_widgets):
+    def get_context(self, name, value, attrs):
+        context = super().get_context(name, value, attrs)
         labels = [name for code, name in settings.LANGUAGES]
-        rows = list(zip(labels, rendered_widgets))
-        html = render_to_string(self.template, {'rows': rows})
-        return mark_safe(html)
+        context['rows'] = list(zip(labels, context['widget']['subwidgets']))
+        return context
 
 
 class TransFormField(forms.MultiValueField):
@@ -89,7 +86,7 @@ class TransFormField(forms.MultiValueField):
         data_list = data_list or []
         value = {}
         for j, v in enumerate(data_list):
-            code = settings.LANGUAGES[j][0]
+            code, __ = settings.LANGUAGES[j]
             value[code] = v
         return value
 

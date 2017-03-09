@@ -1,10 +1,6 @@
 <div>
-  {% for label, field in rows %}
-    <div>
-      {{ field }}
-      {% if rows|length > 1 %}
-        <small class="help-block">{{ label }}</small>
-      {% endif %}
-    </div
+  {% for label, widget in rows %}
+    {% include widget.template_name %}
+    <small class="help-block">{{ label }}</small> 
   {% endfor %}
 </div>
