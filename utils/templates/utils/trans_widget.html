@@ -1,6 +1,10 @@
-<div>
+<div class="trans-widget">
   {% for label, widget in rows %}
-    {% include widget.template_name %}
-    <small class="help-block">{{ label }}</small> 
+    <div class="language-widget">
+      <div>
+        {% include widget.template_name %}
+      </div>
+      <small class="help-block">{{ label }}</small> 
+    </div>
   {% endfor %}
 </div>
