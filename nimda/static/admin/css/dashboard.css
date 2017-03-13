@@ -1,0 +1,247 @@
+@charset "UTF-8";
+@import url("//fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700");
+@import url("//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css");
+html, body {
+  min-height: 100%;
+  -webkit-font-smoothing: antialiased;
+  margin: 0;
+  padding: 0;
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+  -moz-osx-font-smoothing: grayscale; }
+
+input, select {
+  font-family: inherit;
+  font-size: inherit; }
+
+::selection {
+  background: #333;
+  /* WebKit/Blink Browsers */
+  color: #fff; }
+
+* {
+  box-sizing: border-box; }
+
+th {
+  font-weight: inherit; }
+
+/* DASHBOARD */
+.dashboard .module h2 {
+  padding: 6px 10px; }
+
+.dashboard .module table th {
+  width: 100%; }
+
+.dashboard .module table td {
+  white-space: nowrap; }
+
+.dashboard .module table td a {
+  display: block;
+  padding-right: .6em; }
+
+.dashboard .module {
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+  overflow: hidden; }
+  .dashboard .module td, .dashboard .module th {
+    padding: 10px;
+    position: relative; }
+    .dashboard .module td .addlink, .dashboard .module th .addlink {
+      padding-right: 0; }
+  .dashboard .module caption, .dashboard .module h2 {
+    background-color: #FBFBFB; }
+
+/* RECENT ACTIONS MODULE */
+.module ul.actionlist {
+  margin-left: 0;
+  margin-bottom: 0;
+  padding: 5px 0 0 0; }
+
+ul.actionlist li {
+  list-style-type: none;
+  margin-bottom: 5px;
+  padding: 0 10px 5px 26px;
+  line-height: 1.25;
+  border-bottom: #eee 1px solid;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -o-text-overflow: ellipsis; }
+  ul.actionlist li:before {
+    color: #ccc; }
+  ul.actionlist li:last-of-type {
+    border-bottom: 0;
+    padding-bottom: 0; }
+
+/* Icons */
+.module caption:before {
+  color: #ccc; }
+
+[class^="app-"] caption {
+  padding-left: 31px; }
+  [class^="app-"] caption:before {
+    position: absolute;
+    margin-top: 4px;
+    margin-left: -19px;
+    content: "";
+    font: normal normal normal 14px/1 FontAwesome;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    transform: translate(0, 0);
+    font-size: 13px; }
+
+.app-auth caption {
+  padding-left: 31px; }
+  .app-auth caption:before {
+    position: absolute;
+    margin-top: 4px;
+    margin-left: -19px;
+    content: "";
+    font: normal normal normal 14px/1 FontAwesome;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    transform: translate(0, 0);
+    font-size: 15px; }
+
+.app-carts caption {
+  padding-left: 31px; }
+  .app-carts caption:before {
+    position: absolute;
+    margin-top: 4px;
+    margin-left: -20px;
+    content: "";
+    font: normal normal normal 14px/1 FontAwesome;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    transform: translate(0, 0);
+    font-size: 13px; }
+
+.app-orders caption {
+  padding-left: 31px; }
+  .app-orders caption:before {
+    position: absolute;
+    margin-top: 4px;
+    margin-left: -19px;
+    content: "";
+    font: normal normal normal 14px/1 FontAwesome;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    transform: translate(0, 0);
+    font-size: 12px; }
+
+.app-products caption {
+  padding-left: 31px; }
+  .app-products caption:before {
+    position: absolute;
+    margin-top: 4px;
+    margin-left: -19px;
+    content: "";
+    font: normal normal normal 14px/1 FontAwesome;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    transform: translate(0, 0);
+    font-size: 13px; }
+
+.app-pages caption {
+  padding-left: 31px; }
+  .app-pages caption:before {
+    position: absolute;
+    margin-top: 4px;
+    margin-left: -19px;
+    content: "";
+    font: normal normal normal 14px/1 FontAwesome;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    transform: translate(0, 0);
+    font-size: 13px; }
+
+.app-staff caption {
+  padding-left: 31px; }
+  .app-staff caption:before {
+    position: absolute;
+    margin-top: 4px;
+    margin-left: -19px;
+    content: "";
+    font: normal normal normal 14px/1 FontAwesome;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    transform: translate(0, 0);
+    font-size: 13px; }
+
+.app-blog caption, .app-news caption {
+  padding-left: 31px; }
+  .app-blog caption:before, .app-news caption:before {
+    position: absolute;
+    margin-top: 5px;
+    margin-left: -19px;
+    content: "";
+    font: normal normal normal 14px/1 FontAwesome;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    transform: translate(0, 0);
+    font-size: 13px; }
+
+.app-case caption, .app-cases caption, .app-showcase caption {
+  padding-left: 31px; }
+  .app-case caption:before, .app-cases caption:before, .app-showcase caption:before {
+    position: absolute;
+    margin-top: 3px;
+    margin-left: -19px;
+    content: "";
+    font: normal normal normal 14px/1 FontAwesome;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    transform: translate(0, 0);
+    font-size: 15px; }
+
+.app-jobs caption {
+  padding-left: 31px; }
+  .app-jobs caption:before {
+    position: absolute;
+    margin-top: 5px;
+    margin-left: -19px;
+    content: "";
+    font: normal normal normal 14px/1 FontAwesome;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    transform: translate(0, 0);
+    font-size: 13px; }
+
+.app-redirects caption {
+  padding-left: 31px; }
+  .app-redirects caption:before {
+    position: absolute;
+    margin-top: 4px;
+    margin-left: -19px;
+    content: "";
+    font: normal normal normal 14px/1 FontAwesome;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    transform: translate(0, 0);
+    font-size: 13px; }
+
+.app-startpage caption {
+  padding-left: 31px; }
+  .app-startpage caption:before {
+    position: absolute;
+    margin-top: 3px;
+    margin-left: -19px;
+    content: "";
+    font: normal normal normal 14px/1 FontAwesome;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    transform: translate(0, 0);
+    font-size: 15px; }
+
+/*# sourceMappingURL=dashboard.css.map */

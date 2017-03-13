@@ -1,0 +1,16 @@
+{% extends "admin/change_form.html" %}
+{% load i18n admin_urls admin_static admin_modify nimda_tags %}
+
+
+{% block extrahead %}
+  {% original %}
+  <script type="text/javascript" src="{% url 'admin:jsi18n' %}"></script>
+{% endblock %}
+
+
+{% block content %}
+  <div class="margin-bottom">
+      <a class="btn btn-default btn-flat" href="../delete/">{% trans "Delete" %}</a>
+  </div>
+  <product></product>
+{% endblock %}

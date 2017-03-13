@@ -1,0 +1,182 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_urls static admin_modify yadmin_tags %}
+
+{% block extrahead %}{{ block.super }}
+  <script type="text/javascript" src="{% url 'admin:jsi18n' %}"></script>
+  {{ media }}
+{% endblock %}
+
+{% block bodyclass %}{{ block.super }} app-{{ opts.app_label }} model-{{ opts.model_name }} change-form{% endblock %}
+
+{% block pretitle %}
+  {% block object-tools %}
+    {% if change and not is_popup %}
+      {% block object-tools-items %}
+        {% if has_absolute_url %}<a href="{{ absolute_url }}" class="viewsitelink">{% trans "View on site" %}</a>{% endif %}
+      {% endblock %}
+    {% endif %}
+  {% endblock %}
+{% endblock %}
+
+{% if not is_popup %}
+  {% block breadcrumbs %}
+    <ol class="breadcrumb">
+      <li><a href="{% url 'admin:index' %}"><i class="fa fa-dashboard"></i> {% trans 'Home' %}</a></li>
+      <li>{% if has_change_permission %}<a href="{% url opts|admin_urlname:'changelist' %}">{{ opts.verbose_name_plural|capfirst }}</a>{% else %}{{ cl.opts.verbose_name_plural|capfirst }}{% endif %}</li>
+      <li class="active">{% if add %}{% trans 'Add' %} {{ opts.verbose_name }}{% else %}{{ original|truncatewords:"18" }}{% endif %}</li>
+    </ol>
+  {% endblock %}
+{% endif %}
+
+{% block content_title %}{{ title }}{% if original %}: {{ original|truncatewords:"18" }}{% endif %}{% endblock %}
+
+{% block content %}
+  {% if errors %}
+    <div>
+      <div class="flat alert alert-error alert-dismissible">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+        {% if errors|length == 1 %}{% trans "Please correct the error below." %}{% else %}{% trans "Please correct the errors below." %}{% endif %}
+        {{ adminform.form.non_field_errors }}
+      </div>
+    </div>
+  {% endif %}
+
+  <form {% if has_file_field %}enctype="multipart/form-data" {% endif %}action="{{ form_url }}" method="post" id="{{ opts.model_name }}_form" novalidate>{% csrf_token %}
+    {% block form_top %}{% endblock %}
+
+    {% if is_popup %}
+      <input type="hidden" name="{{ is_popup_var }}" value="1">
+    {% endif %}
+
+    {% if to_field %}
+      <input type="hidden" name="{{ to_field_var }}" value="{{ to_field }}">
+    {% endif %}
+
+    {% if save_on_top %}
+      <div class="margin-bottom">
+        {% block submit_buttons_top %}
+          {% submit_row %}
+        {% endblock %}
+      </div>
+    {% endif %}
+
+    {% block field_sets %}
+      {% for fieldset in adminform %}
+        {% include "admin/includes/fieldset.html" %}
+      {% endfor %}
+    {% endblock %}
+
+    {% block after_field_sets %}{% endblock %}
+
+    {% block inline_field_sets %}
+      {% for inline_admin_formset in inline_admin_formsets %}
+        {% include inline_admin_formset.opts.template %}
+      {% endfor %}
+    {% endblock %}
+
+    {% block after_related_objects %}{% endblock %}
+
+
+    <div class="clearfix">
+      {% block submit_buttons_bottom %}
+        {% submit_row %}
+      {% endblock %}
+    </div>
+  </form>
+
+  {% prepopulated_fields_js %}
+  <script>
+    ;(function() {
+      function updateLinks() {
+        var self = $(this);
+        var siblings = self.parent().prevAll('.change-related', '.delete-related')
+        var value = self.val()
+        if (value) {
+          siblings.each(function() {
+            var el = $(this)
+            el.attr('href', el.attr('data-href-template').replace('__fk__', value))
+          })
+        } else {
+          siblings.removeAttr('href')
+        }
+      }
+      var content = $('section.content')
+      content.on('change', '.related-widget-wrapper select', updateLinks)
+      content.find('.related-widget-wrapper select').each(updateLinks)
+      content.on('click', '.related-widget-wrapper-link', function(e) {
+        if (this.href) {
+          showRelatedObjectPopup(this)
+        }
+        e.preventDefault()
+      })
+    }())
+
+    $('.add-another').click(function(e) {
+      e.preventDefault()
+      showAddAnotherPopup(this)
+    })
+    $('.related-lookup').click(function(e) {
+      e.preventDefault()
+      showRelatedObjectLookupPopup(this)
+    })
+
+    {% if adminform and add %}
+      $('form#{{ opts.model_name }}_form :input:visible:enabled:first').focus()
+    {% endif %}
+
+  </script>
+
+  {% block admin_change_form_document_ready %}
+  {% endblock %}
+
+{% endblock %}
+
+
+{% comment %}
+{% block contentXXX %}<div id="content-main">
+<div>
+{% if is_popup %}<input type="hidden" name="{{ is_popup_var }}" value="1" />{% endif %}
+{% if to_field %}<input type="hidden" name="{{ to_field_var }}" value="{{ to_field }}" />{% endif %}
+{% if save_on_top %}{% block submit_buttons_top %}{% submit_row %}{% endblock %}{% endif %}
+{% if errors %}
+    <p class="errornote">
+    {% if errors|length == 1 %}{% trans "Please correct the error below." %}{% else %}{% trans "Please correct the errors below." %}{% endif %}
+    </p>
+    {{ adminform.form.non_field_errors }}
+{% endif %}
+
+{% block field_sets %}
+{% for fieldset in adminform %}
+  {% include "admin/includes/fieldset.html" %}
+{% endfor %}
+{% endblock %}
+
+{% block after_field_sets %}{% endblock %}
+
+{% block inline_field_sets %}
+{% for inline_admin_formset in inline_admin_formsets %}
+    {% include inline_admin_formset.opts.template %}
+{% endfor %}
+{% endblock %}
+
+{% block after_related_objects %}{% endblock %}
+
+{% block submit_buttons_bottom %}{% submit_row %}{% endblock %}
+
+{% block admin_change_form_document_ready %}
+    <script type="text/javascript"
+            id="django-admin-form-add-constants"
+            src="{% static 'admin/js/change_form.js' %}"
+            {% if adminform and add %}
+                data-model-name="{{ opts.model_name }}"
+            {% endif %}>
+    </script>
+{% endblock %}
+
+{# JavaScript for prepopulated fields #}
+{% prepopulated_fields_js %}
+
+</div>
+</form></div>
+{% endblock %}
+{% endcomment %}

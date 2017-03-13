@@ -1,0 +1,23 @@
+{% load i18n admin_static %}
+
+{% if cl.search_fields %}
+<form action="" method="get" style="margin-bottom: 5px">
+	<div class="input-group input-group-sm">
+   	<input class="form-control" type="text" name="{{ search_var }}" value="{{ cl.query }}" placeholder="{% trans 'Search' %}">
+		<span class="input-group-btn">
+    	<button type="submit" class="btn btn-flat btn-default"><i class="fa fa-search"></i></button>
+     </span>
+		{% for pair in cl.params.items %}
+		    {% ifnotequal pair.0 search_var %}<input type="hidden" name="{{ pair.0 }}" value="{{ pair.1 }}"/>{% endifnotequal %}
+		{% endfor %}
+	</div>
+</form>
+{% endif %}
+
+{% if show_result_count %}
+	<div>
+		{% blocktrans count counter=cl.result_count %}{{ counter }} match{% plural %}{{ counter }} matches{% endblocktrans %}
+		{% if cl.show_full_result_count %}{% blocktrans with full_result_count=cl.full_result_count %}of {{ full_result_count }}{% endblocktrans %}{% endif %}.
+		<a href="?{% if cl.is_popup %}_popup=1{% endif %}">{% trans "Show all" %}</a>
+	</div>
+{% endif %}

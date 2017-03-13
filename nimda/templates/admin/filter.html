@@ -1,0 +1,11 @@
+{% load i18n %}
+<div class="col-xs-3" style="margin-bottom: 8px;">
+<label style="margin:5px 0 0 0;font-weight:normal;text-transform:uppercase;font-size:11px;letter-spacing: 1px;" for="select-{{ title|slugify }}">{% blocktrans with filter_title=title|capfirst %} {{ filter_title }} {% endblocktrans %}</label>
+<select class="form-control" style="height:26px" name="{{ title|slugify }}" id="select-{{ title|slugify }}" onChange="window.document.location.href=this.options[this.selectedIndex].value;">
+{% for choice in choices %}
+    <!-- <li{% if choice.selected %} class="selected"{% endif %}> -->
+    <option value="{{ choice.query_string|iriencode }}" {% if choice.selected %}selected{% endif %}>{% if forloop.counter == 1 %}- - -{% else %}{{ choice.display }}{% endif %}</option>
+    <!-- <a href="{{ choice.query_string|iriencode }}">{{ choice.display }}</a> -->
+{% endfor %}
+</select>
+</div>

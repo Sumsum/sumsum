@@ -1,0 +1,15 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_static yadmin_tags %}
+
+
+{% block breadcrumbs %}
+  <ol class="breadcrumb">
+    <li><a href="{% url 'admin:index' %}"><i class="fa fa-dashboard"></i> {% trans 'Home' %}</a></li>
+  </ol>
+{% endblock %}
+
+{% block content %}
+  {{ block.super }}
+  {% include 'admin/includes/dashboard_example.html' %}
+{% endblock %}
+

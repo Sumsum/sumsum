@@ -1,0 +1,38 @@
+{% extends 'admin/change_list.html' %}
+
+{% block extrastyle %}
+  {{ block.super }}
+  <style>
+    th.column-is_in_use,
+    td.field-is_in_use {
+      display: none;
+    }
+    body.product-images th.column-is_in_use,
+    body.product-images td.field-is_in_use {
+      display: table-cell;
+    }
+  </style>
+{% endblock %}
+
+{% block extrahead %}
+  {{ block.super }}
+  <script>
+  $(function() {
+    var pimval = $('select[name="product-image"]').val()
+    if ( pimval.indexOf('pim=only') > -1) {
+      $('body').addClass('product-images')
+    }
+  })
+  </script>
+{% endblock %}
+
+{% block content %}
+<script>
+</script>
+<div class="box">
+  <div class="box-body">
+    <image-list-dropzone></image-list-dropzone>
+  </div>
+</div>
+{{ block.super }}
+{% endblock %}

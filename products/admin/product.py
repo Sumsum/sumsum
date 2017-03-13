@@ -59,7 +59,7 @@ class ProductVariantInline(admin.StackedInline):
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    icon = '<i class="material-icons">local_offer</i>'
+    icon = '<i class="fa fa-tags" aria-hidden="true"></i>'
     save_on_top = True
     list_fields = ('title', 'product_type', 'vendor', 'published_at', 'updated_at')
     search_fields = ('title', 'product_type', 'vendor')
