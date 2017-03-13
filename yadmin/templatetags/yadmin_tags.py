@@ -70,26 +70,22 @@ def original(context):
 
 @register.filter
 def label_tag(field):
-    if 'label' in field.field:
-        # read only field
-        contents = format_html('<label>{}</label>', field.field['label'])
+    contents = field.field.label
+    widget = field.field.field.widget
+    id_ = widget.attrs.get('id') or field.field.auto_id
+    if id_:
+        attrs = {}
+        css_classes = []
+        id_for_label = widget.id_for_label(id_)
+        if id_for_label:
+            attrs['for'] = id_for_label
+        if field.field.field.required:
+            css_classes.append('required')
+        attrs['class'] = ' '.join(css_classes)
+        attrs = flatatt(attrs)
+        contents = format_html('<label{}>{}</label>', attrs, contents)
     else:
-        contents = field.field.label
-        widget = field.field.field.widget
-        id_ = widget.attrs.get('id') or field.field.auto_id
-        if id_:
-            attrs = {}
-            css_classes = []
-            id_for_label = widget.id_for_label(id_)
-            if id_for_label:
-                attrs['for'] = id_for_label
-            if field.field.field.required:
-                css_classes.append('required')
-            attrs['class'] = ' '.join(css_classes)
-            attrs = flatatt(attrs)
-            contents = format_html('<label{}>{}</label>', attrs, contents)
-        else:
-            contents = conditional_escape(contents)
+        contents = conditional_escape(contents)
     return mark_safe(contents)
 
 
