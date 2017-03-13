@@ -10,16 +10,7 @@ var config = {
       'select2',
       'bootstrap',
       './src/django',
-      './src/sirtrevor/image-picker.js',
-      './src/sirtrevor/image-picker.css',
-      'vue',
-      'vuex',
-      'sortablejs',
-      'dropzone',
-      'dropzone/dist/dropzone.css', // messes things up
-      'sir-trevor',
-      'sir-trevor/build/sir-trevor.css',
-      'ionicons/css/ionicons.css',
+      //'ionicons/css/ionicons.css',
       'lodash'
     ]
   },
@@ -29,16 +20,20 @@ var config = {
     filename: '[name].js'
   },
   module: {
+    rules: [{
+      test: require.resolve('jquery'),
+      use: [{
+        loader: 'expose-loader',
+        options: 'jQuery'
+      },{
+        loader: 'expose-loader',
+        options: '$'
+      }]
+    }],
     loaders: [
-      { test: require.resolve("jquery"), loader: "expose?$!expose?jQuery" },
       {
         test: /\.js$/,
-        loader: 'babel',
-        exclude: /node_modules|vue\/dist|vue-hot-reload-api|vue-loader/
-      },
-      {
-        test: /\.vue$/,
-        loader: 'vue'
+        loader: 'babel-loader'
       },
       {
         test: /\.(eot|svg|ttf|woff)/,
@@ -57,7 +52,7 @@ var config = {
     ]
   },
   plugins: [
-    new webpack.optimize.CommonsChunkPlugin('vendor', 'vendor.bundle.js'),
+    new webpack.optimize.CommonsChunkPlugin({ name: 'vendor', filename: 'vendor.bundle.js' })
     //new ExtractTextPlugin('[name].css')
   ]
 }

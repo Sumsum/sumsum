@@ -12,8 +12,8 @@ from django.forms.utils import flatatt
 from django.utils.html import conditional_escape, format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _
-from nimda.base import NimdaException
 from rest_framework import serializers
+from django.contrib import admin
 
 
 register = template.Library()
@@ -70,26 +70,22 @@ def original(context):
 
 @register.filter
 def label_tag(field):
-    if 'label' in field.field:
-        # read only field
-        contents = format_html('<label>{}</label>', field.field['label'])
+    contents = field.field.label
+    widget = field.field.field.widget
+    id_ = widget.attrs.get('id') or field.field.auto_id
+    if id_:
+        attrs = {}
+        css_classes = []
+        id_for_label = widget.id_for_label(id_)
+        if id_for_label:
+            attrs['for'] = id_for_label
+        if field.field.field.required:
+            css_classes.append('required')
+        attrs['class'] = ' '.join(css_classes)
+        attrs = flatatt(attrs)
+        contents = format_html('<label{}>{}</label>', attrs, contents)
     else:
-        contents = field.field.label
-        widget = field.field.field.widget
-        id_ = widget.attrs.get('id') or field.field.auto_id
-        if id_:
-            attrs = {}
-            css_classes = []
-            id_for_label = widget.id_for_label(id_)
-            if id_for_label:
-                attrs['for'] = id_for_label
-            if field.field.field.required:
-                css_classes.append('required')
-            attrs['class'] = ' '.join(css_classes)
-            attrs = flatatt(attrs)
-            contents = format_html('<label{}>{}</label>', attrs, contents)
-        else:
-            contents = conditional_escape(contents)
+        contents = conditional_escape(contents)
     return mark_safe(contents)
 
 
@@ -129,23 +125,30 @@ def inline_td_classes(field):
 
 @register.inclusion_tag('admin/includes/sidebar_menu.html', takes_context=True)
 def sidebar_menu(context):
-    if 'app_list' in context:
-        available_apps = context['app_list']
-    elif 'available_apps' in context:
-        available_apps = context['available_apps']
-    elif 'request' in context:
-        # big fat disclaimer, this will only work with default site
-        from django.contrib.admin.sites import site
-        res = site.index(context['request'])
-        available_apps = res.context_data['app_list']
-    else:
-        raise NimdaException(
-            'Cannot find app list. Add '
-            '"django.template.context_processors.request" to you list of '
-            'context context_processors to use the default admin site '
-            'or better yet use nimda.base.NimdaSiteMixin for your admin site '
-            'class.')
-    return {'available_apps': available_apps}
+    registry = {}
+    for model, model_admin in admin.site._registry.items():
+        app_label = model._meta.app_label
+        object_name = model._meta.object_name
+        registry['{}.{}'.format(app_label, object_name)] = model_admin
+
+    app_list = []
+    for app in context['available_apps']:
+        app_config = apps.get_app_config(app['app_label'])
+        if hasattr(app_config, 'icon'):
+            app['icon'] = app_config.icon
+        else:
+            app['icon'] = '<i class="fa fa-folder" aria-hidden="true"></i>'
+        models = []
+        for model in app['models']:
+            admin_model = registry['{}.{}'.format(app['app_label'], model['object_name'])]
+            if hasattr(admin_model, 'icon'):
+                model['icon'] = admin_model.icon
+            else:
+                model['icon'] = '<i class="fa fa-folder" aria-hidden="true"></i>'
+            models.append(model)
+        app['models'] = models
+        app_list.append(app)
+    return {'app_list': app_list}
 
 
 @register.inclusion_tag('admin/includes/model_summary.html', takes_context=True)

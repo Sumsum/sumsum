@@ -4,7 +4,7 @@
     <div class="input-group">
       {% for field in action_form %}{{ field }}{% endfor %}
       <span class="input-group-btn">
-        <button type="submit" class="btn btn-info btn-flat" title="{% trans "Run the selected action" %}" name="index" value="{{ action_index|default:0 }}">{% trans "Go" %}</button>
+        <button type="submit" class="btn btn-primary btn-flat" title="{% trans "Run the selected action" %}" name="index" value="{{ action_index|default:0 }}">{% trans "Go" %}</button>
       </span>
     </div>
     {% if actions_selection_counter %}
@@ -19,10 +19,3 @@
     {% endif %}
   </div>
 </div>
-
-<style>
-  .actions .action-counter { display:block;margin-top: 7px }
-  .actions .all { display:block }
-  .actions .question { display:block }
-  .actions .clear { display:block }
-</style>

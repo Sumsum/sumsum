@@ -25,7 +25,7 @@ DATABASES = {'default': {
     'NAME': 'yashop',
 }}
 INSTALLED_APPS = [
-    'yadmin',
+    'nimda',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

@@ -2,7 +2,6 @@
 {% load i18n admin_urls admin_static admin_modify nimda_tags %}
 
 {% block extrahead %}{{ block.super }}
-  {% original %}
   <script type="text/javascript" src="{% url 'admin:jsi18n' %}"></script>
   {{ media }}
 {% endblock %}

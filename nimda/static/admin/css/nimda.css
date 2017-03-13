@@ -176,5 +176,9 @@ table.orderable-initalized .order-cell, body > tr > td.order-cell {
 .errorlist li {
   color: #e44158; }
 
-/*# sourceMappingURL=nimda.css.map */
+.actions .action-counter { display:block;margin-top: 7px }
+.actions .all { display:block }
+.actions .question { display:block }
+.actions .clear { display:block }
+
 

@@ -31,7 +31,7 @@
           {% else %}
             {% if field.is_readonly %}
               <div class="form-group">
-                {{ field|label_tag }}
+                <label>{{ field.field.label }}</label>
                 <div>
                   {{ field.contents }}
                 </div>

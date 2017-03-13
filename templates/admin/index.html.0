@@ -1,5 +1,0 @@
-{% extends "admin/index.html" %}
-
-
-{% block content %}
-{% endblock %}

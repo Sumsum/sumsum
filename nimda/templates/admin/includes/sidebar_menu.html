@@ -1,44 +1,15 @@
 <ul class="sidebar-menu">
   <li class="header">APPLICATIONS</li>
-  {% for app in available_apps %}
+  {% for app in app_list %}
   <li class="treeview {{ app.name | slugify }}">
     <a href="{{ app.app_url }}">
-    {% if app.name == 'Authentication and Authorization' %}
-      <i class="ion-person-stalker"></i>
-    {% elif app.name == 'Images'  %}
-      <i class="ion-image"></i>
-    {% elif app.name == 'Markets'  %}
-      <i class="ion-pie-graph"></i>
-    {% elif app.name == 'Products' %}
-      <i class="ion-cube"></i>
-    {% elif app.name == 'Sync' %}
-      <i class="ion-refresh"></i>
-    {% elif app.name == 'Search'  %}
-      <i class="ion-ios-search-strong"></i>
-    {% elif app.name == 'Customdata' %}
-      <i class="ion-document-text"></i>
-    {% elif app.name == 'Pages' %}
-      <i class="ion-android-document"></i>
-    {% elif app.name == 'Redirects' %}
-      <i class="ion-arrow-graph-up-right"></i>
-    {% elif app.name == 'Transparency' %}
-      <i class="ion-happy-outline"></i>
-    {% elif app.name == 'Stores' %}
-      <i class="ion-home"></i>
-    {% elif app.name == 'Repair' %}
-      <i class="ion-wrench"></i>
-    {% elif app.name == 'Njio' %}
-      <i class="ion-forward"></i>
-    {% else %}
-      <i class="ion-ios-browsers"></i>
-    {% endif %}
-     <span>{{ app.name|truncatechars:"26" }}</span> <i class="fa fa-angle-left pull-right"></i>
-
+      {{ app.icon|safe }}
+      <span>{{ app.name|truncatechars:"26" }}</span> <i class="fa fa-angle-left pull-right"></i>
     </a>
     <ul class="treeview-menu">
       {% for model in app.models %}
         {% if model.admin_url %}
-          <li><a href="{{ model.admin_url }}">{{ model.name }}</a></li>
+          <li><a href="{{ model.admin_url }}">{{ model.icon|safe }} {{ model.name }}</a></li>
         {% endif %}
       {% endfor %}
     </ul>
