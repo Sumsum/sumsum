@@ -3,9 +3,7 @@ from django import forms
 from django.conf import settings
 from django.contrib.postgres.fields import JSONField
 from django.core import exceptions
-from django.template.loader import render_to_string
 from django.utils.functional import curry
-from django.utils.text import mark_safe
 from django.utils.translation import get_language
 from inspect import signature, getmro
 from utils.text import slugify
