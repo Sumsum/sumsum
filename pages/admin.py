@@ -5,7 +5,7 @@ from django.utils.translation import ugettext_lazy as _
 
 @admin.register(Page)
 class PageAdmin(admin.ModelAdmin):
-    icon = '<i class="material-icons">content_copy</i>'
+    icon = '<i class="fa fa-file-text" aria-hidden="true"></i>'
     list_display = ('title', 'published_at', 'updated_at')
     fieldsets = (
         (_('Page details'), {

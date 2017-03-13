@@ -2,5 +2,5 @@ from django.apps import AppConfig
 
 
 class UsersConfig(AppConfig):
-    icon = '<i class="material-icons">account_circle</i>'
+    icon = '<i class="fa fa-users" aria-hidden="true"></i>'
     name = 'users'

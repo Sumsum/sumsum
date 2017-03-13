@@ -5,7 +5,7 @@ from django.utils.functional import cached_property
 from django.utils.translation import get_language
 from django.utils.translation import ugettext_lazy as _
 from metafields.models import MetaFieldsMixin
-from utils.fields import StringField, TransStringField, TransWysiwygField, TransHandleField
+from utils.fields import StringField, TransStringField, TransHandleField, TransTextField
 from yashop.middleware import get_request
 
 
@@ -17,7 +17,7 @@ class PageManager(models.Manager):
 
 class Page(MetaFieldsMixin, models.Model):
     user = models.ForeignKey('users.User', verbose_name=_('author'))
-    body_html_t = TransWysiwygField(_('description'))
+    body_html_t = TransTextField(_('description'))
     created_at = models.DateTimeField(_('created at'), auto_now_add=True)
     handle_t = TransHandleField(_('handle'), populate_from='title_t', unique_together=('handle_t', 'user'))
     published_at = models.DateTimeField(_('published at'), blank=True, null=True, default=datetime.datetime.now)
