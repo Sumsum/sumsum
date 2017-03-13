@@ -1,0 +1,134 @@
+$color-hero: #3c8dbc;
+
+.st-block__inner {
+  .st-icon { display: none; }
+}
+.st-block-controls {
+  > button {
+    border-right: 1px solid #D8D8D8;
+    padding-right: 20px;
+
+    &:last-child {
+      border-right: 0;
+    }
+
+    i {
+      font-size: 25px;
+      display: inline-block;
+      vertical-align: middle;
+      margin-right: 10px;
+    }
+  }
+}
+.st-block {
+  .st-block__editor {
+    padding: 15px 0;
+    overflow: auto;
+  }
+}
+
+.box-body {
+  padding-bottom: 20px;
+
+  .thumbnail {
+    margin-bottom: 0;
+  }
+
+  &.state-inactive {
+    display: none;
+  }
+}
+
+
+// ==================================
+//  Resetting color from original css
+// ==================================
+.st-block__inner ::-moz-selection {
+  background: $color-hero;}
+
+.st-block__inner ::selection {
+  background: $color-hero;}
+
+  .st-block-addition:hover .st-block-addition__button,
+  .st-block--active .st-block-addition__button {
+    background-color: $color-hero; }
+
+  .st-block-addition:hover .st-block-addition__button:after {
+    border-left-color: $color-hero; }
+
+.st-block-addition:hover:before {
+  background-color: $color-hero; }
+
+.st-block-addition {
+  left: 0; }
+
+.st-block-addition:before {
+  padding-right: 0; }
+
+.st-block-controls__button:hover {
+  color: $color-hero; }
+
+.st-block--with-plus:after {
+  color: $color-hero;
+}
+
+.st-block.st-drag-over:after,
+.st-block.st-drag-over:last-child:after,
+.st-block-controls__top.st-drag-over:before {
+
+  background: $color-hero; }
+
+.st-drag-element {
+  box-shadow: 3px 3px $color-hero inset, -3px -3px $color-hero inset;
+}
+
+.st-block__upload-container:hover .st-upload-btn {
+  background: $color-hero;
+}
+
+.st-block__messages {
+  border: 2px solid $color-hero;
+}
+
+
+.st-block-positioner {
+  border: 2px solid $color-hero;
+  z-index: 999; }
+
+  .st-block-positioner:before {
+    border: 2px solid $color-hero;
+}
+
+
+
+  .st-block-ui-btn__reorder:hover, .st-block-ui-btn__reorder:focus {
+    color: $color-hero; }
+
+
+.st-block-control-ui-btn {
+  border: 2px solid $color-hero;
+ }
+
+
+.st-block__ui-delete-controls {
+  border: 2px solid $color-hero;
+ }
+  .st-block__ui-delete-controls:before {
+
+    border: 2px solid $color-hero;
+    }
+
+
+.st-format-btn:hover,
+.st-format-btn--is-active {
+  color: $color-hero; }
+
+.thumbnail {
+  width: 100px; }
+
+.st-outer {
+  margin-top: 10px; }
+
+.st-save {
+  margin-bottom: 25px;
+}

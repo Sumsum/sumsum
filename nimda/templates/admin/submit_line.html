@@ -1,0 +1,12 @@
+{% load i18n admin_urls %}
+
+{% if show_delete_link %}
+  {% url opts|admin_urlname:'delete' original.pk|admin_urlquote as delete_url %}
+  <a class="btn btn-default btn-flat" href="{% add_preserved_filters delete_url %}">{% trans "Delete" %}</a>
+{% else %}
+  <span>&nbsp;</span>
+{% endif %}
+
+{% if show_save %}
+  <button type="submit" name="_continue" class="btn btn-primary pull-right btn-flat">{% trans 'Save' %}</button>
+{% endif %}

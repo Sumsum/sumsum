@@ -1,0 +1,20 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_static nimda_tags %}
+
+
+{% block breadcrumbs %}
+  <ol class="breadcrumb">
+    <li><a href="{% url 'admin:index' %}"><i class="fa fa-dashboard"></i> {% trans 'Home' %}</a></li>
+  </ol>
+{% endblock %}
+
+
+{% block content %}
+  {% if user.is_superuser %}
+    <index-load></index-load>
+    <index-cache></index-cache>
+  {% endif %}
+{% endblock %}
+
+{% block sidebar %}
+{% endblock %}

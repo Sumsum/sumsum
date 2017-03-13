@@ -1,0 +1,42 @@
+{% extends "admin/change_form.html" %}
+{% load nimda_tags %}
+
+
+{% block extrahead %}
+  {% original %}
+  <script type="text/javascript" src="{% url 'admin:jsi18n' %}"></script>
+{% endblock %}
+
+{% block content_title %}Category tree: {{ original }}{% endblock %}
+
+{% block content %}
+<style>
+#full pre, #summary pre {
+  background-color: #fff;
+  border: none;
+  font-family: courier;
+  font-size: 13px;
+}
+</style>
+
+<div class="row">
+  <div class="col-md-12">
+    <div class="nav-tabs-custom">
+      <ul class="nav nav-tabs">
+        <li class="active"><a href="#summary" data-toggle="tab">Summary</a></li>
+        <li><a href="#full" data-toggle="tab">Full tree</a></li>
+      </ul>
+      <div class="tab-content">
+        <div class="active tab-pane" id="summary">
+          <pre>{{ original.pretty }}</pre>
+        </div>
+
+        <div class="tab-pane" id="full">
+          <pre>{{ original.yaml_data }}</pre>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

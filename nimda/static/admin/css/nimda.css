@@ -1,0 +1,180 @@
+// sidebar
+.sidebar-menu i { opacity: 0.5; display: inline-block; width: 9px; text-align: right; }
+.sidebar-menu .treeview.active > a { font-weight: bold; }
+.sidebar-menu .treeview-menu { background: #1e282c !important;  margin-left: 0 !important; border-left: 3px solid #eee; }
+.sidebar-menu .treeview:hover .treeview-menu { border-left-color: #2d7dac }
+.sidebar-menu .treeview-menu li a { padding-left: 30px; }
+
+/* Hack for ionicicons v2 (no animation code) */
+.ion-spin-animation { -webkit-animation: spin 1s infinite linear; -moz-animation: spin 1s infinite linear; -o-animation: spin 1s infinite linear; animation: spin 1s infinite linear; }
+
+
+@-moz-keyframes spin { 0% { -moz-transform: rotate(0deg); }
+    100% { -moz-transform: rotate(359deg); } }
+@-webkit-keyframes spin { 0% { -webkit-transform: rotate(0deg); }
+    100% { -webkit-transform: rotate(359deg); } }
+@-o-keyframes spin { 0% { -o-transform: rotate(0deg); }
+    100% { -o-transform: rotate(359deg); } }
+@-ms-keyframes spin { 0% { -ms-transform: rotate(0deg); }
+    100% { -ms-transform: rotate(359deg); } }
+@keyframes spin { 0% { transform: rotate(0deg); }
+    100% { transform: rotate(359deg); } }
+.ion-load-a.ion-spin-animation { -webkit-animation-timing-function: steps(8, start); -moz-animation-timing-function: steps(8, start); animation-timing-function: steps(8, start); }
+
+.hierarchy {
+  background: #333;
+  color: #fff;
+}
+html, body {
+  min-height: 100%;
+  -webkit-font-smoothing: antialiased;
+  margin: 0;
+  padding: 0;
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+  -moz-osx-font-smoothing: grayscale; }
+
+input, select {
+  font-family: inherit;
+  font-size: inherit; }
+
+::selection {
+  background: #333;
+  /* WebKit/Blink Browsers */
+  color: #fff; }
+
+* {
+  box-sizing: border-box; }
+
+th {
+  font-weight: inherit; }
+
+h2, .h2 {
+  font-size: 20px; }
+
+.sidebar-menu i {
+  margin-right: 7px; }
+
+.skin-black .sidebar-menu > li:hover > a {
+  border-left-color: #2d7dac; }
+
+.related-widget-wrapper-link {
+  margin-left: 7px; }
+
+.table .original {
+  padding: 0; }
+
+.inline-related .vIntegerField,
+.inline-related input[type=number] {
+  width: 7em; }
+
+.inline-related .delete {
+  width: 1em; }
+
+/* make error look the same as danger */
+.callout.callout-error {
+  border-color: #c23321;
+  color: #fff !important;
+  background-color: #dd4b39 !important; }
+
+.select2-selection--multiple .select2-dropdown .select2-search__field:focus,
+.select2-selection--multiple .select2-search--inline .select2-search__field:focus {
+  outline: none;
+  border: none; }
+
+.required label:after, label.required:after {
+  content: " *";
+  color: #e44158; }
+
+/* action cols */
+table thead th.action-checkbox-column {
+  width: 1.5em;
+  text-align: center; }
+
+table tbody td.action-checkbox {
+  text-align: center; }
+
+/* SORTABLE TABLES */
+thead th {
+  line-height: normal;
+  border-bottom: 1px solid #ccc; }
+
+thead th a:link, thead th a:visited {
+  color: #666; }
+
+thead th.sorted {
+  font-weight: 600; }
+
+thead th.sorted a {
+  color: #000; }
+
+thead th.sorted .text {
+  padding-right: 42px; }
+
+table thead th .text span {
+  padding: 5px 10px;
+  display: block; }
+
+table thead th .text a {
+  display: block;
+  cursor: pointer;
+  padding: 5px 10px; }
+
+thead th.sorted a.sortremove {
+  visibility: hidden; }
+
+table thead th.sorted:hover a.sortremove {
+  visibility: visible; }
+
+table thead th.sorted .sortoptions {
+  display: block;
+  padding: 11px 5px 0 5px;
+  float: right;
+  text-align: right; }
+
+table thead th.sorted .sortpriority {
+  font-size: .8em;
+  min-width: 12px;
+  text-align: center;
+  vertical-align: top; }
+
+table thead th.sorted .sortoptions a {
+  width: 14px;
+  height: 12px;
+  display: inline-block; }
+
+table thead th.sorted .sortoptions a.sortremove {
+  background: url(../img/sorting-icons.gif) -4px -5px no-repeat; }
+
+table thead th.sorted .sortoptions a.sortremove:hover {
+  background: url(../img/sorting-icons.gif) -4px -27px no-repeat; }
+
+table thead th.sorted .sortoptions a.ascending {
+  background: url(../img/sorting-icons.gif) -5px -50px no-repeat; }
+
+table thead th.sorted .sortoptions a.ascending:hover {
+  background: url(../img/sorting-icons.gif) -5px -72px no-repeat; }
+
+table thead th.sorted .sortoptions a.descending {
+  background: url(../img/sorting-icons.gif) -5px -94px no-repeat; }
+
+table thead th.sorted .sortoptions a.descending:hover {
+  background: url(../img/sorting-icons.gif) -5px -115px no-repeat; }
+
+/* ORDERABLE TABLES */
+table.orderable tbody tr td:hover {
+  cursor: move; }
+
+table.orderable tbody tr td:first-child {
+  padding-left: 14px;
+  background-repeat: repeat-y; }
+
+table.orderable-initalized .order-cell, body > tr > td.order-cell {
+  display: none; }
+
+
+.errorlist li {
+  color: #e44158; }
+
+/*# sourceMappingURL=nimda.css.map */
+

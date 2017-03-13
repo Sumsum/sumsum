@@ -1,0 +1,58 @@
+
+{% load nimda_tags %}
+
+<div class="box">
+
+  {% if fieldset.name %}
+    <div class="box-header with-border">
+      <h3 class="box-title">{{ fieldset.name }}</h3>
+    </div>
+  {% endif %}
+
+  {% if fieldset.description %}
+    <div class="box-body">
+      {{ fieldset.description|safe }}
+    </div>
+  {% endif %}
+
+  <div class="box-body">
+    {% for line in fieldset %}
+      {{ line.errors }}
+
+      <div class="row">
+      {% for field in line %}
+        <div class="col-md-{% if field.field.field.widget.is_wide %}12{% else %}6{% endif %}">
+          {% if field.is_checkbox %}
+            <div class="checkbox">
+              <label>
+                {{ field.field }} {{ field.field.label }}
+              </label>
+            </div>
+          {% else %}
+            {% if field.is_readonly %}
+              <div class="form-group">
+                {{ field|label_tag }}
+                <div>
+                  {{ field.contents }}
+                </div>
+              </div>
+            {% else %}
+              <div class="form-group">
+                {{ field|label_tag }}
+                {{ field.field|add_classes }}
+              </div>
+            {% endif %}
+          {% endif %}
+
+          {% if field.field.help_text %}
+            <p class="help-block">{{ field.field.help_text|safe }}</p>
+          {% endif %}
+        </div>
+      {% endfor %}
+      </div>
+
+    {% endfor %}
+  </div>
+
+</div>
+{# end box #}

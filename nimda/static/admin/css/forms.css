@@ -1,0 +1,453 @@
+@charset "UTF-8";
+@import url("//fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700");
+@import url("//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css");
+@import url("widgets.css");
+html, body {
+  min-height: 100%;
+  -webkit-font-smoothing: antialiased;
+  margin: 0;
+  padding: 0;
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+  -moz-osx-font-smoothing: grayscale; }
+
+input, select {
+  font-family: inherit;
+  font-size: inherit; }
+
+::selection {
+  background: #333;
+  /* WebKit/Blink Browsers */
+  color: #fff; }
+
+* {
+  box-sizing: border-box; }
+
+th {
+  font-weight: inherit; }
+
+/* FORM ROWS */
+.form-row {
+  overflow: hidden;
+  padding: 8px 12px;
+  border-bottom: 1px solid #FBFBFB; }
+  .form-row:last-of-type {
+    border-bottom: 0; }
+
+.form-row img, .form-row input {
+  vertical-align: middle; }
+
+form .form-row p {
+  padding-left: 0; }
+
+.hidden {
+  display: none; }
+
+/* FORM LABELS */
+form h4 {
+  margin: 0 !important;
+  padding: 0 !important;
+  border: none !important; }
+
+label {
+  font-weight: normal !important;
+  color: #666; }
+
+.required label:after, label.required:after {
+  content: "*";
+  color: #e44158; }
+
+/* RADIO BUTTONS */
+form ul.radiolist li {
+  list-style-type: none; }
+
+form ul.radiolist label {
+  float: none;
+  display: inline; }
+
+form ul.inline {
+  margin-left: 0;
+  padding: 0; }
+
+form ul.inline li {
+  float: left;
+  padding-right: 7px; }
+
+/* ALIGNED FIELDSETS */
+.aligned label {
+  display: block;
+  padding: 6px 10px 0 0;
+  float: left;
+  width: 10em;
+  word-wrap: break-word; }
+
+.aligned ul label {
+  display: inline;
+  float: none;
+  width: auto; }
+
+.colMS .aligned .vLargeTextField, .colMS .aligned .vXMLLargeTextField {
+  width: 350px; }
+
+form .aligned p, form .aligned ul {
+  margin-left: 7em;
+  /*padding-left: 74px;*/ }
+
+form .aligned table p {
+  margin-left: 0;
+  padding-left: 0; }
+
+form .aligned p.help {
+  clear: left;
+  padding-left: 49px;
+  font-size: 13px; }
+
+.aligned .vCheckboxLabel {
+  float: none !important;
+  display: inline-block;
+  vertical-align: -1px;
+  padding-left: 8px; }
+
+.colM .aligned .vLargeTextField, .colM .aligned .vXMLLargeTextField {
+  width: 610px; }
+
+.checkbox-row p.help {
+  margin-left: 0;
+  padding-left: 0 !important; }
+
+fieldset .field-box {
+  float: left;
+  margin-right: 20px; }
+
+form > div > fieldset.module {
+  padding: 7px 0; }
+
+form > div > fieldset.module h2 {
+  margin: -7px 0 0 0; }
+
+/* WIDE FIELDSETS */
+.wide label {
+  width: 15em !important; }
+
+form .wide p {
+  margin-left: 15em; }
+
+form .wide p.help {
+  padding-left: 16px; }
+
+.colM fieldset.wide .vLargeTextField, .colM fieldset.wide .vXMLLargeTextField {
+  width: 450px; }
+
+/* COLLAPSED FIELDSETS */
+fieldset.collapse {
+  cursor: pointer; }
+  fieldset.collapse h2 {
+    transition: background 200ms; }
+  fieldset.collapse h2:hover {
+    background-color: #FBFBFB; }
+
+fieldset .collapse-toggle {
+  color: #2594ee;
+  float: right;
+  text-transform: uppercase;
+  font-size: 12px;
+  letter-spacing: 1px;
+  border-radius: 3px;
+  padding: 3px;
+  padding-left: 20px; }
+  fieldset .collapse-toggle:before {
+    position: absolute;
+    margin-top: 2px;
+    margin-left: -17px;
+    content: "";
+    font: normal normal normal 14px/1 FontAwesome;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    transform: translate(0, 0);
+    font-size: 13px; }
+  fieldset .collapse-toggle:before {
+    color: #2594ee; }
+
+fieldset.collapsed {
+  padding-bottom: 0 !important; }
+
+fieldset.collapsed * {
+  display: none; }
+
+fieldset.collapsed h2, fieldset.collapsed {
+  display: block !important; }
+
+fieldset.collapsed h2 {
+  background-position: bottom left;
+  color: #999; }
+
+fieldset.collapsed .collapse-toggle {
+  display: inline !important; }
+  fieldset.collapsed .collapse-toggle:before {
+    content: "";
+    font: normal normal normal 14px/1 FontAwesome;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    transform: translate(0, 0);
+    font-size: 13px; }
+
+/* TABBED FIELDSETS */
+ul.tabs {
+  margin: 0;
+  padding: 0; }
+  ul.tabs li {
+    display: inline-block;
+    padding: 10px 12px;
+    position: relative;
+    cursor: pointer;
+    color: #666;
+    margin-right: 1px;
+    transition: color 100ms;
+    background-color: rgba(255, 255, 255, 0.5); }
+    ul.tabs li:hover {
+      color: #000; }
+    ul.tabs li.active {
+      background-color: #fff;
+      border: 0;
+      color: #000;
+      box-shadow: 1px 0 0 rgba(0, 0, 0, 0.05), 0px 4px 6px rgba(37, 148, 238, 0.02) inset; }
+    ul.tabs li:last-child {
+      border-top-right-radius: 3px; }
+
+fieldset.tabbed {
+  display: none; }
+
+fieldset.untabbed {
+  display: block; }
+
+/* MONOSPACE TEXTAREAS */
+fieldset.monospace textarea {
+  font-family: "Bitstream Vera Sans Mono",Monaco,"Courier New",Courier,monospace; }
+
+/* SUBMIT ROW */
+.submit-row {
+  text-align: right;
+  margin: 5px 0 10px 0;
+  overflow: auto; }
+  .submit-row .deletelink {
+    color: #fff;
+    padding: 10px 15px;
+    background: #e44158;
+    border-radius: 3px;
+    cursor: pointer;
+    line-height: 1;
+    display: inline-block;
+    vertical-align: middle;
+    transition-property: background-color;
+    transition-duration: 150ms;
+    border: 0;
+    text-align: center; }
+    .submit-row .deletelink:before {
+      display: none; }
+    .submit-row .deletelink:hover {
+      text-decoration: none;
+      background-color: #e86073; }
+
+body.popup .submit-row {
+  overflow: auto; }
+
+.submit-row input {
+  margin: 0;
+  -webkit-appearance: none;
+  appearance: none;
+  padding: 0;
+  background-color: transparent;
+  font-size: inherit;
+  border: 0;
+  color: #2594ee;
+  min-height: 34px; }
+  .submit-row input:hover {
+    text-decoration: underline;
+    cursor: pointer;
+    background-color: transparent; }
+
+.submit-row p.deletelink-box {
+  float: left;
+  margin: 0; }
+
+/* CUSTOM FORM FIELDS */
+.vSelectMultipleField {
+  vertical-align: top !important; }
+
+.vCheckboxField {
+  border: none; }
+
+.vDateField, .vTimeField {
+  margin-right: 2px; }
+
+.vDateField {
+  min-width: 6.85em; }
+
+.vTimeField {
+  min-width: 4.7em; }
+
+.vURLField {
+  width: 30em; }
+
+.vLargeTextField, .vXMLLargeTextField {
+  width: 48em; }
+
+.flatpages-flatpage #id_content {
+  height: 40.2em; }
+
+.module table .vPositiveSmallIntegerField {
+  width: 2.2em; }
+
+.vTextField {
+  width: 20em; }
+
+.vIntegerField {
+  width: 5em; }
+
+.vBigIntegerField {
+  width: 10em; }
+
+.vForeignKeyRawIdAdminField {
+  width: 5em; }
+
+/* INLINES */
+.inline-group {
+  padding: 0;
+  border: 1px solid #e0e0e0;
+  margin: 10px 0;
+  overflow-x: auto; }
+
+.inline-group .aligned label {
+  width: 8em; }
+
+.inline-related {
+  position: relative; }
+
+.inline-related h3 {
+  margin: 0;
+  color: #666;
+  padding: 3px 5px;
+  font-size: 11px;
+  background: #e1e1e1 url(../img/nav-bg.gif) top left repeat-x;
+  border-bottom: 1px solid #ddd; }
+
+.inline-related h3 span.delete {
+  float: right; }
+
+.inline-related h3 span.delete label {
+  margin-left: 2px;
+  font-size: 11px; }
+
+.inline-related fieldset {
+  margin: 0;
+  background: #fff;
+  border: none;
+  width: 100%; }
+
+.inline-related fieldset.module h3 {
+  margin: 0;
+  padding: 2px 5px 3px 5px;
+  font-size: 11px;
+  text-align: left;
+  font-weight: bold;
+  background: #bcd;
+  color: #fff; }
+
+.inline-group .tabular fieldset.module {
+  border: none; }
+
+.inline-related.tabular fieldset.module table {
+  width: 100%; }
+
+.last-related fieldset {
+  border: none; }
+
+.inline-group .tabular tr.has_original td {
+  padding-top: 1em; }
+
+.inline-group .tabular tr td.original {
+  padding: 2px 0 0 0;
+  width: 0;
+  _position: relative; }
+
+.inline-group .tabular th.original {
+  width: 0px;
+  padding: 0; }
+
+.inline-group .tabular td.original p {
+  position: absolute;
+  left: 0;
+  padding: 2px 12px;
+  overflow: hidden;
+  font-size: 9px;
+  font-weight: bold;
+  color: #666;
+  _width: 700px; }
+
+.inline-group ul.tools {
+  padding: 0;
+  margin: 0;
+  list-style: none; }
+
+.inline-group ul.tools li {
+  display: inline;
+  padding: 0 5px; }
+
+.inline-group div.add-row,
+.inline-group .tabular tr.add-row td {
+  color: #666;
+  padding: 3px 5px;
+  border-bottom: 1px solid #ddd; }
+
+.inline-group .tabular tr.add-row td {
+  padding: 10px;
+  border-bottom: none; }
+
+.inline-group ul.tools a.add,
+.inline-group div.add-row a,
+.inline-group .tabular tr.add-row td a {
+  padding-left: 20px;
+  padding-left: 14px;
+  outline: 0;
+  /* Remove dotted border around link */ }
+  .inline-group ul.tools a.add:before,
+  .inline-group div.add-row a:before,
+  .inline-group .tabular tr.add-row td a:before {
+    position: absolute;
+    margin-top: 3px;
+    margin-left: -17px;
+    content: "";
+    font: normal normal normal 14px/1 FontAwesome;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    transform: translate(0, 0);
+    font-size: 13px; }
+
+.empty-form {
+  display: none; }
+
+/* RELATED FIELD ADD ONE / LOOKUP */
+.add-another, .related-lookup {
+  margin-left: 5px;
+  display: inline-block; }
+
+.add-another {
+  width: 10px;
+  height: 10px;
+  background-image: url(../img/icon_addlink.gif); }
+
+.related-lookup {
+  width: 16px;
+  height: 16px;
+  background-image: url(../img/selector-search.gif); }
+
+.timezonewarning {
+  margin-left: 10em;
+  color: #858585;
+  margin-top: 3px;
+  display: block; }
+
+/*# sourceMappingURL=forms.css.map */

@@ -1,0 +1,18 @@
+<div class="row">
+  {% for m in models %}
+  <a class="text-black" href="{{ m.url }}">
+  <div class="col-md-3 col-sm-6 col-xs-12">
+    <div class="info-box">
+      <span class="info-box-icon bg-{{ m.color }}"></span>
+
+      <div class="info-box-content">
+        <span class="info-box-text">{{ m.name }}</span>
+        <span class="info-box-number">{{ m.count }}</span>
+      </div>
+      <!-- /.info-box-content -->
+    </div>
+    <!-- /.info-box -->
+  </div>
+  </a>
+  {% endfor %}
+</div>

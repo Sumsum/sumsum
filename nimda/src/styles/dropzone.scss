@@ -1,0 +1,140 @@
+.dropzone {
+
+  &.dz-clickable {
+    // box-shadow: 0 0 3px 1px rgba(0,0,0,0.05) inset;
+    border: 1px dashed #d2d6de;
+    background-color: #FDFDFD;
+    padding: 12px;
+  }
+  &.dz-drag-hover {
+    box-shadow: 0 0 2px 3px #D3EBFF inset, 0 0 2px 2px #7FBDEF;
+    background-color: #e4f0f9;
+    // border: 3px solid blue;
+  }
+
+  .dz-preview {
+    width: 120px;
+    height: 120px;
+    margin: 2px;
+    float: left;
+    border: 1px solid #eee;
+    background: #fff;
+    position: relative;
+    box-sizing: content-box;
+
+    &:hover {
+      border-color: #adadad;
+
+      .dz-image {
+        img {
+          -webkit-transform: scale(1, 1);
+          -moz-transform: scale(1, 1);
+          -ms-transform: scale(1, 1);
+          -o-transform: scale(1, 1);
+          transform: scale(1, 1);
+          -webkit-filter: blur(0px);
+          filter: blur(0px);
+        }
+      }
+    }
+
+    &.dz-image-preview {
+      .dz-image, .dz-details {
+        border-radius: 0px;
+       -webkit-transition: none;
+       -moz-transition: none;
+       -ms-transition: none;
+       -o-transition: none;
+       transition: none;
+      }
+    }
+
+    .dz-image {
+      overflow: hidden;
+      text-align: center;
+      border-radius: 3px;
+
+      img {
+        max-width: 100%;
+        min-width: 20%;
+      }
+    }
+
+
+
+    .dz-details {
+      padding: 5px;
+      font-size: 10px;
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      color: #000;
+      transition: none;
+
+      .dz-filename {
+        border-radius: 0px;
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        left: 0;
+        color: #fff;
+        padding: 5px 0px;
+        background-color: rgba(0,0,0,0.5);
+        border-bottom-left-radius: 3px;
+        border-bottom-right-radius: 3px;
+
+        &:hover {
+          span {
+            margin-left: 3px;
+            background-color: rgba(0,0,0,0.4);
+            border: 0;
+          }
+        }
+        span {
+          // display: block;
+          background-color: transparent;
+        }
+      }
+
+      .dz-size {
+        // float: right;
+        position: absolute;
+        right: 0;
+        padding-left: 5px;
+        font-size: 12px;
+
+        span {
+          color: #fff;
+          padding: 3px 5px;
+          border-top-right-radius: 0;
+          border-bottom-right-radius: 0;
+          background-color: rgba(0,0,0,0.5);
+        }
+      }
+    }
+
+    .dz-success-mark {
+      svg {
+        path {
+          fill: rgba(145, 255, 145, 1);
+        }
+      }
+    }
+
+    .dz-error-mark {
+      svg {
+        path {
+          fill: rgba(251, 136, 152, 1);
+        }
+      }
+    }
+  }
+
+  .dz-message {
+    margin-top: 50px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #797979;
+  }
+}

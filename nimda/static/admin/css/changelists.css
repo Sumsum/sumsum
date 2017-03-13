@@ -1,0 +1,269 @@
+@import url("//fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700");
+@import url("//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css");
+html, body {
+  min-height: 100%;
+  -webkit-font-smoothing: antialiased;
+  margin: 0;
+  padding: 0;
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+  -moz-osx-font-smoothing: grayscale; }
+
+input, select {
+  font-family: inherit;
+  font-size: inherit; }
+
+::selection {
+  background: #333;
+  /* WebKit/Blink Browsers */
+  color: #fff; }
+
+* {
+  box-sizing: border-box; }
+
+th {
+  font-weight: inherit; }
+
+/* CHANGELISTS */
+#changelist {
+  position: relative;
+  width: 100%; }
+
+#changelist table {
+  width: 100%; }
+
+#changelist-search #searchbar {
+  width: 300px; }
+
+#changelist-search input[type="submit"] {
+  color: #fff;
+  padding: 10px 15px;
+  background: #2594ee;
+  border-radius: 3px;
+  cursor: pointer;
+  line-height: 1;
+  display: inline-block;
+  vertical-align: middle;
+  transition-property: background-color;
+  transition-duration: 150ms;
+  border: 0;
+  text-align: center;
+  padding: 8px 15px;
+  margin: 0 5px; }
+  #changelist-search input[type="submit"]:before {
+    display: none; }
+  #changelist-search input[type="submit"]:hover {
+    text-decoration: none;
+    background-color: #46a4f1; }
+
+.change-list .hiddenfields {
+  display: none; }
+
+.change-list .filtered {
+  min-height: 400px; }
+
+.change-list .filtered .results, .change-list .filtered .paginator, .filtered #toolbar, .filtered div.xfull {
+  width: auto !important; }
+
+.change-list .filtered table tbody th {
+  padding-right: 1em; }
+
+#changelist-form .results {
+  overflow-x: auto;
+  border-top: 1px solid #eee; }
+  #changelist-form .results img[alt="True"], #changelist-form .results img[alt="False"] {
+    border-radius: 50%;
+    overflow: hidden; }
+
+#changelist .toplinks {
+  border-bottom: 1px solid #ccc !important; }
+
+#changelist .paginator {
+  color: #ccc;
+  overflow: hidden; }
+
+/* CHANGELIST TABLES */
+#changelist table thead th {
+  padding: 0;
+  white-space: nowrap;
+  vertical-align: middle; }
+
+#changelist table thead th.action-checkbox-column {
+  width: 1.5em;
+  text-align: center; }
+
+#changelist table tbody td, #changelist table tbody th {
+  border-left: 1px solid #ddd; }
+
+#changelist table tbody td:first-child, #changelist table tbody th:first-child {
+  border-left: 0;
+  border-right: 1px solid #ddd; }
+
+#changelist table tbody td.action-checkbox {
+  text-align: center; }
+
+#changelist table tfoot {
+  color: #666; }
+
+/* TOOLBAR */
+#changelist #toolbar {
+  padding: 10px; }
+
+#changelist #changelist-search img {
+  display: none; }
+
+/* FILTER COLUMN */
+#changelist-filter fieldset {
+  border: 0;
+  display: inline-block;
+  padding: 0 0 10px 10px; }
+  #changelist-filter fieldset.active label, #changelist-filter fieldset.active select {
+    font-weight: bold;
+    color: #333; }
+  #changelist-filter fieldset label {
+    color: #858585;
+    margin-right: 5px;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: block; }
+  #changelist-filter fieldset select {
+    padding: 4px;
+    min-width: 100px;
+    width: 100%;
+    font-size: 13px; }
+
+#changelist-filter h2 {
+  font-size: 14px;
+  padding: 2px 10px;
+  color: #333;
+  border-bottom: 1px solid #ddd; }
+
+#changelist-filter h3 {
+  font-size: 13px;
+  margin-bottom: 0; }
+
+#changelist-filter ul {
+  font-size: 13px;
+  padding-left: 0;
+  margin-left: 10px; }
+
+#changelist-filter li {
+  list-style-type: none;
+  margin-left: 0;
+  padding-left: 0; }
+
+#changelist-filter a {
+  color: #858585; }
+
+#changelist-filter li.selected {
+  padding-left: 10px;
+  margin-left: -10px; }
+
+#changelist-filter li.selected a {
+  color: #2594ee; }
+
+/* DATE DRILLDOWN */
+.change-list ul.toplinks {
+  display: block;
+  background: white url(../img/nav-bg-reverse.gif) 0 -10px repeat-x;
+  border-top: 1px solid white;
+  float: left;
+  padding: 0 !important;
+  margin: 0 !important;
+  width: 100%; }
+
+.change-list ul.toplinks li {
+  padding: 3px 6px;
+  font-weight: bold;
+  list-style-type: none;
+  display: inline-block; }
+
+.change-list ul.toplinks .date-back a {
+  color: #999; }
+
+.change-list ul.toplinks .date-back a:hover {
+  color: #036; }
+
+/* PAGINATOR */
+.paginator {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  line-height: 22px;
+  margin: 0;
+  border-top: 1px solid #ddd; }
+
+.paginator a:link, .paginator a:visited {
+  padding: 2px 6px;
+  border: solid 1px #ccc;
+  background: white;
+  text-decoration: none; }
+
+.paginator a.showall {
+  padding: 0 !important;
+  border: none !important; }
+
+.paginator a.showall:hover {
+  color: #036 !important;
+  background: transparent !important; }
+
+.paginator .end {
+  border-width: 2px !important;
+  margin-right: 6px; }
+
+.paginator .this-page {
+  padding: 2px 6px;
+  font-weight: bold;
+  font-size: 13px;
+  vertical-align: top; }
+
+.paginator a:hover {
+  color: white;
+  background: #5b80b2;
+  border-color: #036; }
+
+/* ACTIONS */
+.filtered .actions {
+  border-top: 1px solid #eee; }
+
+#changelist table input {
+  margin: 0; }
+
+#changelist table tbody tr.selected {
+  background-color: rgba(37, 148, 238, 0.05); }
+
+#changelist .actions {
+  padding: 10px;
+  display: none;
+  /* default */ }
+
+#changelist .actions.selected {
+  background: #fffccf;
+  border-top: 1px solid #fffee8;
+  border-bottom: 1px solid #edecd6; }
+
+#changelist .actions span.all,
+#changelist .actions span.action-counter,
+#changelist .actions span.clear,
+#changelist .actions span.question {
+  margin: 0 0.5em;
+  display: none; }
+
+#changelist .actions:last-child {
+  border-bottom: none; }
+
+#changelist .actions select {
+  border: 1px solid #aaa;
+  margin-left: 0.5em;
+  padding: 1px 2px; }
+
+#changelist #action-toggle {
+  display: none; }
+
+#changelist .actions .button {
+  font-size: 13px;
+  padding: 6px 8px;
+  margin-left: 5px;
+  background-color: #2594ee; }
+
+/*# sourceMappingURL=changelists.css.map */
