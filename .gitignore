@@ -5,6 +5,7 @@
 ._*
 *.pyc
 .DS_Store
+.vscode
 node_modules
 *-env
 media

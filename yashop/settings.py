@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'timezone_field',
     'rest_framework',
 
+    'plekan',
     'customers',
     'users',
     'discounts',

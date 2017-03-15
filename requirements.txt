@@ -7,7 +7,6 @@ django-crispy-forms==1.6.1
 django-debug-toolbar==1.6
 django-easy-select2==1.2.5
 django-formtools==1.0
-django-material==0.12.5
 Django-Select2==5.8.10
 django-superuser==0.2.2
 django-timezone-field==2.0
