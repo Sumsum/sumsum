@@ -1,11 +1,11 @@
 # Sumsum
 
-** Warning: This project is very much work in progress, do not expect anything
+**Warning: This project is very much work in progress, do not expect anything
 to work.**
 
 ## Installation
 ```
-$ git clone https://github.com/SumsumShop/sumsum.git
+$ git clone https://github.com/Sumsum/sumsum.git
 $ cd sumsum
 $ mkvirtualenv --python `which python3` sumsum
 $ pip install -r requirements.txt
