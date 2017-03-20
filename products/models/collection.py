@@ -4,7 +4,7 @@ from django.utils.translation import ugettext_lazy as _
 from metafields.models import MetaFieldsMixin
 from utils.datastructures import List
 from utils.fields import HandleField, ChoiceField, StringField, PositionField, ImageField, WysiwygField
-from yashop.middleware import get_request
+from sumsum.middleware import get_request
 
 
 COLUMN_CHOICES = (

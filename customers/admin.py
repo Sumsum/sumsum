@@ -16,20 +16,20 @@ class CustomerAdmin(admin.ModelAdmin):
                 'tax_exempt',
             )
         }),
-        (_('Address'), {
-            'fields': (
-                'address_first_name',
-                'address_last_name',
-                'address_company',
-                'address_phone',
-                'address_address1',
-                'address_address2',
-                'address_city',
-                'address_zip',
-                'address_country_code',
-                'address_province',
-            )
-        }),
+        #(_('Address'), {
+        #    'fields': (
+        #        'address_first_name',
+        #        'address_last_name',
+        #        'address_company',
+        #        'address_phone',
+        #        'address_address1',
+        #        'address_address2',
+        #        'address_city',
+        #        'address_zip',
+        #        'address_country_code',
+        #        'address_province',
+        #    )
+        #}),
         (_('Notes'), {
             'fields': (
                 'note',
@@ -42,17 +42,17 @@ class CustomerAdmin(admin.ModelAdmin):
         }),
     )
 
-    #def save_related(self, request, form, formsets, change):
-    #    super().save_related(request, form, formsets, change)
-    #    obj = form.instance
-    #    if form.default_address_data:
-    #        if obj.default_address:
-    #            for attr, value in form.default_address_data:
-    #                setattr(obj.default_address, attr, value)
-    #            obj.default_address_data.save()
-    #        else:
-    #            form.default_address_data['customer'] = obj
-    #            CustomerAddress.objects.create(**form.default_address_data)
+    def save_related(self, request, form, formsets, change):
+        super().save_related(request, form, formsets, change)
+        obj = form.instance
+        if form.default_address_data:
+            if obj.default_address:
+                for attr, value in form.default_address_data:
+                    setattr(obj.default_address, attr, value)
+                obj.default_address_data.save()
+            else:
+                form.default_address_data['customer'] = obj
+                CustomerAddress.objects.create(**form.default_address_data)
 
 
 @admin.register(CustomerAddress)

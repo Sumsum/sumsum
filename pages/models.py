@@ -6,7 +6,7 @@ from django.utils.translation import get_language
 from django.utils.translation import ugettext_lazy as _
 from metafields.models import MetaFieldsMixin
 from utils.fields import StringField, TransStringField, TransHandleField, TransTextField
-from yashop.middleware import get_request
+from sumsum.middleware import get_request
 
 
 class PageManager(models.Manager):

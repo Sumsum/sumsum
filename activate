@@ -1,4 +1,4 @@
 #!/bin/bash
 
-source yashop-env/bin/activate
+source sumsum-env/bin/activate
 nvm use 6.10

@@ -9,6 +9,7 @@ class CustomerManager(models.Manager):
     def get_queryset(self):
         qs = super().get_queryset()
         qs.prefetch_related('customeraddress_set').select_related('default_address')
+        return qs
 
 
 class Customer(User):

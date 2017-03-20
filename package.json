@@ -1,6 +1,6 @@
 {
-  "name": "yashop",
-  "version": "1.0.0",
+  "name": "Sumsum",
+  "version": "0.0.1",
   "description": "",
   "main": "index.js",
   "directories": {
@@ -12,15 +12,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/sorl/yashop.git"
+    "url": "git+https://github.com/SumsumShop/sumsum.git"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Mikko Hellsing",
+  "license": "MIT",
   "bugs": {
-    "url": "https://github.com/sorl/yashop/issues"
+    "url": "https://github.com/SumsumShop/sumsum/issues"
   },
-  "homepage": "https://github.com/sorl/yashop#readme",
-  "devDependencies": {
-    "sir-trevor": "^0.6.4"
-  }
+  "homepage": "http://sumsums.shop"
 }

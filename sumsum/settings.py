@@ -17,12 +17,12 @@ CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
         'LOCATION': '127.0.0.1:11211',
-        'KEY_PREFIX': 'yashop::'
+        'KEY_PREFIX': 'sumsum::'
     }
 }
 DATABASES = {'default': {
     'ENGINE': 'django.db.backends.postgresql',
-    'NAME': 'yashop',
+    'NAME': 'sumsum',
 }}
 INSTALLED_APPS = [
     'nimda',
@@ -39,7 +39,6 @@ INSTALLED_APPS = [
     'timezone_field',
     'rest_framework',
 
-    'plekan',
     'customers',
     'users',
     'discounts',
@@ -61,7 +60,7 @@ LANGUAGES = (
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 MIDDLEWARE = [
-    'yashop.middleware.RequestLocalMiddleware',
+    'sumsum.middleware.RequestLocalMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -74,7 +73,7 @@ MIDDLEWARE = [
 ]
 REDACTOR_OPTIONS = {'lang': 'en'}
 REDACTOR_UPLOAD = 'images/'
-ROOT_URLCONF = 'yashop.urls'
+ROOT_URLCONF = 'sumsum.urls'
 SECRET_KEY = os.environ.get('SECRET_KEY', 'sumSUMsum')
 SELECT2_CACHE_BACKEND = 'default'
 STATIC_ROOT = os.path.join(BASE_DIR, 'site_static')
@@ -97,4 +96,4 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_L10N = True
 USE_TZ = True
-WSGI_APPLICATION = 'yashop.wsgi.application'
+WSGI_APPLICATION = 'sumsum.wsgi.application'

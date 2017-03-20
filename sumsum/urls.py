@@ -2,7 +2,6 @@ from django.conf import settings
 from django.conf.urls import url, include
 from django.contrib import admin
 from django.views.static import serve as static
-from plekan.views import plekan
 #from rest_framework import routers
 #from products.api import ProductViewSet
 
@@ -27,7 +26,6 @@ if settings.DEBUG:
 
 urlpatterns += [
     #url(r'^api/', include(router.urls)),
-    url(r'^plekan/$', plekan),
     url(r'^admin/', admin.site.urls),
     url(r'^redactor/', include('redactor.urls')),
     url(r'^select2/', include('django_select2.urls')),

@@ -7,7 +7,7 @@ from django.utils.translation import ugettext_lazy as _
 from metafields.models import MetaFieldsMixin
 from utils.datastructures import List
 from utils.fields import StringField, TextField, ChoiceField, TransStringField, TransWysiwygField, TransHandleField, TransTagField
-from yashop.middleware import get_request
+from sumsum.middleware import get_request
 
 
 COMMENTABLE_CHOICES = (

@@ -4,7 +4,7 @@ from django.utils.functional import cached_property
 from django.utils.translation import ugettext_lazy as _
 from metafields.models import MetaFieldsMixin
 from utils.fields import ChoiceField, StringField, PositionField
-from yashop.middleware import get_request
+from sumsum.middleware import get_request
 
 
 UNIT_CHOICES = (
