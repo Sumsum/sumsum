@@ -7,9 +7,11 @@ to work.**
 ```
 $ git clone https://github.com/SumsumShop/sumsum.git
 $ cd sumsum
-$ createdb sumsum
 $ mkvirtualenv --python `which python3` sumsum
 $ pip install -r requirements.txt
+$ createdb sumsum
+$ ./manage.py makemigrations
+$ ./manage.py migrate
 $ ./run
 ```
 
@@ -21,7 +23,7 @@ $ yarn install
 $ ./buildjs
 ```
 
-Navigate to http://localhost:8000/admin
+Navigate to http://localhost:8000/admin/
 
 
 ## What?
