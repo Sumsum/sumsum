@@ -3,6 +3,27 @@
 ** Warning: This project is very much work in progress, do not expect anything
 to work.**
 
+## Installation
+```
+$ git clone https://github.com/SumsumShop/sumsum.git
+$ cd sumsum
+$ createdb sumsum
+$ mkvirtualenv --python `which python3` sumsum
+$ pip install -r requirements.txt
+$ ./run
+```
+
+Open up a new shell and cd into sumsum dir.
+
+```
+$ cd nimda
+$ yarn install
+$ ./buildjs
+```
+
+Navigate to http://localhost:8000/admin
+
+
 ## What?
 Sumsum is a Shopify like ecom plattform built using Django. It is a clone in
 the sense that we are trying to mimic the tempalte language, data model, API
