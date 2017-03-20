@@ -12,12 +12,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/SumsumShop/sumsum.git"
+    "url": "git+https://github.com/Sumsum/sumsum.git"
   },
   "author": "Mikko Hellsing",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/SumsumShop/sumsum/issues"
+    "url": "https://github.com/Sumsum/sumsum/issues"
   },
-  "homepage": "http://sumsums.shop"
+  "homepage": "http://sumsum.shop"
 }
