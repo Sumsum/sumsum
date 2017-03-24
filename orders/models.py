@@ -84,7 +84,7 @@ class Order(models.Model):
     landing_site = models.URLField(_('landing site'), blank=True, null=True)
     # line items
     location = models.ForeignKey('locations.Location', blank=True, null=True)
-    order_number = models.PositiveIntegerField(_('number'), editable=False)  # its nice to be searchable
+    order_number = models.PositiveIntegerField(_('order'), editable=False)  # its nice to be searchable
     note = TextField(_('note'))
     note_attributes = JSONField(_('note attributes'))
     processed_at = models.DateTimeField(_('processed at'), blank=True)
@@ -148,7 +148,7 @@ class Order(models.Model):
 
     @cached_property
     def fulfillments(self):
-        return List(self.fullfillment_set.all())
+        return List(self.fulfillment_set.all())
 
     @property
     def gateway(self):

@@ -5,30 +5,27 @@ from django.utils.functional import cached_property
 
 
 TYPE_CHOICES = (
+    # https://help.shopify.com/api/reference/discount#discount-type-property
     ('fixed_amount', _('SEK')),
     ('percentage', _('% Discount')),
     ('shipping', _('Free shipping')),
 )
 
 
-#RESOURCE_CHOICES = (
-#    ('all', _('all orders')),
-#    ('minimum_order_amount', _('orders over')),
-#    ('collection', _('collection')),
-#    ('product', _('product')),
-#    ('variant', _('product variant')),
-#    ('customer_group', _('customer group')),
-#    ('free_shipping_all', _('Free shipping all countries')),
-#    ('free_shipping_rest', _('Free shipping rest of the world')),
-#    ('free_shipping_sweden', _('Free shipping Sweden')),
-#)
-
-
 RESOURCE_CHOICES = (
-    ('product', _('Product')),
-    ('smart_collection', _('SmartCollection')),
-    ('customersavedsearch', _('CustomerSavedSearch')),
-    ('custom_collection', _('CustomCollection')),
+    # Options are a combination of the API documention:
+    # https://help.shopify.com/api/reference/discount#applies-to-resource-property
+    # and looking at the options in the Shopify admin panel
+    ('', _('all orders')),
+    ('minimum_order_amount', _('orders over')),
+    ('custom_collection', _('collection')),
+    ('product', _('product')),
+    ('product_variant', _('product variant')),
+    # this option i spelled customer_saved_search in the admin but
+    # customersavedsearch in the API documentation
+    ('customersavedsearch', _('customer in group')),
+    # this option is not visible in the admin interface
+    #('smart_collection', _('smart collection')),
 )
 
 
@@ -44,13 +41,13 @@ class Discount(models.Model):
     applies_once_per_customer = models.BooleanField(_('limit 1 per customer'), default=False)
     applies_to_id = models.PositiveIntegerField(_('applies to id'), blank=True, null=True)
     applies_to_resource = ChoiceField(_('applies to resource'), choices=RESOURCE_CHOICES)
-    code = StringField(_('code'), required=True, unique=True)
+    code = StringField(_('discount code'), required=True, unique=True)
     discount_type = ChoiceField(_('type'), choices=TYPE_CHOICES)
     ends_at = models.DateField(_('end date'), blank=True, null=True)
     minimum_order_amount = models.FloatField(_('minimum order amount'), null=True, blank=True)
     starts_at = models.DateField(_('start date'), blank=True, null=True)
     status = ChoiceField(_('status'), choices=STATUS_CHIOCES)
-    times_used = models.PositiveIntegerField(_('times used'), blank=True, null=True)
+    times_used = models.PositiveIntegerField(_('used'), blank=True, null=True)
     usage_limit = models.PositiveIntegerField(_('total available'), blank=True, null=True)
     value = models.FloatField(_('value'), null=True, blank=True)
 
