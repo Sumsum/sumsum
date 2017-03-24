@@ -28,7 +28,7 @@ Navigate to http://localhost:8000/admin/
 
 ## What?
 Sumsum is a Shopify like ecom plattform built using Django. It is a clone in
-the sense that we are trying to mimic the tempalte language, data model, API
+the sense that we are trying to mimic the template language, data model, API
 and Administration panel.
 
 ## Data model
@@ -47,7 +47,7 @@ done. Our goal is to be able to use Shopify templates without modification.
 We are currently using Djangos admin application with the AdminLTE theme and
 until we have time to do something creative we will continue to use this
 approach since it results in very fast development. There is always a
-braeking point when you want to implement something fancy and you almost
+breaking point when you want to implement something fancy and you almost
 break your legs trying to build a nice interface using Django admin app,
 we try to avoid this point and instead make it good enough for practical
 purposes. Sometime in the future however we will want to make a custom
