@@ -1,3 +1,6 @@
+'use strict';
+
+
 import $ from 'jquery'
 let jQuery = $
 

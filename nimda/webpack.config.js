@@ -9,9 +9,9 @@ var config = {
       'jquery',
       'select2',
       'bootstrap',
-      './src/django',
-      //'ionicons/css/ionicons.css',
       'lodash'
+      './src/django',
+      './src/adminlte',
     ]
   },
   output: {

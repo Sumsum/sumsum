@@ -1,6 +1,26 @@
-'use strict'
+'use strict';
 
-import './adminlte'
-import './init'
-import './django'
+
+import $ from 'jquery'
+// it seems we need to import this thing here
 import 'bootstrap-datepicker'
+
+
+String.prototype.format = function() {
+  var args = arguments
+  return this.replace(/{(\d+)}/g, function(match, j) {
+    return args[j]
+  })
+}
+
+
+$('ul.sidebar-menu a:path').parent().addClass('active')
+$("tr input.action-select").actions()
+$('.actions select').addClass('form-control')
+$('.actions .all').hide()
+$('.actions .question').hide()
+$('.actions .clear').hide()
+$($('.actions select[name=action] option')[0]).text('Action')
+
+$('.select2').select2()
+$('.datepicker').datepicker({autoclose: true})
