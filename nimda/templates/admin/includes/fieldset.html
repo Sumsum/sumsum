@@ -38,8 +38,8 @@
               </div>
             {% else %}
               <div class="form-group">
-                {{ field|label_tag }}
-                {{ field.field|add_classes }}
+                {{ field.field|render_field_label }}
+                {{ field.field|render_field }}
               </div>
             {% endif %}
           {% endif %}

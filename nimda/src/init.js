@@ -16,3 +16,7 @@ $('.actions .all').hide()
 $('.actions .question').hide()
 $('.actions .clear').hide()
 $($('.actions select[name=action] option')[0]).text('Action')
+
+$('#id_published_at_0').datepicker({
+  autoclose: true
+});

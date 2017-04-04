@@ -70,7 +70,7 @@
                           <p>{{ field.contents }}</p>
                         {% else %}
                           {{ field.field.errors.as_ul }}
-                          {{ field.field|add_classes }}
+                          {{ field.field|render_field }}
                         {% endif %}
                       </td>
                     {% endif %}

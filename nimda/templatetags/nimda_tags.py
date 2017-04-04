@@ -5,7 +5,7 @@ import random
 from django import template
 from django.apps import apps
 from django.conf import settings
-from django.contrib.admin.widgets import RelatedFieldWidgetWrapper, FilteredSelectMultiple
+from django.contrib.admin.widgets import RelatedFieldWidgetWrapper, FilteredSelectMultiple, AdminSplitDateTime
 from django.core.cache import cache
 from django.forms import Select, SelectMultiple
 from django.forms.utils import flatatt
@@ -69,17 +69,17 @@ def original(context):
 
 
 @register.filter
-def label_tag(field):
-    contents = field.field.label
-    widget = field.field.field.widget
-    id_ = widget.attrs.get('id') or field.field.auto_id
+def render_field_label(field):
+    contents = field.label
+    widget = field.field.widget
+    id_ = widget.attrs.get('id') or field.auto_id
     if id_:
         attrs = {}
         css_classes = []
         id_for_label = widget.id_for_label(id_)
         if id_for_label:
             attrs['for'] = id_for_label
-        if field.field.field.required:
+        if field.field.required:
             css_classes.append('required')
         attrs['class'] = ' '.join(css_classes)
         attrs = flatatt(attrs)
@@ -89,29 +89,36 @@ def label_tag(field):
     return mark_safe(contents)
 
 
-@register.filter
-def add_classes(field):
-    css_classes = field.field.widget.attrs.get('class', '').split(' ')
-    css_classes.append('form-control')
+
+def render_select2(field):
     widget = field.field.widget
-    widget.attrs['class'] = ' '.join(css_classes)
-    if not isinstance(widget, (Select, SelectMultiple, RelatedFieldWidgetWrapper)):
-        return field
+    # nested widget
+    if hasattr(widget, 'widget'):
+        if isinstance(widget.widget, FilteredSelectMultiple):
+            widget = SelectMultiple()
+            field.field.widget.widget = widget
+        else:
+            widget = widget.widget
+    # make ugly filter go away
     if hasattr(field, 'no_select2') and widget.no_select2:
         return field
+    # remove unwanted help text
     rmthis = str(_('Hold down "Control", or "Command" on a Mac, to select more than one.'))
     field.help_text = str(field.help_text).replace(rmthis, '')
-    css_classes.append('select2')
-    if isinstance(field.field.widget, RelatedFieldWidgetWrapper):
-        # make that ugly filter go away
-        if isinstance(field.field.widget.widget, FilteredSelectMultiple):
-            field.field.widget.widget = SelectMultiple()
-        field.field.widget.widget.attrs['class'] = ' '.join(css_classes)
-        id_ = field.field.widget.widget.attrs.get('id') or field.auto_id
-    else:
-        id_ = field.field.widget.attrs.get('id') or field.auto_id
+    widget.attrs['class'] = 'form-control select2'
+    id_ = widget.attrs.get('id') or field.auto_id
     placeholder = _('Select %s') % str(field.label).lower()
-    return mark_safe('%s<script>$(function() { $("#%s").select2({"placeholder": "%s"}) });</script>' % (field, id_, placeholder))
+    return mark_safe('%s<script>$(function() { $("#%s").select2({"placeholder": "%s"}) })</script>' % (
+        field, id_, placeholder
+    ))
+
+@register.filter
+def render_field(field):
+    widget = field.field.widget
+    if isinstance(widget, (Select, SelectMultiple, RelatedFieldWidgetWrapper)):
+        return render_select2(field)
+    widget.attrs['class'] = 'form-control'
+    return field
 
 
 @register.filter
