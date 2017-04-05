@@ -1,11 +1,6 @@
 'use strict';
 
 
-import $ from 'jquery'
-// it seems we need to import this thing here
-import 'bootstrap-datepicker'
-
-
 String.prototype.format = function() {
   var args = arguments
   return this.replace(/{(\d+)}/g, function(match, j) {
@@ -22,5 +17,6 @@ $('.actions .question').hide()
 $('.actions .clear').hide()
 $($('.actions select[name=action] option')[0]).text('Action')
 
+$.AdminLTE.options.animationSpeed = 100
 $('.select2').select2()
-$('.datepicker').datepicker({autoclose: true})
+$('.datepickerInput').datepicker({autoclose: true})

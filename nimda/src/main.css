@@ -144,22 +144,22 @@ table thead th.sorted .sortoptions a {
   display: inline-block; }
 
 table thead th.sorted .sortoptions a.sortremove {
-  background: url(../img/sorting-icons.gif) -4px -5px no-repeat; }
+  background: url(img/sorting-icons.gif) -4px -5px no-repeat; }
 
 table thead th.sorted .sortoptions a.sortremove:hover {
-  background: url(../img/sorting-icons.gif) -4px -27px no-repeat; }
+  background: url(img/sorting-icons.gif) -4px -27px no-repeat; }
 
 table thead th.sorted .sortoptions a.ascending {
-  background: url(../img/sorting-icons.gif) -5px -50px no-repeat; }
+  background: url(img/sorting-icons.gif) -5px -50px no-repeat; }
 
 table thead th.sorted .sortoptions a.ascending:hover {
-  background: url(../img/sorting-icons.gif) -5px -72px no-repeat; }
+  background: url(img/sorting-icons.gif) -5px -72px no-repeat; }
 
 table thead th.sorted .sortoptions a.descending {
-  background: url(../img/sorting-icons.gif) -5px -94px no-repeat; }
+  background: url(img/sorting-icons.gif) -5px -94px no-repeat; }
 
 table thead th.sorted .sortoptions a.descending:hover {
-  background: url(../img/sorting-icons.gif) -5px -115px no-repeat; }
+  background: url(img/sorting-icons.gif) -5px -115px no-repeat; }
 
 /* ORDERABLE TABLES */
 table.orderable tbody tr td:hover {

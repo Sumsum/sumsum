@@ -5,19 +5,18 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>{% block title %}{{ title }} | {{ site_title|default:"Nimda" }}{% endblock %}</title>
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-  <link rel="stylesheet" href="{% static "admin/bootstrap/css/bootstrap.min.css" %}">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-  <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
-  <link rel="stylesheet" href="{% static "admin/plugins/select2/select2.min.css" %}">
-  <link rel="stylesheet" href="{% static "admin/css/AdminLTE.min.css" %}">
-  <link rel="stylesheet" href="{% static "admin/css/skins/skin-black.min.css" %}">
-  <link rel="stylesheet" href="{% static "admin/plugins/datepicker/datepicker3.css" %}">
-  <link rel="stylesheet" href="{% static "admin/css/nimda.css" %}?2">
+  {% if debug %}
+    <link rel="stylesheet" href="http://127.0.0.1:9999/dist/nimda/vendor.css">
+    <link rel="stylesheet" href="http://127.0.0.1:9999/dist/nimda/main.css">
+  {% else %}
+    <link rel="stylesheet" href="{% dist 'nimda/vendor.css' %}">
+    <link rel="stylesheet" href="{% dist 'nimda/mail.css' %}">
+  {% endif %}
 
   {% if debug %}
-    <script src="http://127.0.0.1:9999/dist/nimda/vendor.bundle.js"></script>
+    <script src="http://127.0.0.1:9999/dist/nimda/vendor.js"></script>
   {% else %}
-    <script src="{% dist 'nimda/vendor.bundle.js' %}"></script>
+    <script src="{% dist 'nimda/vendor.js' %}"></script>
   {% endif %}
 
   <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
