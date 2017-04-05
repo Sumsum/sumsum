@@ -19,4 +19,7 @@ $($('.actions select[name=action] option')[0]).text('Action')
 
 $.AdminLTE.options.animationSpeed = 100
 $('.select2').select2()
-$('.datepickerInput').datepicker({autoclose: true})
+$('.datepickerInput').datepicker({
+  autoclose: true,
+  format: 'yyyy-mm-dd', 
+})
