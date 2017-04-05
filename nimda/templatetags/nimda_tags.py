@@ -12,6 +12,7 @@ from django.forms.utils import flatatt
 from django.utils.html import conditional_escape, format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _
+from nimda.forms.widgets import NimdaDateWidget, NimdaTimeWidget
 from rest_framework import serializers
 from django.contrib import admin
 
@@ -89,35 +90,31 @@ def render_field_label(field):
     return mark_safe(contents)
 
 
-
-def render_select2(field):
-    widget = field.field.widget
-    # nested widget
-    if hasattr(widget, 'widget'):
-        if isinstance(widget.widget, FilteredSelectMultiple):
-            widget = SelectMultiple()
-            field.field.widget.widget = widget
-        else:
-            widget = widget.widget
-    # make ugly filter go away
-    if hasattr(field, 'no_select2') and widget.no_select2:
-        return field
-    # remove unwanted help text
-    rmthis = str(_('Hold down "Control", or "Command" on a Mac, to select more than one.'))
-    field.help_text = str(field.help_text).replace(rmthis, '')
-    widget.attrs['class'] = 'form-control select2'
-    id_ = widget.attrs.get('id') or field.auto_id
-    placeholder = _('Select %s') % str(field.label).lower()
-    return mark_safe('%s<script>$(function() { $("#%s").select2({"placeholder": "%s"}) })</script>' % (
-        field, id_, placeholder
-    ))
-
 @register.filter
 def render_field(field):
     widget = field.field.widget
+
     if isinstance(widget, (Select, SelectMultiple, RelatedFieldWidgetWrapper)):
-        return render_select2(field)
-    widget.attrs['class'] = 'form-control'
+        # nested widget
+        if hasattr(widget, 'widget'):
+            if isinstance(widget.widget, FilteredSelectMultiple):
+                widget = SelectMultiple()
+                field.field.widget.widget = widget
+            else:
+                widget = widget.widget
+        if hasattr(field, 'no_select2') and widget.no_select2:
+            return field
+        # remove unwanted help text
+        rmthis = str(_('Hold down "Control", or "Command" on a Mac, to select more than one.'))
+        field.help_text = str(field.help_text).replace(rmthis, '')
+        widget.attrs['class'] = 'form-control select2'
+
+    elif isinstance(widget, AdminSplitDateTime):
+        widget.widgets = [NimdaDateWidget(), NimdaTimeWidget()]
+
+    else:
+        widget.attrs['class'] = 'form-control'
+
     return field
 
 

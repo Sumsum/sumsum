@@ -1,17 +1,37 @@
 /* global __dirname */
-var webpack = require('webpack')
+const webpack = require('webpack')
+const ExtractTextPlugin = require('extract-text-webpack-plugin')
 
 
-var config = {
+const extractCSS = new ExtractTextPlugin({
+  filename: '[name].css',
+})
+const vendorBundle = new webpack.optimize.CommonsChunkPlugin({
+  name: 'vendor',
+})
+
+
+module.exports = {
   entry: {
-    main: './src/main.js',
+    main: [
+      './src/main.js',
+      './src/main.css',
+    ],
     vendor: [
       'jquery',
       'select2',
+      'select2/dist/css/select2.css',
       'bootstrap',
+      'bootstrap/dist/css/bootstrap.css',
+      'bootstrap-datepicker',
+      'bootstrap-datepicker/dist/css/bootstrap-datepicker3.css',
+      'lodash',
+      'font-awesome/css/font-awesome.css',
+      'ionicons/dist/css/ionicons.css',
+      'admin-lte/dist/js/app.js',
+      'admin-lte/dist/css/AdminLTE.css',
+      'admin-lte/dist/css/skins/skin-black.min.css',
       './src/django',
-      //'ionicons/css/ionicons.css',
-      'lodash'
     ]
   },
   output: {
@@ -20,42 +40,66 @@ var config = {
     filename: '[name].js'
   },
   module: {
-    rules: [{
-      test: require.resolve('jquery'),
-      use: [{
-        loader: 'expose-loader',
-        options: 'jQuery'
-      },{
-        loader: 'expose-loader',
-        options: '$'
-      }]
-    }],
-    loaders: [
+    rules: [
+      // OK
       {
-        test: /\.js$/,
-        loader: 'babel-loader'
+        test: require.resolve('jquery'),
+        use: [{
+          loader: 'expose-loader',
+          options: 'jQuery'
+        },{
+          loader: 'expose-loader',
+          options: '$'
+        }],
       },
-      {
-        test: /\.(eot|svg|ttf|woff)/,
-        loader: 'url-loader?limit=10000'
-      },
-      {
-        test: /\.scss$/,
-        //loader: ExtractTextPlugin.extract('style-loader', 'css-loader!sass-loader')
-        loader: 'style-loader!css-loader!sass-loader'
-      },
+      // OK
       {
         test: /\.css$/,
-        //loader: ExtractTextPlugin.extract('style-loader', 'css-loader')
-        loader: 'style-loader!css-loader'
-      }
+        use: extractCSS.extract({
+          use: 'css-loader',
+          fallback: 'style-loader',
+        })
+      },
+      // OK
+      {
+        test: /\.scss$/,
+        use: extractCSS.extract({
+          use: ['css-loader', 'sass-loader'],
+          fallback: 'style-loader',
+        })
+      },
+      // OK
+      {
+        test: /\.js$/,
+        exclude: /(node_modules|bower_components)/,
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: ['env']
+          }
+        }
+      },
+      // OK
+      {
+        test: /\.(ttf|eot|woff|woff2)$/,
+        loader: 'file-loader',
+        options: {
+          name: 'fonts/[name].[ext]',
+        },
+      },
+      // OK
+      {
+        test: /\.(svg|jpg|png|gif)$/,
+        loader: 'file-loader',
+        options: {
+          name: 'img/[name].[ext]',
+        },
+      },
     ]
   },
   plugins: [
-    new webpack.optimize.CommonsChunkPlugin({ name: 'vendor', filename: 'vendor.bundle.js' })
-    //new ExtractTextPlugin('[name].css')
+    vendorBundle,
+    extractCSS,
+    //jQueryPlugin,
   ]
 }
-
-
-module.exports = config
