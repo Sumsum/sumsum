@@ -190,3 +190,9 @@ div.ace_wrapper {
   float: initial;
 }
 
+.lang-name {
+  margin: 4px 0 20px 1px;
+  color: #666;
+  display: block;
+}
+

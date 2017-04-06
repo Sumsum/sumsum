@@ -1,20 +1,19 @@
 import hashlib
 import json
 import os
-import random
 from django import template
 from django.apps import apps
 from django.conf import settings
+from django.contrib import admin
 from django.contrib.admin.widgets import RelatedFieldWidgetWrapper, FilteredSelectMultiple, AdminSplitDateTime
 from django.core.cache import cache
-from django.forms import Select, SelectMultiple
+from django.forms import Select, SelectMultiple, MultiWidget
 from django.forms.utils import flatatt
 from django.utils.html import conditional_escape, format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _
 from nimda.forms.widgets import NimdaDateWidget, NimdaTimeWidget
 from rest_framework import serializers
-from django.contrib import admin
 
 
 register = template.Library()
@@ -109,7 +108,7 @@ def col_width(field):
     widget = field.field.widget
     if hasattr(widget, 'is_wide') and widget.is_wide:
         return 12
-    if isinstance(widget, AdminSplitDateTime):
+    if isinstance(widget, MultiWidget):
         return 12
     return 6
 
@@ -120,7 +119,7 @@ def form_class(field):
     if (isinstance(field, dict)):
         return 'form-group'
     widget = field.field.widget
-    if isinstance(widget, AdminSplitDateTime):
+    if isinstance(widget, MultiWidget):
         return ''
     return 'form-group'
 
@@ -194,23 +193,3 @@ def sidebar_menu(context):
         app['models'] = models
         app_list.append(app)
     return {'app_list': app_list}
-
-
-@register.inclusion_tag('admin/includes/model_summary.html', takes_context=True)
-def model_summary(context):
-    if 'app_list' in context:
-        colors = ['aqua', 'green', 'red', 'white', 'black']
-        random.seed('nimdalhc')
-        random.shuffle(colors)
-        models = []
-        for j, app in enumerate(context['app_list']):
-            for m in app['models']:
-                cidx = j % len(colors)
-                model = apps.get_model(app['app_label'], m['object_name'])
-                models.append({
-                    'name': m['name'],
-                    'count': model._default_manager.all().count(),
-                    'color': colors[cidx],
-                    'url': m['admin_url']
-                })
-        return {'models': models}

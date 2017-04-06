@@ -54,9 +54,6 @@ class TransWidget(forms.MultiWidget):
         context['rows'] = list(zip(labels, context['widget']['subwidgets']))
         return context
 
-    class Media:
-        css = {'all': ['utils/trans.css']}
-
 
 class TransFormField(forms.MultiValueField):
     """
