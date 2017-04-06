@@ -185,4 +185,8 @@ table.orderable-initalized .order-cell, body > tr > td.order-cell {
   color: #999;
 }
 
+/* ace editor fix */
+div.ace_wrapper {
+  float: initial;
+}
 

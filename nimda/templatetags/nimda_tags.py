@@ -92,11 +92,20 @@ def render_field_label(field):
 
 @register.inclusion_tag('admin/includes/help_text.html')
 def help_text(field):
-    return {'help_text': field.field.help_text}
+    if (isinstance(field, dict)):
+        help_text = field.get('help_text', '')
+    else:
+        help_text = field.field.help_text
+    return {'help_text': help_text}
 
 
 @register.filter
 def col_width(field):
+    # read only
+    if (isinstance(field, dict)):
+        if field.get('is_wide'):
+            return 12
+        return 6
     widget = field.field.widget
     if hasattr(widget, 'is_wide') and widget.is_wide:
         return 12
@@ -107,6 +116,9 @@ def col_width(field):
 
 @register.filter
 def form_class(field):
+    # read only
+    if (isinstance(field, dict)):
+        return 'form-group'
     widget = field.field.widget
     if isinstance(widget, AdminSplitDateTime):
         return ''
@@ -146,6 +158,9 @@ def render_field(field):
 
 @register.filter
 def inline_td_classes(field):
+    # read only
+    if (isinstance(field, dict)):
+        return ''
     css_classes = field.field.widget.attrs.get('class', '').split(' ')
     css_classes.append(field.field.widget.attrs.get('type', ''))
     if field.name:
