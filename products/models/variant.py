@@ -16,7 +16,7 @@ UNIT_CHOICES = (
 
 INVENTORY_MANAGEMENT_CHOICES = (
     ('blank', _("Don't track inventory")),
-    ('shopify', _("YAShop tracks this product's inventory")),
+    ('shopify', _("Sumsum tracks this product's inventory")),
 )
 
 INVENTORY_POLICY_CHOICES = (
@@ -31,7 +31,7 @@ class ProductVariant(MetaFieldsMixin, models.Model):
     created_at = models.DateTimeField(_('created at'), auto_now_add=True)
     fulfillment_service = models.ForeignKey('fulfillments.FulfillmentService', blank=True, null=True)
     image = models.ForeignKey('products.ProductImage', verbose_name=_('image'), blank=True, null=True)
-    inventory_management = ChoiceField(_('track inventory'), help_text=_('Yashop tracks this products inventory'), choices=INVENTORY_MANAGEMENT_CHOICES)
+    inventory_management = ChoiceField(_('track inventory'), help_text=_('Sumsum tracks this products inventory'), choices=INVENTORY_MANAGEMENT_CHOICES)
     inventory_policy = ChoiceField(_('inventory policy'), help_text=_("Allow customers to purchase this product when it's out of stock"), choices=INVENTORY_POLICY_CHOICES)
     inventory_quantity = models.IntegerField(_('quantity'), default=0)
     next_incoming_date = models.DateField(_('next incoming date'), blank=True, null=True)

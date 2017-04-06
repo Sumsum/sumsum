@@ -25,8 +25,8 @@ sensitive_post_parameters_m = method_decorator(sensitive_post_parameters())
 
 
 admin.site.unregister(AuthGroup)
-admin.site.site_title = 'YAShop Admin'
-admin.site.site_header = 'YAShop Admin'
+admin.site.site_title = 'Sumsum Admin'
+admin.site.site_header = 'Sumsum Admin'
 
 
 @admin.register(Group)

@@ -23,3 +23,7 @@ $('.datepickerInput').datepicker({
   autoclose: true,
   format: 'yyyy-mm-dd', 
 })
+$(".timepickerInput").timepicker({
+  showInputs: false,
+  showMeridian: false,
+})

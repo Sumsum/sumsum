@@ -7,9 +7,8 @@ class NimdaDateWidget(forms.DateInput):
     def __init__(self):
         super().__init__(attrs={'class': 'form-control pull-right datepickerInput'})
 
-
 class NimdaTimeWidget(forms.TimeInput):
     template_name = 'admin/widgets/time.html'
 
     def __init__(self):
-        super().__init__(attrs={'class': 'form-control timepicker'})
+        super().__init__(attrs={'class': 'form-control timepickerInput'})

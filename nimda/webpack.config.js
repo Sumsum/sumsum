@@ -3,6 +3,7 @@ const webpack = require('webpack')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 
 
+const DEBUG = process.env.NODE_ENV != 'production'
 const extractCSS = new ExtractTextPlugin({
   filename: '[name].css',
 })
@@ -11,7 +12,7 @@ const vendorBundle = new webpack.optimize.CommonsChunkPlugin({
 })
 
 
-module.exports = {
+let config = {
   entry: {
     main: [
       './src/main.js',
@@ -25,6 +26,8 @@ module.exports = {
       'bootstrap/dist/css/bootstrap.css',
       'bootstrap-datepicker',
       'bootstrap-datepicker/dist/css/bootstrap-datepicker3.css',
+      'bootstrap-timepicker',
+      'bootstrap-timepicker/css/bootstrap-timepicker.css',
       'lodash',
       'font-awesome/css/font-awesome.css',
       'ionicons/dist/css/ionicons.css',
@@ -58,7 +61,7 @@ module.exports = {
         use: extractCSS.extract({
           use: 'css-loader',
           fallback: 'style-loader',
-        })
+        }),
       },
       // OK
       {
@@ -100,6 +103,7 @@ module.exports = {
   plugins: [
     vendorBundle,
     extractCSS,
-    //jQueryPlugin,
-  ]
+  ],
 }
+
+module.exports = config
