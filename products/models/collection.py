@@ -3,7 +3,8 @@ from django.utils.functional import cached_property
 from django.utils.translation import ugettext_lazy as _
 from metafields.models import MetaFieldsMixin
 from utils.datastructures import List
-from utils.fields import HandleField, ChoiceField, StringField, PositionField, ImageField, WysiwygField
+from utils.fields import ChoiceField, StringField, PositionField, ImageField
+from utils.fields import TransStringField, TransHandleField, TransWysiwygField
 from sumsum.middleware import get_request
 
 
@@ -55,22 +56,22 @@ class CustomCollectionManager(models.Manager):
 
 
 class CustomCollection(MetaFieldsMixin, models.Model):
-    body_html = WysiwygField(_('description'), blank=True, null=True)
+    body_html_t = TransWysiwygField(_('description'))
     disjunctive = models.BooleanField(_('products can match any condition'), default=False)
-    handle = HandleField(_('handle'), from_field='title')
+    handle_t = TransHandleField(_('handle'), populate_from='title_t')
     image = ImageField(_('image'), upload_to='products')
     published = models.BooleanField(_('published'), default=True)
     published_at = models.DateTimeField(_('published at'), help_text=_('publish this collection on'), blank=True, null=True)
     published_scope = ChoiceField(_('visability'), choices=PUBLICATION_CHOICES)
     sort_order = ChoiceField(_('sort'), choices=SORT_CHOICES)
     template_suffix = StringField(_('template suffix'))
-    title = StringField(_('title'), required=True)
+    title_t = TransStringField(_('title'), required=True)
     updated_at = models.DateTimeField(_('updated at'), auto_now=True)
 
     objects = CustomCollectionManager()
 
     class Meta:
-        ordering = ('-title',)
+        ordering = ('-title_t',)
         verbose_name = _('collection')
         verbose_name_plural = _('collections')
 

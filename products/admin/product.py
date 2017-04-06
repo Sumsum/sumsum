@@ -1,4 +1,3 @@
-from .forms import ProductForm
 from django.contrib import admin
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
@@ -26,9 +25,9 @@ class ProductVariantInline(admin.StackedInline):
         }),
         (_('Options'), {
             'fields': (
-                'option1',
-                'option2',
-                'option3',
+                'option1_t',
+                'option2_t',
+                'option3_t',
                 'image',
             ),
             'classes': ('collapse',)
@@ -68,8 +67,8 @@ class ProductAdmin(admin.ModelAdmin):
     fieldsets = (
         (None, {
             'fields': (
-                'title',
-                'body_html',
+                'title_t',
+                'body_html_t',
             )
         }),
         (_('Visability'), {
@@ -88,15 +87,15 @@ class ProductAdmin(admin.ModelAdmin):
         }),
         (_('Options'), {
             'fields': (
-                'option1_name',
-                'option2_name',
-                'option3_name',
+                'option1_name_t',
+                'option2_name_t',
+                'option3_name_t',
             ),
             'classes': ('collapse',)
         }),
         (_('Search engine listing preview'), {
             'fields': (
-                'handle',
+                'handle_t',
             ),
             'classes': ('collapse',)
         }),

@@ -85,7 +85,7 @@ class TrackingNumber(models.Model):
 class FulfillmentService(models.Model):
     callback_url = models.URLField(_('callback url'), blank=True, null=True)
     format = ChoiceField(_('format'), choices=FORMAT_CHOICES)
-    handle = HandleField(_('handle'), from_field='name')
+    handle = HandleField(_('handle'), populate_from='name')
     inventory_management = models.BooleanField(_('inventory management'), help_text=_('fulfillment service tracks product inventory'))
     name = StringField(_('name'), required=True)
     provider_id = StringField(_('provider id'), help_text=_('A unique identifier for the fulfillment service provider.'), unique=True)

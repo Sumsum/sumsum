@@ -4,6 +4,7 @@ from django.utils.functional import cached_property
 from django.utils.translation import ugettext_lazy as _
 from metafields.models import MetaFieldsMixin
 from utils.fields import ChoiceField, StringField, PositionField
+from utils.fields import TransStringField
 from sumsum.middleware import get_request
 
 
@@ -35,9 +36,9 @@ class ProductVariant(MetaFieldsMixin, models.Model):
     inventory_policy = ChoiceField(_('inventory policy'), help_text=_("Allow customers to purchase this product when it's out of stock"), choices=INVENTORY_POLICY_CHOICES)
     inventory_quantity = models.IntegerField(_('quantity'), default=0)
     next_incoming_date = models.DateField(_('next incoming date'), blank=True, null=True)
-    option1 = StringField(_('option #1'))
-    option2 = StringField(_('option #2'))
-    option3 = StringField(_('option #3'))
+    option1_t = TransStringField(_('option #1'))
+    option2_t = TransStringField(_('option #2'))
+    option3_t = TransStringField(_('option #3'))
     position = PositionField()
     price = models.FloatField(_('price'), default=0)
     product = models.ForeignKey('products.Product', verbose_name=_('product'))

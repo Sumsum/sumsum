@@ -4,7 +4,8 @@ from django.utils.functional import cached_property
 from django.utils.translation import ugettext_lazy as _
 from metafields.models import MetaFieldsMixin
 from utils.datastructures import List
-from utils.fields import HandleField, StringField, ChoiceField, WysiwygField
+from utils.fields import StringField, ChoiceField
+from utils.fields import TransHandleField, TransStringField, TransWysiwygField
 from sumsum.middleware import get_request
 
 
@@ -28,27 +29,27 @@ class ProductManager(models.Manager):
 
 
 class Product(MetaFieldsMixin, models.Model):
-    body_html = WysiwygField(_('description'))
+    body_html_t = TransWysiwygField(_('description'))
     collections_m2m = models.ManyToManyField('products.CustomCollection', through='products.Collect', blank=True)
     created_at = models.DateTimeField(_('created at'), auto_now_add=True)
-    handle = HandleField(_('handle'), from_field='title')
+    handle_t = TransHandleField(_('handle'), populate_from='title_t')
     # sh*pify probably has a related table implementation, is this good enough?
-    option1_name = StringField(_('option #1 name'))
-    option2_name = StringField(_('option #2 name'))
-    option3_name = StringField(_('option #3 name'))
+    option1_name_t = TransStringField(_('option #1 name'))
+    option2_name_t = TransStringField(_('option #2 name'))
+    option3_name_t = TransStringField(_('option #3 name'))
     product_type = StringField(_('product type'))  # this might need a related table
     published_at = models.DateTimeField(_('published at'), help_text=_('publish this product on'), blank=True, null=True)
     published_scope = ChoiceField(_('visability'), choices=PUBLICATION_CHOICES)
     tags = ArrayField(StringField(_('tag'), required=True), verbose_name=_('tags'), default=[], blank=True)
     template_suffix = StringField(_('template suffix'))
-    title = StringField(_('title'), required=True)
+    title_t = TransStringField(_('title'), required=True)
     updated_at = models.DateTimeField(_('updated at'), auto_now=True)
     vendor = StringField(_('vendor'), blank=True, null=True)
 
     objects = ProductManager()
 
     class Meta:
-        ordering = ('title',)
+        ordering = ('title_t',)
         verbose_name = _('product')
         verbose_name_plural = _('products')
 

@@ -17,7 +17,7 @@ class HandleField(models.CharField):
         kwargs.setdefault('db_index', True)
         kwargs.setdefault('blank', True)
         kwargs.setdefault('unique', True)
-        self.from_field = kwargs.pop('from_field', None)
+        self.populate_from = kwargs.pop('populate_from', None)
         super().__init__(*args, **kwargs)
 
     def deconstruct(self):
@@ -34,8 +34,9 @@ class HandleField(models.CharField):
     def pre_save(self, obj, add):
         value = self.value_from_object(obj)
         if add or not value:
-            # only compute slug from self.from_field if its a new record or if empty value
-            value = getattr(obj, self.from_field)
+            # only compute slug from self.populate_from if its a new record or
+            # if empty value
+            value = getattr(obj, self.populate_from)
         slug = slugify(value)[:46]
         if self.unique:
             qs = obj.__class__._default_manager.using(obj._state.db)
