@@ -87,9 +87,12 @@ def render_field_label(field):
         contents = format_html('<label{}>{}</label>', attrs, contents)
     else:
         contents = conditional_escape(contents)
-    if field.help_text:
-        contents += '<i class="fieldhelp fa fa-question-circle-o" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="{}"></i>'.format(field.help_text)
     return mark_safe(contents)
+
+
+@register.inclusion_tag('admin/includes/help_text.html')
+def help_text(field):
+    return {'help_text': field.field.help_text}
 
 
 @register.filter

@@ -32,6 +32,7 @@
             {% if field.is_readonly %}
               <div class="{{ field.field|form_class }}">
                 <label>{{ field.field.label }}</label>
+                {% help_text field.field %}
                 <div>
                   {{ field.contents }}
                 </div>
@@ -39,6 +40,7 @@
             {% else %}
               <div class="{{ field.field|form_class }}">
                 {{ field.field|render_field_label }}
+                {% help_text field.field %}
                 {{ field.field|render_field }}
               </div>
             {% endif %}
