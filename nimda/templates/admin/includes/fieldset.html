@@ -21,7 +21,7 @@
 
       <div class="row">
       {% for field in line %}
-        <div class="col-md-{% if field.field.field.widget.is_wide %}12{% else %}6{% endif %}">
+        <div class="col-md-{{ field.field|col_width }}">
           {% if field.is_checkbox %}
             <div class="checkbox">
               <label>
@@ -30,22 +30,18 @@
             </div>
           {% else %}
             {% if field.is_readonly %}
-              <div class="form-group">
+              <div class="{{ field.field|form_class }}">
                 <label>{{ field.field.label }}</label>
                 <div>
                   {{ field.contents }}
                 </div>
               </div>
             {% else %}
-              <div class="form-group">
+              <div class="{{ field.field|form_class }}">
                 {{ field.field|render_field_label }}
                 {{ field.field|render_field }}
               </div>
             {% endif %}
-          {% endif %}
-
-          {% if field.field.help_text %}
-            <p class="help-block">{{ field.field.help_text|safe }}</p>
           {% endif %}
         </div>
       {% endfor %}

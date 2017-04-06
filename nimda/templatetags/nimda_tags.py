@@ -87,7 +87,27 @@ def render_field_label(field):
         contents = format_html('<label{}>{}</label>', attrs, contents)
     else:
         contents = conditional_escape(contents)
+    if field.help_text:
+        contents += '<i class="fieldhelp fa fa-question-circle-o" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="{}"></i>'.format(field.help_text)
     return mark_safe(contents)
+
+
+@register.filter
+def col_width(field):
+    widget = field.field.widget
+    if hasattr(widget, 'is_wide') and widget.is_wide:
+        return 12
+    if isinstance(widget, AdminSplitDateTime):
+        return 12
+    return 6
+
+
+@register.filter
+def form_class(field):
+    widget = field.field.widget
+    if isinstance(widget, AdminSplitDateTime):
+        return ''
+    return 'form-group'
 
 
 @register.filter
@@ -110,7 +130,10 @@ def render_field(field):
         widget.attrs['class'] = 'form-control select2'
 
     elif isinstance(widget, AdminSplitDateTime):
-        widget.widgets = [NimdaDateWidget(), NimdaTimeWidget()]
+        widget.widgets = [
+            NimdaDateWidget(attrs={'class': 'form-control datepickerInput'}),
+            NimdaTimeWidget(attrs={'class': 'form-control timepickerInput'}),
+        ]
 
     else:
         widget.attrs['class'] = 'form-control'

@@ -1,5 +1,5 @@
 bleach==1.5.0
-Django==1.11rc1
+Django==1.11
 django-appconf==1.0.2
 django-braces==1.4.0
 django-countries==4.1

@@ -1,11 +1,13 @@
-<div class="form-group">
-  {% with widget=widget.subwidgets.0 %}
-    {% include widget.template_name %}
-  {% endwith %}
-</div>
+<div class="row">
+  <div class="col-md-6 form-group">
+    {% with widget=widget.subwidgets.0 %}
+      {% include widget.template_name %}
+    {% endwith %}
+  </div>
 
-<div class="form-group">
-  {% with widget=widget.subwidgets.1 %}
-    {% include widget.template_name %}
-  {% endwith %}
+  <div class="col-md-6 form-group">
+    {% with widget=widget.subwidgets.1 %}
+      {% include widget.template_name %}
+    {% endwith %}
+  </div>
 </div>

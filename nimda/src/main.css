@@ -172,7 +172,6 @@ table.orderable tbody tr td:first-child {
 table.orderable-initalized .order-cell, body > tr > td.order-cell {
   display: none; }
 
-
 .errorlist li {
   color: #e44158; }
 
@@ -180,5 +179,10 @@ table.orderable-initalized .order-cell, body > tr > td.order-cell {
 .actions .all { display:block }
 .actions .question { display:block }
 .actions .clear { display:block }
+
+.fieldhelp {
+  margin-left: 5px;
+  color: #999;
+}
 
 
