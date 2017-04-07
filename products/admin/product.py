@@ -77,7 +77,7 @@ class ProductAdmin(admin.ModelAdmin):
                 'published_at',
                 'published_scope',
             ),
-            'classes': ('box-primary',)
+            'classes': ('box-primary', 'collapsed')
         }),
         (_('Organization'), {
             'fields': (
