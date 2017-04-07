@@ -23,11 +23,12 @@ class PageAdmin(admin.ModelAdmin):
             'fields': (
                 'metafields_json',
             ),
+            'classes': ('box-primary', 'collapsed',)
         }),
         (_('Search engine listing preview'), {
             'fields': (
                 'handle_t',
             ),
-            'classes': ('collapse',)
+            'classes': ('box-danger', 'collapsed',)
         }),
     )

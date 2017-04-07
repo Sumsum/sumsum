@@ -185,13 +185,17 @@ table.orderable-initalized .order-cell, body > tr > td.order-cell {
   color: #999;
 }
 
+div.box {
+  margin-bottom: 12px;
+}
+
 /* ace editor fix */
 div.ace_wrapper {
   float: initial;
 }
 
 .lang-name {
-  margin: 4px 0 20px 1px;
+  margin: 4px 0 0 1px;
   color: #666;
   display: block;
 }

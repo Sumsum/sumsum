@@ -34,6 +34,8 @@ let config = {
       'admin-lte/dist/js/app.js',
       'admin-lte/dist/css/AdminLTE.css',
       'admin-lte/dist/css/skins/skin-black.min.css',
+      'dropzone',
+      'dropzone/dist/dropzone.css',
       './src/django',
     ]
   },

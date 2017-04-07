@@ -99,6 +99,21 @@ def help_text(field):
 
 
 @register.filter
+def box_classes(fieldset):
+    css_classes = []
+    for name in fieldset.classes.split(' '):
+        name = name.strip()
+        if name.startswith('box-'):
+            css_classes.append(name)
+    return ' '.join(css_classes)
+
+
+@register.filter
+def has_class(fieldset, name):
+    return name in [c.strip() for c in fieldset.classes.split(' ')]
+
+
+@register.filter
 def col_width(field):
     # read only
     if (isinstance(field, dict)):

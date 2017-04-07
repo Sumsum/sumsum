@@ -16,7 +16,7 @@ class ProductImageInline(admin.TabularInline):
 
 class ProductVariantInline(admin.StackedInline):
     model = ProductVariant
-    extra = 1
+    extra = 0
     fieldsets = (
         (None, {
             'fields': (
@@ -61,7 +61,7 @@ class ProductAdmin(admin.ModelAdmin):
     icon = '<i class="fa fa-tags" aria-hidden="true"></i>'
     save_on_top = True
     list_fields = ('title', 'product_type', 'vendor', 'published_at', 'updated_at')
-    search_fields = ('title', 'product_type', 'vendor')
+    search_fields = ('title_t', 'product_type', 'vendor')
     inlines = [ProductVariantInline, ProductImageInline]
     #form = ProductForm
     fieldsets = (
@@ -69,13 +69,15 @@ class ProductAdmin(admin.ModelAdmin):
             'fields': (
                 'title_t',
                 'body_html_t',
-            )
+            ),
+            'classes': ('box-primary',)
         }),
         (_('Visability'), {
             'fields': (
                 'published_at',
                 'published_scope',
             ),
+            'classes': ('box-primary',)
         }),
         (_('Organization'), {
             'fields': (
@@ -91,19 +93,19 @@ class ProductAdmin(admin.ModelAdmin):
                 'option2_name_t',
                 'option3_name_t',
             ),
-            'classes': ('collapse',)
+            'classes': ('collapsed',)
         }),
         (_('Search engine listing preview'), {
             'fields': (
                 'handle_t',
             ),
-            'classes': ('collapse',)
+            'classes': ('box-danger', 'collapsed',)
         }),
         (_('Metafields'), {
             'fields': (
                 'metafields_json',
             ),
-            'classes': ('collapse',)
+            'classes': ('collapsed',)
         }),
     )
 
