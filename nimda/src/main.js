@@ -26,4 +26,5 @@ $('.datepickerInput').datepicker({
 $(".timepickerInput").timepicker({
   showInputs: false,
   showMeridian: false,
+  defaultTime: false,
 })

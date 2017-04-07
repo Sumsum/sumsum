@@ -5,7 +5,8 @@ from django import template
 from django.apps import apps
 from django.conf import settings
 from django.contrib import admin
-from django.contrib.admin.widgets import RelatedFieldWidgetWrapper, FilteredSelectMultiple, AdminSplitDateTime
+from django.contrib.admin.widgets import RelatedFieldWidgetWrapper, FilteredSelectMultiple
+from django.contrib.admin.widgets import AdminSplitDateTime, AdminDateWidget, AdminTimeWidget
 from django.core.cache import cache
 from django.forms import Select, SelectMultiple, MultiWidget
 from django.forms.utils import flatatt
@@ -157,6 +158,14 @@ def render_field(field):
         rmthis = str(_('Hold down "Control", or "Command" on a Mac, to select more than one.'))
         field.help_text = str(field.help_text).replace(rmthis, '')
         widget.attrs['class'] = 'form-control select2'
+    
+    elif isinstance(widget, AdminDateWidget):
+        widget = NimdaDateWidget(attrs={'class': 'form-control datepickerInput'})
+        field.field.widget = widget
+
+    elif isinstance(widget, AdminTimeWidget):
+        widget = NimdaTimeWidget(attrs={'class': 'form-control timepickerInput'})
+        field.field.widget = widget
 
     elif isinstance(widget, AdminSplitDateTime):
         widget.widgets = [
