@@ -65,6 +65,11 @@
 
     {% block field_sets %}
       {% for fieldset in adminform %}
+        {% for inline_admin_formset in inline_admin_formsets %}
+          {% if inline_admin_formset.opts.position == forloop.parentloop.counter0 %}
+            {% include inline_admin_formset.opts.template %}
+          {% endif %}
+        {% endfor %}
         {% include "admin/includes/fieldset.html" %}
       {% endfor %}
     {% endblock %}
@@ -73,7 +78,9 @@
 
     {% block inline_field_sets %}
       {% for inline_admin_formset in inline_admin_formsets %}
-        {% include inline_admin_formset.opts.template %}
+        {% if inline_admin_formset.opts.position == None %}
+          {% include inline_admin_formset.opts.template %}
+        {% endif %}
       {% endfor %}
     {% endblock %}
 
