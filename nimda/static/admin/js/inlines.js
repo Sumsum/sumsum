@@ -207,8 +207,9 @@
   // Stacked inlines ---------------------------------------------------------
   $.fn.stackedFormset = function(options) {
     var $rows = $(this);
+    console.log($rows)
     var updateInlineLabel = function(row) {
-      $($rows.selector).find(".inline_label").each(function(i) {
+      $($rows.selector).find(".inline-related").each(function(i) {
         var count = i + 1;
         $(this).html($(this).html().replace(/(#\d+)/g, "#" + count));
       });

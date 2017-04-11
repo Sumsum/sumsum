@@ -72,7 +72,6 @@ class ProductAdmin(admin.ModelAdmin):
                 'title_t',
                 'body_html_t',
             ),
-            'classes': ('box-primary',)
         }),
         (_('Visability'), {
             'fields': (

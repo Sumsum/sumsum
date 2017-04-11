@@ -8,7 +8,7 @@
 
   {% for inline_admin_form in inline_admin_formset %}
     <div class="inline-related{% if inline_admin_form.original or inline_admin_form.show_url %} has_original{% endif %}{% if forloop.last %} empty-form last-related{% endif %}" id="{{ inline_admin_formset.formset.prefix }}-{% if not forloop.last %}{{ forloop.counter0 }}{% else %}empty{% endif %}">
-      <div class="box">
+      <div class="box box-solid">
         <div class="box-header">
           <h3 class="box-title">{{ inline_admin_formset.opts.verbose_name|capfirst }}:
             <span class="inline_label">
@@ -37,10 +37,12 @@
           {% if inline_admin_form.form.non_field_errors %}
             {{ inline_admin_form.form.non_field_errors }}
           {% endif %}
-
+  
+          {% with inline=1 %}
           {% for fieldset in inline_admin_form %}
             {% include "admin/includes/fieldset.html" %}
           {% endfor %}
+          {% endwith %}
 
           {% if inline_admin_form.needs_explicit_pk_field %}
             {{ inline_admin_form.pk_field.field }}

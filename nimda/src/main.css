@@ -200,3 +200,11 @@ div.ace_wrapper {
   display: block;
 }
 
+.page-header {
+  margin-top: 15px;
+  margin-bottom: 0px;
+}
+
+.box-noshadow {
+  box-shadow: none;
+}
