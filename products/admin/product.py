@@ -19,6 +19,7 @@ class ProductVariantInline(admin.StackedInline):
     model = ProductVariant
     position = 4
     extra = 0
+    collapsed = True
     fieldsets = (
         (None, {
             'fields': (

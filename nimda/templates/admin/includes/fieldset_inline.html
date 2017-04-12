@@ -1,15 +1,16 @@
+
 {% load nimda_tags %}
 
-<div class="box box-solid {{ fieldset|box_classes }}{% if fieldset|has_class:"collapsed" %} collapsed-box{% endif %}">
+<div class="box box-solid box-noshadow {{ fieldset|box_classes }}{% if fieldset|has_class:"collapsed" %} collapsed-box{% endif %}">
 
   {% if fieldset.name %}
     <div class="box-header with-border">
       <h3 class="box-title">{{ fieldset.name }}</h3>
-        <div class="box-tools pull-right">
-          {% if fieldset|has_class:"collapsed" %}
-            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>
-          {% else %}
+          <div class="box-tools pull-right">
+          {% if fieldset|has_class:"collapse" %}
             <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+          {% elif fieldset|has_class:"collapsed" %}
+            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>
           {% endif %}
         </div>
     </div>

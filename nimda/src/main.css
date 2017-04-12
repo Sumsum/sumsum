@@ -187,6 +187,11 @@ table.orderable-initalized .order-cell, body > tr > td.order-cell {
 
 div.box {
   margin-bottom: 15px;
+  border-radius: 0;
+}
+
+.form-control {
+  padding: 6px 8px:
 }
 
 /* ace editor fix */
