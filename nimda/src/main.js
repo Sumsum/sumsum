@@ -55,9 +55,9 @@ $(function() {
       //Show the content
       box_content.slideDown(_this.animationSpeed, function () {
         box.removeClass("collapsed-box");
+        // this is the only line that has been added, to trigger the select2
+        box.find('.select2').select2()
       });
-      // this is the only line that has been added, to trigger the select2
-      box.find('.select2').select2()
     }
   }
 })
