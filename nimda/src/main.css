@@ -228,3 +228,7 @@ div.ace_wrapper {
   margin-left: 5px;
   font-weight: normal;
 }
+
+.inline-group .add-row {
+  margin-bottom: 15px;
+}

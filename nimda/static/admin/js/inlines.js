@@ -53,14 +53,14 @@
           $parent.append('<tr class="' + options.addCssClass + '"><td colspan="' + numCols + '"><a href="#">' + options.addText + "</a></tr>");
           addButton = $parent.find("tr:last a");
         } else {
-          // Otherwise, insert it immediately after the last form:
-          $this.filter(":last").after('<div class="' + options.addCssClass + '"><a href="#">' + options.addText + "</a></div>");
+          // stacked
+          $this.filter(":last").after('<div class="' + options.addCssClass + '"><a href="#" class="btn btn-default btn-flat">' + options.addText + "</a></div>");
           addButton = $this.filter(":last").next().find("a");
         }
       }
       addButton.click(function(e) {
         e.preventDefault();
-        var template = $("#" + options.prefix + "-empty");
+        var template = $("#" + options.prefix + "-empty")
         var row = template.clone(true);
         row.removeClass(options.emptyCssClass)
         .addClass(options.formCssClass)
@@ -77,7 +77,7 @@
           // Otherwise, just insert the remove button as the
           // last child element of the form's container:
           // This is for stacked
-          row.find('.box-title').after('<span><a class="' + options.deleteCssClass + '" href="#">' + options.deleteText + "</a></span>");
+          row.find('.inline_label').parent('.box-title').after('<span><a class="' + options.deleteCssClass + '" href="#">' + options.deleteText + "</a></span>");
         }
         row.find("*").each(function() {
           updateElementIndex(this, options.prefix, totalForms.val());
@@ -122,6 +122,7 @@
         });
         // If a post-add callback was supplied, call it with the added form:
         if (options.added) {
+          row.find('.select2').select2()
           options.added(row);
         }
         $(document).trigger('formset:added', [row, options.prefix]);
