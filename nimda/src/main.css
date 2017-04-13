@@ -68,9 +68,6 @@ h2, .h2 {
 .inline-related input[type=number] {
   width: 7em; }
 
-.inline-related .delete {
-  width: 1em; }
-
 /* make error look the same as danger */
 .callout.callout-error {
   border-color: #c23321;
@@ -220,4 +217,14 @@ div.ace_wrapper {
 /* this is the inline/stacked template form */
 .empty-form {
   display: none;
+}
+
+.inline-related .delete {
+  position: absolute;
+  right: 40px;
+}
+
+.inline-related .delete label {
+  margin-left: 5px;
+  font-weight: normal;
 }

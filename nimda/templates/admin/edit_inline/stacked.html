@@ -22,11 +22,11 @@
                 New {{ inline_admin_formset.opts.verbose_name|capfirst }}
               {% endif %}
             </span>
-            {% if inline_admin_formset.formset.can_delete and inline_admin_form.original.pk %}
-              <span class="delete">{{ inline_admin_form.deletion_field.field }} {{ inline_admin_form.deletion_field.label_tag }}</span>
-            {% endif %}
           </h3>
-          <div class="box-tools pull-right">
+          {% if inline_admin_formset.formset.can_delete and inline_admin_form.original %}
+            <span class="delete">{{ inline_admin_form.deletion_field.field }} {{ inline_admin_form.deletion_field.label_tag }}</span>
+          {% endif %}
+          <div class="box-tools">
             {% if inline_admin_form.model_admin.collapsed %}
               <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>
             {% else %}
