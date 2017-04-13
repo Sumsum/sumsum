@@ -76,7 +76,8 @@
         } else {
           // Otherwise, just insert the remove button as the
           // last child element of the form's container:
-          row.children(":first").append('<span><a class="' + options.deleteCssClass + '" href="#">' + options.deleteText + "</a></span>");
+          // This is for stacked
+          row.find('.box-title').after('<span><a class="' + options.deleteCssClass + '" href="#">' + options.deleteText + "</a></span>");
         }
         row.find("*").each(function() {
           updateElementIndex(this, options.prefix, totalForms.val());

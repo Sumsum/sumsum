@@ -219,9 +219,9 @@ div.ace_wrapper {
   display: none;
 }
 
+.inline-related .inline-deletelink,
 .inline-related .delete {
-  position: absolute;
-  right: 40px;
+  margin-left: 12px;
 }
 
 .inline-related .delete label {
