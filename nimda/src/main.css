@@ -185,11 +185,13 @@ table.orderable-initalized .order-cell, body > tr > td.order-cell {
   color: #999;
 }
 
+/* the boxes seem a bit too far from each other */
 div.box {
   margin-bottom: 15px;
   border-radius: 0;
 }
 
+/* padding is default 12px left/right which is too much */
 .form-control {
   padding: 6px 8px;
 }
@@ -210,6 +212,12 @@ div.ace_wrapper {
   margin-bottom: 0px;
 }
 
+/* set no shadow on inline fieldsets */
 .box-noshadow {
   box-shadow: none;
+}
+
+/* this is the inline/stacked template form */
+.empty-form {
+  display: none;
 }

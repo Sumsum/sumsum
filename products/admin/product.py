@@ -7,7 +7,7 @@ from utils.widgets import AdminImageWidget
 
 class ProductImageInline(admin.TabularInline):
     model = ProductImage
-    extra = 1
+    extra = 0
     position = 1
     formfield_overrides = {
         models.ImageField: {'widget': AdminImageWidget},
@@ -18,7 +18,7 @@ class ProductImageInline(admin.TabularInline):
 class ProductVariantInline(admin.StackedInline):
     model = ProductVariant
     position = 4
-    extra = 0
+    extra = 1
     collapsed = True
     fieldsets = (
         (None, {
