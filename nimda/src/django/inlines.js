@@ -31,16 +31,14 @@ $.fn.formset = function(opts) {
     var addButton = options.addButton
     if (addButton === null) {
       if ($this.prop("tagName") === "TR") {
-        // If forms are laid out as table rows, insert the
-        // "add" button in a new table row:
-        var numCols = this.eq(-1).children().length
-        $parent.append('<tr class="' + options.addCssClass + '"><td colspan="' + numCols + '"><a href="#">' + options.addText + "</a></tr>")
-        addButton = $parent.find("tr:last a")
+        // tabular
+        var $el = $this.closest('.inline-group')
       } else {
         // stacked
-        $this.filter(":last").after('<div class="' + options.addCssClass + '"><a href="#" class="btn btn-default btn-flat">' + options.addText + "</a></div>")
-        addButton = $this.filter(":last").next().find("a")
+        var $el = $this.filter(':last')
       }
+      $el.after('<div class="' + options.addCssClass + '"><a href="#" class="btn btn-default btn-flat">' + options.addText + "</a></div>")
+      addButton = $el.next()
     }
     addButton.click(function(e) {
       e.preventDefault()
@@ -52,10 +50,12 @@ $.fn.formset = function(opts) {
       if (row.is("tr")) {
         // If the forms are laid out in table rows, insert
         // the remove button into the last table cell:
+        // XXX When is this?
         row.children(":last").append('<div><a class="' + options.deleteCssClass + '" href="#">' + options.deleteText + "</a></div>")
       } else if (row.is("ul") || row.is("ol")) {
         // If they're laid out as an ordered/unordered list,
         // insert an <li> after the last list item:
+        // XXX When is this?
         row.append('<li><a class="' + options.deleteCssClass + '" href="#">' + options.deleteText + "</a></li>")
       } else {
         // Otherwise, just insert the remove button as the
@@ -115,34 +115,16 @@ $.fn.formset = function(opts) {
   return this
 }
 
-/* Setup plugin defaults */
+// Setup plugin defaults
 $.fn.formset.defaults = {
   prefix: "form",      // The form prefix for your django formset
   addText: "add another",    // Text for the add link
   deleteText: "remove",    // Text for the delete link
   addCssClass: "add-row",    // CSS class applied to the add link
-  deleteCssClass: "delete-row",  // CSS class applied to the delete link
-  emptyCssClass: "empty-row",  // CSS class applied to the empty row
+  deleteCssClass: "inline-deletelink",  // CSS class applied to the delete link
+  emptyCssClass: "empty-form",  // CSS class applied to the empty row
   formCssClass: "dynamic-form",  // CSS class applied to each form in a formset
   added: null,      // Function called each time a new form is added
   removed: null,      // Function called each time a form is deleted
   addButton: null     // Existing add button to use
-}
-
-
-// Tabular inlines ---------------------------------------------------------
-$.fn.tabularFormset = function(options) {
-  var $rows = $(this)
-  $rows.formset({
-    prefix: options.prefix,
-    addText: options.addText,
-    formCssClass: "dynamic-" + options.prefix,
-    deleteCssClass: "inline-deletelink",
-    deleteText: options.deleteText,
-    emptyCssClass: "empty-form",
-    removed: alternatingRows,
-    addButton: options.addButton
-  })
-
-  return $rows
 }

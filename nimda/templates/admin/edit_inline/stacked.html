@@ -63,24 +63,17 @@
   var formCssClass = 'dynamic-' + prefix
   var update = function(row) {
     var count = $("." + formCssClass).length
-    $("#id_" + prefix + "-TOTAL_FORMS").val(count);
+    $("#id_" + prefix + "-TOTAL_FORMS").val(count)
   }
   var options = {
-      prefix: prefix,
-      addText: '{% blocktrans with verbose_name=inline_admin_formset.opts.verbose_name|capfirst %}Add another {{ verbose_name }}{% endblocktrans %}',
-      formCssClass: formCssClass,
-      deleteCssClass: 'inline-deletelink',
-      deleteText: '{% trans "Remove" %}',
-      emptyCssClass: 'empty-form',
-      removed: update,
-      added: update,
+    prefix: prefix,
+    addText: '{% blocktrans with verbose_name=inline_admin_formset.opts.verbose_name|capfirst %}Add another {{ verbose_name }}{% endblocktrans %}',
+    formCssClass: formCssClass,
+    deleteText: '{% trans "Remove" %}',
+    removed: update,
+    added: update,
   }
 
-  $.fn.stackedFormset = function() {
-    var $rows = $(this)
-    $rows.formset(options)
-  }
-
-  $('#' + prefix + '-group .inline-related').stackedFormset()
+  $('#' + prefix + '-group .inline-related').formset(options)
 }())
 </script>
