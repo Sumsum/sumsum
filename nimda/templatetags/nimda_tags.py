@@ -133,9 +133,9 @@ def col_width(field):
 def form_class(field):
     cls = []
     widget = field.field.widget
-    # read only or normal single widget
-    if (isinstance(field, dict)) or not isinstance(widget, MultiWidget):
-        cls.append('form-group')
+    cls.append('form-group')
+    if isinstance(widget, MultiWidget):
+        cls.append('multi-widget')
     if field.errors:
         cls.append('has-error')
     return ' '.join(cls)
