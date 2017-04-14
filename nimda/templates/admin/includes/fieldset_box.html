@@ -2,8 +2,6 @@
 
 <div class="box-body">
   {% for line in fieldset %}
-    {{ line.errors }}
-
     <div class="row">
     {% for field in line %}
       <div class="col-md-{{ field.field|col_width }}">
@@ -12,6 +10,9 @@
             <label>
               {{ field.field }} {{ field.field.label }}
             </label>
+            {% if field.field.errors %}
+              <span class="help-block">{{ field.field.errors|join:", "}}</span>
+            {% endif %}
           </div>
         {% else %}
           {% if field.is_readonly %}
@@ -27,6 +28,9 @@
               {{ field.field|render_field_label }}
               {% help_text field.field %}
               {{ field.field|render_field }}
+              {% if field.field.errors %}
+                <span class="help-block">{{ field.field.errors|join:", "}}</span>
+              {% endif %}
             </div>
           {% endif %}
         {% endif %}

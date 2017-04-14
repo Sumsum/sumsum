@@ -232,3 +232,8 @@ div.ace_wrapper {
 .add-row {
   margin: -5px 0 15px 0;
 }
+
+/* show red border for select2 */
+.form-group.has-error .select2-container .select2-selection {
+  border-color: #dd4b39;
+}

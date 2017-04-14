@@ -131,13 +131,14 @@ def col_width(field):
 
 @register.filter
 def form_class(field):
-    # read only
-    if (isinstance(field, dict)):
-        return 'form-group'
+    cls = []
     widget = field.field.widget
-    if isinstance(widget, MultiWidget):
-        return ''
-    return 'form-group'
+    # read only or normal single widget
+    if (isinstance(field, dict)) or not isinstance(widget, MultiWidget):
+        cls.append('form-group')
+    if field.errors:
+        cls.append('has-error')
+    return ' '.join(cls)
 
 
 @register.filter
