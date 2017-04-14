@@ -219,7 +219,7 @@ div.ace_wrapper {
   display: none;
 }
 
-.inline-related .inline-deletelink,
+.inline-related .stacked-deletelink,
 .inline-related .delete {
   margin-left: 12px;
 }
