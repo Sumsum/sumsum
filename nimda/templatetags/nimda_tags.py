@@ -129,7 +129,7 @@ def has_class(fieldset, name):
 @register.filter
 def col_width(field):
     # read only
-    if (isinstance(field, dict)):
+    if isinstance(field, dict):
         if field.get('is_wide'):
             return 12
         return 6
@@ -143,13 +143,14 @@ def col_width(field):
 
 @register.filter
 def form_class(field):
-    cls = []
-    widget = field.field.widget
-    cls.append('form-group')
-    if isinstance(widget, MultiWidget):
-        cls.append('multi-widget')
-    if field.errors:
-        cls.append('has-error')
+    cls = ['form-group']
+    # if not readonly
+    if not isinstance(field, dict):
+        widget = field.field.widget
+        if isinstance(widget, MultiWidget):
+            cls.append('multi-widget')
+        if field.errors:
+            cls.append('has-error')
     return ' '.join(cls)
 
 
