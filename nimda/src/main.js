@@ -18,9 +18,9 @@ $('.actions .clear').hide()
 $($('.actions select[name=action] option')[0]).text('Action')
 
 $.AdminLTE.options.animationSpeed = 100
-$('.select2').select2()
+$('.select2').select2({width: '100%'})
 // remove select2 from the inline templates (we add this later)
-$('.inline-related.empty-form').find('select.select2').select2('destroy')
+$('.inline-related .empty-form').find('select.select2').select2('destroy')
 $('.datepickerInput').datepicker({
   autoclose: true,
   format: 'yyyy-mm-dd', 
@@ -59,7 +59,7 @@ $(function() {
         box.removeClass("collapsed-box");
         // this is the only line that has been added, to trigger the select2
         // after the box is opened
-        box.find('.select2').select2()
+        box.find('.select2').select2({width: '100%'})
       });
     }
   }

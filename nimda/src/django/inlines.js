@@ -104,9 +104,9 @@ $.fn.formset = function(opts) {
           $(forms.get(i)).find("*").each(updateElementCallback)
         }
       })
+      row.find('.select2').select2({width: '100%'})
       // If a post-add callback was supplied, call it with the added form:
       if (options.added) {
-        row.find('.select2').select2()
         options.added(row)
       }
       $(document).trigger('formset:added', [row, options.prefix])
