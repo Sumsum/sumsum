@@ -38,7 +38,7 @@ $.fn.formset = function(opts) {
         var $el = $this.filter(':last')
       }
       $el.after('<div class="' + options.addCssClass + '"><a href="#" class="btn btn-default btn-flat">' + options.addText + "</a></div>")
-      addButton = $el.next()
+      addButton = $el.next().find('a')
     }
     addButton.click(function(e) {
       e.preventDefault()

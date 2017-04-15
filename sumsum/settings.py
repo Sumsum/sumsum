@@ -34,7 +34,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'redactor',
-    'debug_toolbar',
+    #'debug_toolbar',
     'django_select2',
     'timezone_field',
     'rest_framework',
@@ -69,7 +69,7 @@ MIDDLEWARE = [
     'superuser.middleware.SuperUserMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
+    #'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 REDACTOR_OPTIONS = {'lang': 'en'}
 REDACTOR_UPLOAD = 'images/'

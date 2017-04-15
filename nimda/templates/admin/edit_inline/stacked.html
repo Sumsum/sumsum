@@ -8,7 +8,7 @@
 
   {% for inline_admin_form in inline_admin_formset %}
   <div class="inline-related{% if forloop.last %} empty-form last-related{% endif %}" id="{{ inline_admin_formset.formset.prefix }}-{% if not forloop.last %}{{ forloop.counter0 }}{% else %}empty{% endif %}">
-      <div class="box box-solid{% if inline_admin_form.model_admin.collapsed %} collapsed-box{% endif %}">
+      <div class="box box-solid{% if inline_admin_form.model_admin.collapsed and not inline_admin_form.errors %} collapsed-box{% endif %}">
         <div class="box-header">
           <h3 class="box-title">
             <span class="inline_label">
@@ -27,7 +27,7 @@
             <span class="delete">{{ inline_admin_form.deletion_field.field }} {{ inline_admin_form.deletion_field.label_tag }}</span>
           {% endif %}
           <div class="box-tools">
-            {% if inline_admin_form.model_admin.collapsed %}
+            {% if inline_admin_form.model_admin.collapsed and not inline_admin_form.errors %}
               <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>
             {% else %}
               <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>

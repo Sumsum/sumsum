@@ -7,6 +7,7 @@ from django.conf import settings
 from django.contrib import admin
 from django.contrib.admin.widgets import RelatedFieldWidgetWrapper, FilteredSelectMultiple
 from django.contrib.admin.widgets import AdminSplitDateTime, AdminDateWidget, AdminTimeWidget
+from django.contrib.admin.helpers import Fieldset
 from django.core.cache import cache
 from django.forms import Select, SelectMultiple, MultiWidget
 from django.forms.utils import flatatt
@@ -22,6 +23,17 @@ register = template.Library()
 
 class DistException(Exception):
     pass
+
+
+@register.filter
+def has_errors(obj):
+    if hasattr(obj, 'errors'):
+        return bool(obj.errors)
+    if isinstance(obj, Fieldset):
+        for field in obj:
+            if field.errors():
+                return True
+    return False
 
 
 @register.simple_tag
@@ -159,7 +171,7 @@ def render_field(field):
         rmthis = str(_('Hold down "Control", or "Command" on a Mac, to select more than one.'))
         field.help_text = str(field.help_text).replace(rmthis, '')
         widget.attrs['class'] = 'form-control select2'
-    
+
     elif isinstance(widget, AdminDateWidget):
         widget = NimdaDateWidget(attrs={'class': 'form-control datepickerInput'})
         field.field.widget = widget
