@@ -222,9 +222,9 @@ def sidebar_menu(context):
             app['icon'] = '<i class="fa fa-folder" aria-hidden="true"></i>'
         models = []
         for model in app['models']:
-            admin_model = registry['{}.{}'.format(app['app_label'], model['object_name'])]
-            if hasattr(admin_model, 'icon'):
-                model['icon'] = admin_model.icon
+            model_admin = registry['{}.{}'.format(app['app_label'], model['object_name'])]
+            if hasattr(model_admin, 'icon'):
+                model['icon'] = model_admin.icon
             else:
                 model['icon'] = '<i class="fa fa-folder" aria-hidden="true"></i>'
             models.append(model)
