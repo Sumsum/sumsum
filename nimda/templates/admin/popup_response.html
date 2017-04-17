@@ -2,10 +2,19 @@
 <html>
   <head><title>{% trans 'Popup closing...' %}</title></head>
   <body>
-    <script type="text/javascript"
-            id="django-admin-popup-response-constants"
-            src="{% static "admin/js/popup_response.js" %}"
-            data-popup-response="{{ popup_response_data }}">
+    <script>
+      var data = {{ popup_response_data|safe }}
+      switch(data.action) {
+      case 'change':
+        opener.dismissChangeRelatedObjectPopup(window, data.value, data.obj, data.new_value)
+        break
+      case 'delete':
+        opener.dismissDeleteRelatedObjectPopup(window, data.value)
+        break
+      default:
+        opener.dismissAddRelatedObjectPopup(window, data.value, data.obj)
+        break
+      }
     </script>
   </body>
 </html>
