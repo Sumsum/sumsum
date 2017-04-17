@@ -101,15 +101,15 @@ function dismissChangeRelatedObjectPopup(win, objId, newRepr, newId) {
   var id = windowname_to_id(win.name).replace(/^edit_/, '')
   var selectsSelector = interpolate('#%s, #%s_from, #%s_to', [id, id, id])
   var selects = $(selectsSelector)
-  $(selects).select2('destroy') // destroy select2 before injecting new value
   selects.find('option').each(function() {
     if (this.value === objId) {
       this.textContent = newRepr
       this.value = newId
     }
   })
-  $(selects).select2({width: '100%'}) // re-apply select2
   win.close()
+  $(selects).select2('destroy') // re-init select2 to see new values
+  $(selects).select2({width: '100%'})
 }
 
 function dismissDeleteRelatedObjectPopup(win, objId) {
