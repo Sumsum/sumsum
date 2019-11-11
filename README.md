@@ -1,6 +1,6 @@
 # Sumsum
 
-**Warning: This project is very much work in progress, do not expect anything
+**Warning: This project is ~very much work in progress~ DEAD, do not expect anything
 to work.**
 
 ## Installation
